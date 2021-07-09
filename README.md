@@ -9,3 +9,6 @@ STEP 3... Machine learning algorithms to reduce the asset universe<br/>
 STEP 4... Scenario generation<br/>
 STEP 5... Mathematical optimization using the CVaR model<br/>
 STEP 6... Statistical analysis of generated trading strategy
+
+
+# Example
