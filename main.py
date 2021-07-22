@@ -68,13 +68,16 @@ class TradeBot(object):
         composition.columns = list(names)
         composition = composition.loc[:, (composition != 0).any(axis=0)]
         data = []
+        idx_color = 0
         for isin in composition.columns:
             trace = go.Bar(
                 x=composition.index,
                 y=composition[isin],
-                name=str(isin)
+                name=str(isin),
+                marker_color=px.colors.sequential.Plasma[idx_color]
             )
             data.append(trace)
+            idx_color += 1
 
         layout = go.Layout(barmode='stack')
         fig = go.Figure(data=data, layout=layout)
@@ -105,6 +108,8 @@ class TradeBot(object):
             data.loc[:, "Type"] = MLsubset.loc[:, "Cluster"]
         if ML == None:
             setColor = None
+       
+
 
         # PLOTTING Data
         fig = px.scatter(data,
@@ -118,6 +123,27 @@ class TradeBot(object):
         # AXIS IN PERCENTAGES
         fig.layout.yaxis.tickformat = ',.1%'
         fig.layout.xaxis.tickformat = ',.1%'
+
+        # RISK LEVEL MARKER
+        minRisk = data['Standard Deviation of Returns'].min()
+        maxRisk = data['Standard Deviation of Returns'].max()
+        riskLevels = {"Risk Class 1" : 0.005, 
+                      "Risk Class 2" : 0.02, 
+                      "Risk Class 3" : 0.05, 
+                      "Risk Class 4" : 0.10,
+                      "Risk Class 5" : 0.15, 
+                      "Risk Class 6" : 0.25,
+                      "Risk Class 7" : maxRisk}           
+        actualRiskLevels = set() # Define dynamic risk levels
+        for i in range(1,8):
+            k = "Risk Class " + str(i)
+            if (riskLevels[k] >=  minRisk and riskLevels[k] <= maxRisk):
+                actualRiskLevels.add(i)
+        if max(actualRiskLevels) < 7:
+            actualRiskLevels.add(max(actualRiskLevels)+1)  # Add the final risk level       
+        for l in actualRiskLevels:
+            k = "Risk Class " + str(l)
+            fig.add_vline(x=riskLevels[k], line_width=2, line_dash="dash", line_color="grey", annotation_text=k, annotation_position="top left")
 
         #fig.show()
         return fig

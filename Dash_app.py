@@ -36,7 +36,8 @@ clust_click_prev = 0
 '''
 # Name and password
 VALID_USERNAME_PASSWORD_PAIRS = {
-    'Petr': 'algo94'
+    'Petr': 'algo94',
+    'CHY': 'algo123'
 }
 # Initialize the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
