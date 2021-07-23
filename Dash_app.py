@@ -11,7 +11,6 @@ from urllib.parse import quote as urlquote
 from Dash_layouts import *
 from dash_extensions.snippets import send_file
 from main import TradeBot
-from dataAnalyser import tickers
 
 global temp_storage
 global Prev_save_click
@@ -25,9 +24,11 @@ temp2_click = 0
 temp_name = ''
 just_retrained = False
 
+global first_run, save_Figure
 global mst_click_prev, clust_click_prev
 mst_click_prev = 0
 clust_click_prev = 0
+first_run = 0
 
 '''
 # ----------------------------------------------------------------------------------------------------------------------
@@ -178,44 +179,46 @@ def update_output(value):
 
 # PLOT GRAPH WITH DOTS
 @app.callback(
-    Output('dotsFig', 'children'),
+    [Output('dotsFig', 'children'),
+     Output('picker-show', 'start_date'),
+     Output('picker-show', 'end_date'),
+     Output('picker-show', 'min_date_allowed'),
+     Output('picker-show', 'max_date_allowed')
+     ],
     [Input('show', 'n_clicks')],
     [State('picker-show', 'start_date'),
      State('picker-show', 'end_date')],
-    prevent_initial_call=True
 )
 def plot_dots(click, start, end):
     global algo
     global startDate, endDate
+    global minDate, maxDate
+    global first_run, save_Figure
 
-    if click > 0:
-        startDate = start
-        endDate = end
+    if first_run < 1:
+        algo = TradeBot()
+        startDate = algo.weeklyReturns.index[0]
+        endDate = algo.weeklyReturns.index[-2]
+        minDate = algo.weeklyReturns.index[0]
+        maxDate = algo.weeklyReturns.index[-2]
 
-        fig = algo.plot_dots(start=str(start), end=str(end))
+        save_Figure = None
+        first_run = 1
 
-    return dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
-                                        'left': '0%'})
+        return save_Figure, startDate, endDate, minDate, maxDate
 
+    try:
+        if click > 0:
+            startDate = start
+            endDate = end
 
-# DOWNLOAD THE DATA
-@app.callback(
-    [Output('picker-show', 'min_date_allowed'),
-     Output('picker-show', 'max_date_allowed'),
-     Output('picker-show', 'start_date'),
-     Output('picker-show', 'end_date')],
-    Input('download', 'n_clicks'),
-    [State('picker-download', 'start_date'),
-     State('picker-download', 'end_date')],
-    prevent_initial_call=True
-)
-def download_data(click, start, end):
-    global algo
+            fig = algo.plot_dots(start=str(start), end=str(end))
+            save_Figure = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
+                                                       'left': '0%'})
+            return save_Figure, startDate, endDate, minDate, maxDate
+    except:
+        return save_Figure, startDate, endDate, minDate, maxDate
 
-    if click > 0:
-        algo = TradeBot(start=str(start), end=str(end), assets=tickers)
-
-    return start, end, start, end
 
 
 '''

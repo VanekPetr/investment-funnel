@@ -7,7 +7,7 @@ import math
 from dash_extensions import Download
 import base64
 from datetime import date
-from dataAnalyser import tickers
+
 
 
 '''
@@ -210,8 +210,8 @@ optionBacktest2 = html.Div([
 
     dcc.Dropdown(
         id='select-benchmark',
-        options=[
-            {'label': value, 'value': value} for value in tickers
+        options = [
+            {'label': value, 'value': value} for value in ['KOKOS','KOKOS2']
         ],
         placeholder="Select your ETF benchmark",
         multi=True,
@@ -335,32 +335,17 @@ graphML = html.Div(id='mlFig', style=GRAPH_RIGHT)
 
 optionGraph = html.Div([
     html.H5("SETUP", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
-    html.P("Download data from Yahoo! and plot it",
+    html.P("Get overview of the ETF market for a selected time period",
             style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
-
-    html.Button('Download Data',
-                id='download',
-                style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                       'background-color': "#111723", 'color': 'white', "top": "20%"}),
 
     html.Button('Show Plot',
                 id='show',
                 style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                        'background-color': "#111723", 'color': 'white', "top": "35%"}),
-
-
-    dcc.DatePickerRange(
-        id='picker-download',
-        min_date_allowed=date(2000, 1, 1),
-        max_date_allowed=date(2020, 12, 31),
-        start_date=date(2015, 1, 1),
-        end_date=date(2020, 12, 31),
-        style={'position':'absolute', 'top': '15%', 'margin-left': '10%'}
-    ),
+                        'background-color': "#111723", 'color': 'white', "top": "20%"}),
 
     dcc.DatePickerRange(
         id='picker-show',
-        style={'position':'absolute', 'top': '30%', 'margin-left': '10%'}
+        style={'position':'absolute', 'top': '15%', 'margin-left': '10%'}
     ),
 ], style=GRAPH_LEFT)
 

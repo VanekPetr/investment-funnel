@@ -4,7 +4,7 @@ Created on Wed Nov 11 15:50:42 2020
 @author: Petr Vanek
 """
 
-from dataAnalyser import meanRetAn, finalStat, tickers
+from dataAnalyser import meanRetAn, finalStat
 from MST import MinimumSpanningTree
 from Clustering import Cluster, pickCluster
 from ScenarioGeneration import MC, BOOT
@@ -17,7 +17,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
-
+import math
 pio.renderers.default = "browser"
 
 
@@ -27,15 +27,26 @@ class TradeBot(object):
     optimization suggesting optimal portfolio of assets.
     """
 
-    def __init__(self, start, end, assets):
-        # DOWNLOAD THE ADJUSTED DAILY PRICES FROM YAHOO DATABASE
-        dailyPrices = data.DataReader(assets, 'yahoo', start, end)["Adj Close"]
+    # def __init__(self, start, end, assets):
+    #     # DOWNLOAD THE ADJUSTED DAILY PRICES FROM YAHOO DATABASE
+    #     dailyPrices = data.DataReader(assets, 'yahoo', start, end)["Adj Close"]
+    #     ## Extra
+    #     # test = dailyPrices
+    #     # for k in range(len(test.columns)):
+    #     #     for i in range(len(test.index)):
+    #     #         if math.isnan(float(test.iloc[i, k])):
+    #     #             test.iloc[i, k] = test.iloc[i-1, k]
+    #     # dailyPrices=test
+    #     # GET WEEKLY RETURNS
+    #     # Get prices only for Wednesdays and delete Nan columns
+    #     pricesWed = dailyPrices[dailyPrices.index.weekday == 2].dropna(axis=1)
+    #     # Get weekly returns
+    #     self.weeklyReturns = pricesWed.pct_change().drop(pricesWed.index[0])  # drop first NaN row
+    #
 
-        # GET WEEKLY RETURNS
-        # Get prices only for Wednesdays and delete Nan columns
-        pricesWed = dailyPrices[dailyPrices.index.weekday == 2].dropna(axis=1)
-        # Get weekly returns
-        self.weeklyReturns = pricesWed.pct_change().drop(pricesWed.index[0])  # drop first NaN row
+    def __init__(self):
+        self.weeklyReturns = pd.read_parquet('etoro_etfs_weekly_returns_2011_2021.parquet')
+        self.tickers = self.weeklyReturns.columns.values
 
     # METHOD COMPUTING ANNUAL RETURNS, ANNUAL STD. DEV. & SHARPE RATIO OF ASSETS
     def __get_stat(self, start, end):
@@ -268,7 +279,8 @@ class TradeBot(object):
 if __name__ == "__main__":
 
     # INITIALIZATION OF THE CLASS
-    algo = TradeBot(start="2015-09-23", end="2019-09-22", assets=tickers)
+    #algo = TradeBot(start="2011-07-01", end="2021-07-01", assets=tickers)
+    algo = TradeBot()
 
     # PLOT INTERACTIVE GRAPH
     algo.plot_dots(start="2018-09-24", end="2019-09-01")
