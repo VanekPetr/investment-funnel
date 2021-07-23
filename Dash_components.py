@@ -157,7 +157,7 @@ sideBar = html.Div([
         dbc.Nav(
             [
                 dbc.NavLink("Market Overview", id='page0', href="/", active="exact"),
-                dbc.NavLink("Algo Strategies", id='page1', href="/page-1", active="exact", n_clicks=0),
+                dbc.NavLink("AI Feature Selection", id='page1', href="/page-1", active="exact", n_clicks=0),
                 dbc.NavLink("Backtesting", id='page2', href="/page-2", active="exact"),
             ],
             vertical=True,
@@ -262,7 +262,7 @@ graphPerformance = html.Div(id='backtestPerfFig', style=GRAPH_RIGHT_TOP)
 graphComposition = html.Div(id='backtestCompFig', style=GRAPH_RIGHT_DOWN)
 
 
-# ALGO STRATEGIES
+# AI Feature Selection
 # ----------------------------------------------------------------------------------------------------------------------
 
 optionML = html.Div([

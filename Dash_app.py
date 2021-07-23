@@ -123,7 +123,7 @@ def update_output(value):
     return 'Selected number of scenarios: {}'.format(value)
 
 
-# ALGO STRATEGIES
+# AI Feature Selection
 # ----------------------------------------------------------------------------------------------------------------------
 
 # PLOT ML GRAPH
