@@ -94,15 +94,25 @@ def display_page(pathname):
      Output('tableResult', 'data')],
     [Input('backtestRun', 'n_clicks')],
     [State('select-ml', 'value'),
+     State('slider-backtest-ml', 'value'),
+     State('slider-backtest', 'value'),
      State('select-scenarios', 'value'),
      State('my-slider2', 'value'),
      State('select-benchmark', 'value')],
     prevent_initial_call=True
 )
-def plot_backtest(click, ml_method, scen_method, scen_num, benchmark):
+def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_num, benchmark):
     global algo
+    global startDate, endDate
 
     if click > 0:
+        # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
+        algo.setup_data(start=startDate, end=endDate, train_test=True, train_ratio=0.6)
+        # RUN ML algo
+        if ml_method == 'MST':
+            algo.mst(nMST=num_runs, plot=False)
+        else:
+            algo.clustering(nClusters=num_runs, nAssets=num_clusters, plot=False)
         # RUN THE BACKTEST
         results, figPerf, figComp = algo.backtest(assets=ml_method,
                                                   benchmark=benchmark,
@@ -122,6 +132,18 @@ def plot_backtest(click, ml_method, scen_method, scen_num, benchmark):
 def update_output(value):
     return 'Selected number of scenarios: {}'.format(value)
 
+@app.callback(
+    Output('slider-output-container-backtest', 'children'),
+    [Input('slider-backtest', 'value')])
+def update_output_cluster(value):
+    return 'In case of CLUSTERING: Number of the best performing assets selected from each cluster is {}'.format(value)
+
+@app.callback(
+    Output('slider-output-container-backtest-ml', 'children'),
+    [Input('slider-backtest-ml', 'value')])
+def update_output_MLtype(value):
+    return '# of clusters or # of MST runs: {}'.format(value)
+
 
 # AI Feature Selection
 # ----------------------------------------------------------------------------------------------------------------------
@@ -138,12 +160,11 @@ def update_output(value):
      Input('clusterRun', 'n_clicks')],
     [State('mst-dropdown', 'value'),
      State('cluster-dropdown', 'value'),
-     State('my-slider', 'value'),
      State('picker-AI', 'start_date'),
      State('picker-AI', 'end_date'),
      ]
 )
-def plot_ml(click_mst, click_clust, mst, clust, clust_num, start, end):
+def plot_ml(click_mst, click_clust, mst, clust, start, end):
     global algo
     global startDate, endDate, startDate2, endDate2
     global minDate, maxDate
@@ -184,18 +205,11 @@ def plot_ml(click_mst, click_clust, mst, clust, clust_num, start, end):
         endDate2 = end
         # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
         algo.setup_data(start=startDate2, end=endDate2, train_test=False)
-        fig = algo.clustering(nClusters=clust, nAssets=clust_num, plot=True)
+        fig = algo.clustering(nClusters=clust, nAssets=2, plot=True)
         save_Figure2 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
                                                     'left': '0%'})
 
     return save_Figure2, startDate2, endDate2, minDate, maxDate
-
-
-@app.callback(
-    Output('slider-output-container', 'children'),
-    [Input('my-slider', 'value')])
-def update_output(value):
-    return 'Number of the best performing assets selected from each cluster: {}'.format(value)
 
 
 # MARKET OVERVIEW

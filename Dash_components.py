@@ -7,6 +7,7 @@ import math
 from dash_extensions import Download
 import base64
 from datetime import date
+from dataAnalyser import tickers
 
 
 
@@ -51,32 +52,22 @@ GRAPH_LEFT = {
     "padding": "1rem 1rem",
 }
 
-GRAPH_LEFT1 = {
-    "position": "fixed",
-    "left": side_bar_width,
-    "top": top_height,
-    "width": '20%',
-    'bottom': '50%',
-    "background-color":  "#d4d5d6",
-    "padding": "1rem 1rem",
-}
-
-GRAPH_LEFT2 = {
-    "position": "fixed",
-    "left": side_bar_width,
-    "top": '50%',
-    "width": '20%',
-    'bottom': '0%',
-    "background-color":  "#d4d5d6",
-    "padding": "1rem 1rem",
-}
-
 GRAPH_LEFT_TOP = {
     "position": "fixed",
     "left": side_bar_width,
     "top": top_height,
     "width": '20%',
-    'bottom': '70%',
+    'bottom': '65%',
+    "background-color":  "#d4d5d6",
+    "padding": "1rem 1rem",
+}
+
+GRAPH_LEFT_SECOND = {
+    "position": "fixed",
+    "left": side_bar_width,
+    "top": "35%",
+    "width": '20%',
+    'bottom': '50%',
     "background-color":  "#d4d5d6",
     "padding": "1rem 1rem",
 }
@@ -84,7 +75,7 @@ GRAPH_LEFT_TOP = {
 GRAPH_LEFT_MIDDLE = {
     "position": "fixed",
     "left": side_bar_width,
-    "top": '30%',
+    "top": '50%',
     "width": '20%',
     'bottom': '30%',
     "background-color":  "#d4d5d6",
@@ -171,8 +162,22 @@ sideBar = html.Div([
 # ----------------------------------------------------------------------------------------------------------------------
 optionBacktest = html.Div([
     html.H5("BACKTESTING", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
-    html.P("Test your investment strategy with selected scenario generation method and CVaR model",
-            style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
+    html.P("Test your investment strategy with a selected ML model, scenario generation method and the CVaR model for a given training and testing time period",
+            style={'text-aling': 'left', "position": "fixed", 'top': '12%', 'left': '11%', 'right':'71%'}),
+
+    html.P("Select your training period",
+            style={'text-aling': 'left', "position": "fixed", 'top': '18%', 'left': '11%', 'right':'71%'}),
+    dcc.DatePickerRange(
+        id='picker-train',
+        style={'position':'absolute', 'top': '46%', 'margin-left': '10%'}
+    ),
+
+    html.P("Select your testing period for backtest",
+            style={'text-aling': 'left', "position": "fixed", 'top': '24%', 'left': '11%', 'right':'71%'}),
+    dcc.DatePickerRange(
+        id='picker-test',
+        style={'position':'absolute', 'top': '68%', 'margin-left': '10%'}
+    ),
 
     dcc.Dropdown(
         id='select-ml',
@@ -181,21 +186,45 @@ optionBacktest = html.Div([
             {'label': 'Clustering', 'value': 'Clustering'},
         ],
         placeholder="Select ML method",
-        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "50%"},
+        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "85%"},
     ),
 
-    dcc.Dropdown(
+    html.Div(id='slider-output-container-backtest-ml',
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "95%"}),
+
+], style=GRAPH_LEFT_TOP)
+
+optionBacktest1 = html.Div([
+    dcc.Slider(
+        id='slider-backtest-ml',
+        min=1,
+        max=5,
+        step=1,
+        value=2
+    ),
+
+    dcc.Slider(
+        id='slider-backtest',
+        min=1,
+        max=20,
+        step=1,
+        value=2
+    ),
+
+    html.Div(id='slider-output-container-backtest',
+             style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "30%"}),
+
+dcc.Dropdown(
         id='select-scenarios',
         options=[
             {'label': 'Bootstrapping', 'value': 'Bootstrapping'},
             {'label': 'Monte Carlo', 'value': 'MonteCarlo'}
         ],
         placeholder="Select scenario generation method",
-        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "80%"},
+        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "70%"},
     ),
 
-], style=GRAPH_LEFT_TOP)
-
+], style=GRAPH_LEFT_SECOND)
 
 optionBacktest2 = html.Div([
     dcc.Slider(
@@ -211,11 +240,11 @@ optionBacktest2 = html.Div([
     dcc.Dropdown(
         id='select-benchmark',
         options = [
-            {'label': value, 'value': value} for value in ['KOKOS','KOKOS2']
+            {'label': value, 'value': value} for value in tickers
         ],
         placeholder="Select your ETF benchmark",
         multi=True,
-        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "40%"},
+        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "25%"},
     ),
 
     html.Button('Run Backtest',
@@ -270,6 +299,8 @@ optionML = html.Div([
     html.P("Machine Learning and AI part of investment strategy",
             style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
 
+    html.P("Select time period",
+            style={'text-aling': 'left', "position": "fixed", 'top': '23%', 'left': '11%', 'right':'71%'}),
     dcc.DatePickerRange(
         id='picker-AI',
         style={'position':'absolute', 'top': '20%', 'margin-left': '10%'}
@@ -284,14 +315,14 @@ optionML = html.Div([
             {'label': '4 MST runs', 'value': 4},
         ],
         placeholder="Select # of MST runs",
-        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "40%"},
+        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "35%"},
     ),
 
 
     html.Button('Run MST',
         id='mstRun',
         style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-               'background-color': "#111723", 'color': 'white', "top": "50%"}),
+               'background-color': "#111723", 'color': 'white', "top": "40%"}),
 
     dcc.Dropdown(
         id='cluster-dropdown',
@@ -302,33 +333,16 @@ optionML = html.Div([
             {'label': '5 Clusters', 'value': 5},
         ],
         placeholder="Select # of clusters",
-        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "90%"},
+        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "60%"},
     ),
-
-
-
-], style=GRAPH_LEFT1)
-
-optionML2 = html.Div([
-
-    dcc.Slider(
-        id='my-slider',
-        min=1,
-        max=20,
-        step=1,
-        value=2
-    ),
-
-    html.Div(id='slider-output-container',
-             style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "7%"}),
 
     html.Button('Run Clustering',
         id='clusterRun',
         style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                'background-color': "#111723", 'color': 'white', "top": "18%"}),
+                'background-color': "#111723", 'color': 'white', "top": "65%"}),
 
-], style=GRAPH_LEFT2)
 
+], style=GRAPH_LEFT)
 
 # Table
 graphML = html.Div(id='mlFig', style=GRAPH_RIGHT)

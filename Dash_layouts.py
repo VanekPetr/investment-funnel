@@ -15,6 +15,7 @@ page_3_layout = html.Div([
         # Row 2, col 2 - text description
         dbc.Col([
             dbc.Row([optionBacktest2]),
+            dbc.Row([optionBacktest1]),
             dbc.Row([optionBacktest]),
             dbc.Row([tableBar]),
         ]),
@@ -39,11 +40,8 @@ page_2_layout = html.Div([
     dbc.Row([
         # Row 2, Col 1 - navigation bar
         dbc.Col([sideBar]),
-        # Row 2, col 2 - text description
-        dbc.Col([
-            dbc.Row([optionML2]),
-            dbc.Row([optionML])
-        ]),
+        # Row 2, col 2 - set-up
+        dbc.Col([optionML]),
         # Row 2, Col 3 - table
         dbc.Col([graphML])
     ])
