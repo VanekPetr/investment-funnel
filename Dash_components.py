@@ -270,6 +270,10 @@ optionML = html.Div([
     html.P("Machine Learning and AI part of investment strategy",
             style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
 
+    dcc.DatePickerRange(
+        id='picker-AI',
+        style={'position':'absolute', 'top': '20%', 'margin-left': '10%'}
+    ),
 
     dcc.Dropdown(
         id='mst-dropdown',

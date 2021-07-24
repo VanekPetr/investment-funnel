@@ -24,11 +24,10 @@ temp2_click = 0
 temp_name = ''
 just_retrained = False
 
-global first_run, save_Figure
+global first_run_page1, first_run_page2
 global mst_click_prev, clust_click_prev
-mst_click_prev = 0
-clust_click_prev = 0
-first_run = 0
+mst_click_prev, clust_click_prev = 0, 0
+first_run_page1, first_run_page2 = 0, 0
 
 '''
 # ----------------------------------------------------------------------------------------------------------------------
@@ -129,18 +128,35 @@ def update_output(value):
 
 # PLOT ML GRAPH
 @app.callback(
-    Output('mlFig', 'children'),
+    [Output('mlFig', 'children'),
+     Output('picker-AI', 'start_date'),
+     Output('picker-AI', 'end_date'),
+     Output('picker-AI', 'min_date_allowed'),
+     Output('picker-AI', 'max_date_allowed')
+     ],
     [Input('mstRun', 'n_clicks'),
      Input('clusterRun', 'n_clicks')],
     [State('mst-dropdown', 'value'),
      State('cluster-dropdown', 'value'),
-     State('my-slider', 'value')],
-    prevent_initial_call=True
+     State('my-slider', 'value'),
+     State('picker-AI', 'start_date'),
+     State('picker-AI', 'end_date'),
+     ]
 )
-def plot_ml(click_mst, click_clust, mst, clust, clust_num):
+def plot_ml(click_mst, click_clust, mst, clust, clust_num, start, end):
     global algo
-    global startDate, endDate
+    global startDate, endDate, startDate2, endDate2
+    global minDate, maxDate
+    global first_run_page2
     global mst_click_prev, clust_click_prev
+    global save_Figure2
+
+    if first_run_page2 < 1:
+        first_run_page2 = 1
+        startDate2 = startDate
+        endDate2 = endDate
+        save_Figure2 = None
+        return save_Figure2, startDate, endDate, minDate, maxDate
 
     if click_mst is None:
         click_mst = mst_click_prev
@@ -152,19 +168,27 @@ def plot_ml(click_mst, click_clust, mst, clust, clust_num):
     elif click_clust < clust_click_prev:
         click_clust = clust_click_prev + 1
 
-    # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
-    algo.setup_data(start=startDate, end=endDate, train_test=True, train_ratio=0.6)
-
     if click_mst > mst_click_prev:
+        startDate2 = start
+        endDate2 = end
+        # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
+        algo.setup_data(start=startDate2, end=endDate2, train_test=False)
         # RUN THE MINIMUM SPANNING TREE METHOD
         fig = algo.mst(nMST=mst, plot=True)
         mst_click_prev = click_mst
+        save_Figure2 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
+                                                    'left': '0%'})
 
     elif click_clust > clust_click_prev:
+        startDate2 = start
+        endDate2 = end
+        # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
+        algo.setup_data(start=startDate2, end=endDate2, train_test=False)
         fig = algo.clustering(nClusters=clust, nAssets=clust_num, plot=True)
+        save_Figure2 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
+                                                    'left': '0%'})
 
-    return dcc.Graph(figure=fig,
-                     style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%', 'left': '0%'})
+    return save_Figure2, startDate2, endDate2, minDate, maxDate
 
 
 @app.callback(
@@ -193,9 +217,9 @@ def plot_dots(click, start, end):
     global algo
     global startDate, endDate
     global minDate, maxDate
-    global first_run, save_Figure
+    global first_run_page1, save_Figure
 
-    if first_run < 1:
+    if first_run_page1 < 1:
         algo = TradeBot()
         startDate = algo.weeklyReturns.index[0]
         endDate = algo.weeklyReturns.index[-2]
@@ -203,7 +227,7 @@ def plot_dots(click, start, end):
         maxDate = algo.weeklyReturns.index[-2]
 
         save_Figure = None
-        first_run = 1
+        first_run_page1 = 1
 
         return save_Figure, startDate, endDate, minDate, maxDate
 

@@ -185,6 +185,7 @@ class TradeBot(object):
             self.lenTest = len(self.testDataset.index)
         else:
             self.trainDataset = data
+            self.endTrainDate = str(self.trainDataset.index.date[-1])
             self.dataPlot = self.__get_stat(start, end)
             self.lenTest = 0
 
