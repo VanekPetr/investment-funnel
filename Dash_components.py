@@ -57,7 +57,7 @@ GRAPH_LEFT_TOP = {
     "left": side_bar_width,
     "top": top_height,
     "width": '20%',
-    'bottom': '65%',
+    'bottom': '60%',
     "background-color":  "#d4d5d6",
     "padding": "1rem 1rem",
 }
@@ -65,9 +65,9 @@ GRAPH_LEFT_TOP = {
 GRAPH_LEFT_SECOND = {
     "position": "fixed",
     "left": side_bar_width,
-    "top": "35%",
+    "top": "40%",
     "width": '20%',
-    'bottom': '50%',
+    'bottom': '45%',
     "background-color":  "#d4d5d6",
     "padding": "1rem 1rem",
 }
@@ -75,9 +75,9 @@ GRAPH_LEFT_SECOND = {
 GRAPH_LEFT_MIDDLE = {
     "position": "fixed",
     "left": side_bar_width,
-    "top": '50%',
+    "top": '55%',
     "width": '20%',
-    'bottom': '30%',
+    'bottom': '25%',
     "background-color":  "#d4d5d6",
     "padding": "1rem 1rem",
 }
@@ -85,7 +85,7 @@ GRAPH_LEFT_MIDDLE = {
 GRAPH_LEFT_DOWN = {
     "position": "fixed",
     "left": side_bar_width,
-    "top": "70%",
+    "top": "75%",
     "width": '20%',
     'bottom': '0%',
     #"background-color":  "#8ab4de",
@@ -165,20 +165,22 @@ optionBacktest = html.Div([
     html.P("Test your investment strategy with a selected ML model, scenario generation method and the CVaR model for a given training and testing time period",
             style={'text-aling': 'left', "position": "fixed", 'top': '12%', 'left': '11%', 'right':'71%'}),
 
-    html.P("Select your training period",
-            style={'text-aling': 'left', "position": "fixed", 'top': '18%', 'left': '11%', 'right':'71%'}),
+    html.P("--- Training period ---",
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "40%"}),
     dcc.DatePickerRange(
         id='picker-train',
         style={'position':'absolute', 'top': '46%', 'margin-left': '10%'}
     ),
 
-    html.P("Select your testing period for backtest",
-            style={'text-aling': 'left', "position": "fixed", 'top': '24%', 'left': '11%', 'right':'71%'}),
+    html.P("--- Testing period for backtest ---",
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "60%"}),
     dcc.DatePickerRange(
         id='picker-test',
-        style={'position':'absolute', 'top': '68%', 'margin-left': '10%'}
+        style={'position':'absolute', 'top': '66%', 'margin-left': '10%'}
     ),
 
+    html.P("--- Feature selection ---",
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "80%"}),
     dcc.Dropdown(
         id='select-ml',
         options=[
@@ -212,7 +214,10 @@ optionBacktest1 = html.Div([
     ),
 
     html.Div(id='slider-output-container-backtest',
-             style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "30%"}),
+             style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "34%"}),
+
+html.P("--- Scenarios ---",
+        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "65%"}),
 
 dcc.Dropdown(
         id='select-scenarios',
@@ -221,7 +226,7 @@ dcc.Dropdown(
             {'label': 'Monte Carlo', 'value': 'MonteCarlo'}
         ],
         placeholder="Select scenario generation method",
-        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "70%"},
+        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "80%"},
     ),
 
 ], style=GRAPH_LEFT_SECOND)
@@ -237,6 +242,8 @@ optionBacktest2 = html.Div([
     html.Div(id='slider-output-container2',
              style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "10%"}),
 
+    html.P("--- Benchmark ---",
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "25%"}),
     dcc.Dropdown(
         id='select-benchmark',
         options = [
@@ -244,13 +251,14 @@ optionBacktest2 = html.Div([
         ],
         placeholder="Select your ETF benchmark",
         multi=True,
-        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "25%"},
+        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "35%"},
     ),
+
 
     html.Button('Run Backtest',
         id='backtestRun',
         style={'width': '60%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                'background-color': "#111723", 'color': 'white', "top": "60%"}),
+                'background-color': "#111723", 'color': 'white', "top": "70%"}),
 
 ], style=GRAPH_LEFT_MIDDLE)
 
@@ -258,8 +266,10 @@ optionBacktest2 = html.Div([
 
 # Table
 tableBar = html.Div([
-    html.H5("RESULTS:", style={'text-aling': 'left', "position": "fixed", 'top': '72%', 'left': '11%'}),
+    html.H5("RESULTS:", style={'text-aling': 'left', "position": "fixed", 'top': '77%', 'left': '11%'}),
 
+    html.P("Table for our optimal portfolio",
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "20%"}),
     dash_table.DataTable(id='tableResult',
           columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
                    {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
@@ -281,8 +291,33 @@ tableBar = html.Div([
                     'textAlign': 'left'
                 } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
 
-          ]
-    )], style=GRAPH_LEFT_DOWN)
+          ]),
+
+    html.P("Table for Benchmark",
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "55%"}),
+    dash_table.DataTable(id='tableResult-benchmark',
+                        columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
+                                 {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
+                                 {"name": 'Sharpe R', "id": 'Sharpe R'}],
+                        # fixed_rows={'headers': True},
+                        style_table={"position": "fixed",
+                                     'width': '17%',
+                                     'margin-left': '1%',
+                                     'margin-top': '9%',
+                                     'overflowY': 'scroll',
+                                     'maxHeight': '85%'
+                                     },
+                        style_cell={'textAlign': 'center'},
+                        style_as_list_view=True,
+                        style_header={'fontWeight': 'bold'},
+                        style_cell_conditional=[
+                            {
+                                'if': {'column_id': c},
+                                'textAlign': 'left'
+                            } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
+
+                        ])
+], style=GRAPH_LEFT_DOWN)
 
 # Performance
 graphPerformance = html.Div(id='backtestPerfFig', style=GRAPH_RIGHT_TOP)
@@ -295,17 +330,19 @@ graphComposition = html.Div(id='backtestCompFig', style=GRAPH_RIGHT_DOWN)
 # ----------------------------------------------------------------------------------------------------------------------
 
 optionML = html.Div([
-    html.H5("MST and CLUSTERING", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
-    html.P("Machine Learning and AI part of investment strategy",
+    html.H5("Minimum Spanning Tree and Clustering", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
+    html.P("Use one of our developed machine learning algorithms to decrease the number of ETFs in your asset universe. On the right side of this page you can compare outputs of Minimum Spanning Tree and Clustering in created graphs for a selected time period.",
             style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
 
-    html.P("Select time period",
-            style={'text-aling': 'left', "position": "fixed", 'top': '23%', 'left': '11%', 'right':'71%'}),
+    html.P("--- Time period for feature selection ---",
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "25%"}),
+    # Select time period
     dcc.DatePickerRange(
         id='picker-AI',
-        style={'position':'absolute', 'top': '20%', 'margin-left': '10%'}
+        style={'position':'absolute', 'top': '28%', 'margin-left': '10%'}
     ),
 
+    # Select MST
     dcc.Dropdown(
         id='mst-dropdown',
         options=[
@@ -315,15 +352,15 @@ optionML = html.Div([
             {'label': '4 MST runs', 'value': 4},
         ],
         placeholder="Select # of MST runs",
-        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "35%"},
+        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "40%"},
     ),
-
-
+    # RUN MST
     html.Button('Run MST',
         id='mstRun',
         style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-               'background-color': "#111723", 'color': 'white', "top": "40%"}),
+               'background-color': "#111723", 'color': 'white', "top": "45%"}),
 
+    # Select clustering
     dcc.Dropdown(
         id='cluster-dropdown',
         options=[
@@ -335,7 +372,7 @@ optionML = html.Div([
         placeholder="Select # of clusters",
         style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "60%"},
     ),
-
+    # RUN Clustering
     html.Button('Run Clustering',
         id='clusterRun',
         style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
@@ -352,19 +389,33 @@ graphML = html.Div(id='mlFig', style=GRAPH_RIGHT)
 # ----------------------------------------------------------------------------------------------------------------------
 
 optionGraph = html.Div([
-    html.H5("SETUP", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
-    html.P("Get overview of the ETF market for a selected time period",
+    html.H5("INVESTMENT FUNNEL", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
+    # Introduction
+    html.P("This tool is used for students and asset managers to get better overview of the ETF market, to experiemnt with a different investment techniques & algorithms and finally to backtest their investment strategies.",
             style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
+    # Description of the first page
+    html.P("On this first page you can select different time periods and compare ETF market in terms of gains and risks. Risk is here represented in terms of annualised standard deviation of returns and gain in terms of annualised returns. The largest possible time interval is already pre-selected for you. Have you already found your favourite ETF?",
+            style={'text-aling': 'left', "position": "fixed", 'top': '20%', 'left': '11%', 'right':'71%'}),
+    # Description of the first page
+    html.P("Do you have your own investment strategy but before you apply it you want to cleverly decrease the number of all possible ETF choices? The second page of this tool will help you with a use of machine learning algorithms as Clustering or Minimum Spanning Tree.",
+            style={'text-aling': 'left', "position": "fixed", 'top': '30%', 'left': '11%', 'right':'71%'}),
+    # Description of the last page
+    html.P("In case you want to use this tool to create the best trading strategy, go to the last page named Backtesting. There you can configurate your optimal strategy with usage of the stochastic CVaR model which select the optimal portfolio maximizing expected returns given some risk benchmark. Select by yourself your prefered time periods for training of the model and for backtesting as well as your favourite models for feature selection and scenario generation. Lastly, do not forget about your risk benchmark which can be for example SPY ETF. Our optimal CVaR model will rebalance every 4 weeks so you can be sure that you are always on the right track for the best results.",
+            style={'text-aling': 'left', "position": "fixed", 'top': '39%', 'left': '11%', 'right':'71%'}),
 
+    html.P("--- Selected dates for market overview ---",
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "72%"}),
+    # Date picker for plotting
+    dcc.DatePickerRange(
+        id='picker-show',
+        style={'position':'absolute', 'top': '75%', 'margin-left': '10%'}
+    ),
+    # Button to plot results
     html.Button('Show Plot',
                 id='show',
                 style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                        'background-color': "#111723", 'color': 'white', "top": "20%"}),
+                        'background-color': "#111723", 'color': 'white', "top": "85%"}),
 
-    dcc.DatePickerRange(
-        id='picker-show',
-        style={'position':'absolute', 'top': '15%', 'margin-left': '10%'}
-    ),
 ], style=GRAPH_LEFT)
 
 

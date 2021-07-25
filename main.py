@@ -221,7 +221,7 @@ class TradeBot(object):
             return fig
 
     # METHOD TO COMPUTE THE BACKTEST
-    def backtest(self, assets, benchmark, scenarios, nSimulations, plot):
+    def backtest(self, assets, benchmark, scenarios, nSimulations, plot=True):
 
         # SELECT THE WORKING SUBSET
         if assets == 'MST':
@@ -275,9 +275,9 @@ class TradeBot(object):
         benchmark_stat = finalStat(benchmarkPortVal)
 
         if plot:
-            return optimal_portfolio_stat.append(benchmark_stat), figPerf, figComp
+            return optimal_portfolio_stat, benchmark_stat, figPerf, figComp
         else:
-            return optimal_portfolio_stat.append(benchmark_stat)
+            return optimal_portfolio_stat, benchmark_stat
 
 
 if __name__ == "__main__":

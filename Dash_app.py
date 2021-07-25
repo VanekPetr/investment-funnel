@@ -91,7 +91,8 @@ def display_page(pathname):
 @app.callback(
     [Output('backtestPerfFig', 'children'),
      Output('backtestCompFig', 'children'),
-     Output('tableResult', 'data')],
+     Output('tableResult', 'data'),
+     Output('tableResult-benchmark', 'data')],
     [Input('backtestRun', 'n_clicks')],
     [State('select-ml', 'value'),
      State('slider-backtest-ml', 'value'),
@@ -118,29 +119,27 @@ def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_nu
         else:
             algo.clustering(nClusters=num_runs, nAssets=num_clusters, plot=False)
         # RUN THE BACKTEST
-        results, figPerf, figComp = algo.backtest(assets=ml_method,
-                                                  benchmark=benchmark,
-                                                  scenarios=scen_method,
-                                                  nSimulations=scen_num,
-                                                  plot=True)
+        results, results_benchmark, figPerf, figComp = algo.backtest(assets=ml_method,
+                                                                     benchmark=benchmark,
+                                                                     scenarios=scen_method,
+                                                                     nSimulations=scen_num,
+                                                                     plot=True)
 
-    return dcc.Graph(figure=figPerf, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
-                                        'left': '0%'}),\
-           dcc.Graph(figure=figComp, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
-                                        'left': '0%'}), \
-           results.to_dict('records')
+    return dcc.Graph(figure=figPerf, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%', 'left': '0%'}),\
+           dcc.Graph(figure=figComp, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%', 'left': '0%'}), \
+           results.to_dict('records'), results_benchmark.to_dict('records')
 
 @app.callback(
     Output('slider-output-container2', 'children'),
     [Input('my-slider2', 'value')])
 def update_output(value):
-    return 'Selected number of scenarios: {}'.format(value)
+    return '# of scenarios: {}'.format(value)
 
 @app.callback(
     Output('slider-output-container-backtest', 'children'),
     [Input('slider-backtest', 'value')])
 def update_output_cluster(value):
-    return 'In case of CLUSTERING: Number of the best performing assets selected from each cluster is {}'.format(value)
+    return 'In case of CLUSTERING: # of the best performing assets selected from each cluster: {}'.format(value)
 
 @app.callback(
     Output('slider-output-container-backtest-ml', 'children'),
