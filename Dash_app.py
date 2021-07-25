@@ -24,10 +24,10 @@ temp2_click = 0
 temp_name = ''
 just_retrained = False
 
-global first_run_page1, first_run_page2
+global first_run_page1, first_run_page2, first_run_page3
 global mst_click_prev, clust_click_prev
 mst_click_prev, clust_click_prev = 0, 0
-first_run_page1, first_run_page2 = 0, 0
+first_run_page1, first_run_page2, first_run_page3 = 0, 0, 0
 
 '''
 # ----------------------------------------------------------------------------------------------------------------------
@@ -98,16 +98,20 @@ def display_page(pathname):
      State('slider-backtest', 'value'),
      State('select-scenarios', 'value'),
      State('my-slider2', 'value'),
-     State('select-benchmark', 'value')],
+     State('select-benchmark', 'value'),
+     State('picker-train', 'start_date'),
+     State('picker-train', 'end_date'),
+     State('picker-test', 'start_date'),
+     State('picker-test', 'end_date')],
     prevent_initial_call=True
 )
-def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_num, benchmark):
+def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_num, benchmark,
+                  start_data, end_train, start_test, end_data):
     global algo
-    global startDate, endDate
 
     if click > 0:
         # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
-        algo.setup_data(start=startDate, end=endDate, train_test=True, train_ratio=0.6)
+        algo.setup_data(start=start_data, end=end_data, train_test=True, end_train=end_train, start_test=start_test)
         # RUN ML algo
         if ml_method == 'MST':
             algo.mst(nMST=num_runs, plot=False)
@@ -143,6 +147,30 @@ def update_output_cluster(value):
     [Input('slider-backtest-ml', 'value')])
 def update_output_MLtype(value):
     return '# of clusters or # of MST runs: {}'.format(value)
+
+@app.callback(
+    [Output('picker-test', 'start_date'),
+     Output('picker-test', 'end_date'),
+     Output('picker-test', 'min_date_allowed'),
+     Output('picker-test', 'max_date_allowed'),
+     Output('picker-train', 'min_date_allowed'),
+     Output('picker-train', 'max_date_allowed'),
+     Output('picker-train', 'start_date'),
+     Output('picker-train', 'end_date')],
+    [Input('picker-train', 'end_date')])
+def update_test_date(selected_date):
+    global first_run_page3
+    global minDate, maxDate
+    global final_date
+    if first_run_page3 < 1:
+        final_date = '2017-07-01'
+        first_run_page3 = 1
+    elif selected_date != None:
+        final_date = selected_date
+
+    return final_date, maxDate, minDate, maxDate, minDate, maxDate, minDate, final_date
+
+
 
 
 # AI Feature Selection

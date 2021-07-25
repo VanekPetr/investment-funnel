@@ -160,7 +160,7 @@ class TradeBot(object):
         return fig
 
     # METHOD TO PREPARE DATA FOR ML AND BACKTESTING
-    def setup_data(self, start, end, train_test, train_ratio=0.5):
+    def setup_data(self, start, end, train_test, train_ratio=0.5, end_train=None, start_test=None):
         self.start = start
         self.end = end
         self.train_test = train_test
@@ -170,12 +170,15 @@ class TradeBot(object):
 
         # IF WE DIVIDE DATASET
         if train_test:
-            # DIVIDE DATA INTO TRAINING AND TESTING PARTS
-            breakPoint = int(np.floor(len(data.index) * train_ratio))
+            # # DIVIDE DATA INTO TRAINING AND TESTING PARTS
+            # breakPoint = int(np.floor(len(data.index) * train_ratio))
+            #
+            # # DEFINITION OF TRAINING AND TESTING DATASETS
+            # self.trainDataset = data.iloc[0:breakPoint, :]
+            # self.testDataset = data.iloc[breakPoint:, :]
 
-            # DEFINITION OF TRAINING AND TESTING DATASETS
-            self.trainDataset = data.iloc[0:breakPoint, :]
-            self.testDataset = data.iloc[breakPoint:, :]
+            self.trainDataset = data[data.index <= end_train]
+            self.testDataset = data[data.index > start_test]
 
             # Get dates
             self.endTrainDate = str(self.trainDataset.index.date[-1])
