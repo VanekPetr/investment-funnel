@@ -155,6 +155,11 @@ class TradeBot(object):
         for l in actualRiskLevels:
             k = "Risk Class " + str(l)
             fig.add_vline(x=riskLevels[k], line_width=2, line_dash="dash", line_color="grey", annotation_text=k, annotation_position="top left")
+        
+        # RETURN LEVEL MARKER
+        fig.add_hline(y=0, line_width=2, line_color="red")
+
+
 
         #fig.show()
         return fig
