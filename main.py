@@ -127,7 +127,7 @@ class TradeBot(object):
                          hover_data=["Sharpe Ratio", "Name"],
                          color=setColor,
                          title="The Relationship between Annual Returns and Standard Deviation of Returns from "
-                               + start + " to " + end)
+                               + start[:10] + " to " + end[:10])
 
         # AXIS IN PERCENTAGES
         fig.layout.yaxis.tickformat = ',.1%'
@@ -154,11 +154,16 @@ class TradeBot(object):
             k = "Risk Class " + str(l)
             fig.add_vline(x=riskLevels[k], line_width=2, line_dash="dash", line_color="grey")# annotation_text=k, annotation_position="top left")
             fig.add_annotation(x=riskLevels[k]-0.01, y=0.9, text=k, textangle=-90, showarrow=False)
+        
         # RETURN LEVEL MARKER
         fig.add_hline(y=0, line_width=1, line_color="rgba(233, 30, 99, 0.5)")
 
+        #TITLES 
+        fig.update_layout(
+            xaxis_title="Annualised standard deviation of returns (Risk)",
+            yaxis_title="Annualised average returns",
 
-
+        )
         #fig.show()
         return fig
 
