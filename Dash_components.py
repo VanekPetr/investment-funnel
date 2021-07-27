@@ -335,11 +335,11 @@ optionML = html.Div([
             style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
 
     html.P("--- Time period for feature selection ---",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "25%"}),
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "20%"}),
     # Select time period
     dcc.DatePickerRange(
         id='picker-AI',
-        style={'position':'absolute', 'top': '28%', 'margin-left': '10%'}
+        style={'position':'absolute', 'top': '23%', 'margin-left': '10%'}
     ),
 
     # Select MST
@@ -352,13 +352,13 @@ optionML = html.Div([
             {'label': '4 MST runs', 'value': 4},
         ],
         placeholder="Select # of MST runs",
-        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "40%"},
+        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "35%"},
     ),
     # RUN MST
     html.Button('Run MST',
         id='mstRun',
         style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-               'background-color': "#111723", 'color': 'white', "top": "45%"}),
+               'background-color': "#111723", 'color': 'white', "top": "40%"}),
 
     # Select clustering
     dcc.Dropdown(
@@ -370,13 +370,13 @@ optionML = html.Div([
             {'label': '5 Clusters', 'value': 5},
         ],
         placeholder="Select # of clusters",
-        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "60%"},
+        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "55%"},
     ),
     # RUN Clustering
     html.Button('Run Clustering',
         id='clusterRun',
         style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                'background-color': "#111723", 'color': 'white', "top": "65%"}),
+                'background-color': "#111723", 'color': 'white', "top": "60%"}),
 
 
 ], style=GRAPH_LEFT)
