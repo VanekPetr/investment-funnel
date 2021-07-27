@@ -37,7 +37,8 @@ first_run_page1, first_run_page2, first_run_page3 = 0, 0, 0
 # Name and password
 VALID_USERNAME_PASSWORD_PAIRS = {
     'Petr': 'algo94',
-    'CHY': 'algo123'
+    'CHY': 'algo123',
+    'PFO2021': 'student'
 }
 # Initialize the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
