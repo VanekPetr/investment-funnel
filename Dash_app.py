@@ -175,9 +175,10 @@ def update_test_date(selected_date):
 # AI Feature Selection
 # ----------------------------------------------------------------------------------------------------------------------
 
-# PLOT ML GRAPH
+# PLOT ML MST GRAPH
 @app.callback(
     [Output('mlFig', 'children'),
+    Output('mlFig2', 'children'),
      Output('picker-AI', 'start_date'),
      Output('picker-AI', 'end_date'),
      Output('picker-AI', 'min_date_allowed'),
@@ -198,13 +199,15 @@ def plot_ml(click_mst, click_clust, mst, clust, start, end):
     global first_run_page2
     global mst_click_prev, clust_click_prev
     global save_Figure2
+    global save_Figure3
 
     if first_run_page2 < 1:
         first_run_page2 = 1
         startDate2 = startDate
         endDate2 = endDate
         save_Figure2 = None
-        return save_Figure2, startDate, endDate, minDate, maxDate
+        save_Figure3 = None
+        return save_Figure2, save_Figure3, startDate, endDate, minDate, maxDate
 
     if click_mst is None:
         click_mst = mst_click_prev
@@ -227,16 +230,17 @@ def plot_ml(click_mst, click_clust, mst, clust, start, end):
         save_Figure2 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
                                                     'left': '0%'})
 
-    elif click_clust > clust_click_prev:
+    if click_clust > clust_click_prev:
         startDate2 = start
         endDate2 = end
         # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
         algo.setup_data(start=startDate2, end=endDate2, train_test=False)
         fig = algo.clustering(nClusters=clust, nAssets=2, plot=True)
-        save_Figure2 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
+        save_Figure3 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
                                                     'left': '0%'})
 
-    return save_Figure2, startDate2, endDate2, minDate, maxDate
+    return save_Figure2, save_Figure3, startDate2, endDate2, minDate, maxDate
+
 
 
 # MARKET OVERVIEW

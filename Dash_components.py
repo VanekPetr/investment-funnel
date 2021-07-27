@@ -107,19 +107,19 @@ GRAPH_RIGHT_TOP = {
     "left": '30%',
     'right': 0,
     "top": top_height,
-    'bottom': '40%',
+    'bottom': '50%',
     #"background-color":  "#8ab4de",
-    "padding": "1rem 1rem",
+    "padding": "2rem 2rem",
 }
 
 GRAPH_RIGHT_DOWN = {
     "position": "fixed",
     "left": '30%',
     'right': 0,
-    "top": "60%",
+    "top": "50%",
     'bottom': '0%',
     #"background-color":  "#f5e5b5",
-    "padding": "1rem 1rem",
+    "padding": "2rem 2rem",
 }
 
 
@@ -382,8 +382,8 @@ optionML = html.Div([
 ], style=GRAPH_LEFT)
 
 # Table
-graphML = html.Div(id='mlFig', style=GRAPH_RIGHT)
-
+graphML = html.Div(id='mlFig', style=GRAPH_RIGHT_TOP)
+graphML2 = html.Div(id='mlFig2', style=GRAPH_RIGHT_DOWN)
 
 
 # MARKET OVERVIEW

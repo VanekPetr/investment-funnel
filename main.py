@@ -119,8 +119,6 @@ class TradeBot(object):
             data.loc[:, "Type"] = MLsubset.loc[:, "Cluster"]
         if ML == None:
             setColor = None
-       
-
 
         # PLOTTING Data
         fig = px.scatter(data,
@@ -154,10 +152,10 @@ class TradeBot(object):
             actualRiskLevels.add(max(actualRiskLevels)+1)  # Add the final risk level       
         for l in actualRiskLevels:
             k = "Risk Class " + str(l)
-            fig.add_vline(x=riskLevels[k], line_width=2, line_dash="dash", line_color="grey", annotation_text=k, annotation_position="top left")
-        
+            fig.add_vline(x=riskLevels[k], line_width=2, line_dash="dash", line_color="grey")# annotation_text=k, annotation_position="top left")
+            fig.add_annotation(x=riskLevels[k]-0.01, y=0.9, text=k, textangle=-90, showarrow=False)
         # RETURN LEVEL MARKER
-        fig.add_hline(y=0, line_width=2, line_color="red")
+        fig.add_hline(y=0, line_width=1, line_color="rgba(233, 30, 99, 0.5)")
 
 
 

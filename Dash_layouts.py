@@ -43,7 +43,10 @@ page_2_layout = html.Div([
         # Row 2, col 2 - set-up
         dbc.Col([optionML]),
         # Row 2, Col 3 - table
-        dbc.Col([graphML])
+        dbc.Col([
+            dbc.Row([graphML]),
+            dbc.Row([graphML2])   
+        ])
     ])
 ])
 
