@@ -111,9 +111,9 @@ class TradeBot(object):
         # IF WE WANT TO HIGHLIGHT THE SUBSET OF ASSETS BASED ON ML
         if ML == "MST":
             setColor = "Type"
-            data.loc[:, "Type"] = "The rest of assets"
+            data.loc[:, "Type"] = "ETFs"
             for fund in MLsubset:
-                data.loc[fund, "Type"] = "Subset based on MST"
+                data.loc[fund, "Type"] = "MST subset"
         if ML == "Clustering":
             setColor = "Type"
             data.loc[:, "Type"] = MLsubset.loc[:, "Cluster"]

@@ -107,7 +107,7 @@ GRAPH_RIGHT_TOP = {
     "left": '30%',
     'right': 0,
     "top": top_height,
-    'bottom': '50%',
+    'bottom': '47%',
     #"background-color":  "#8ab4de",
     "padding": "2rem 2rem",
 }
@@ -116,7 +116,7 @@ GRAPH_RIGHT_DOWN = {
     "position": "fixed",
     "left": '30%',
     'right': 0,
-    "top": "50%",
+    "top": "53%",
     'bottom': '0%',
     #"background-color":  "#f5e5b5",
     "padding": "2rem 2rem",
