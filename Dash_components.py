@@ -109,7 +109,7 @@ GRAPH_RIGHT_TOP = {
     "top": top_height,
     'bottom': '47%',
     #"background-color":  "#8ab4de",
-    "padding": "2rem 2rem",
+    "padding": "1rem 1rem",
 }
 
 GRAPH_RIGHT_DOWN = {
@@ -119,7 +119,7 @@ GRAPH_RIGHT_DOWN = {
     "top": "53%",
     'bottom': '0%',
     #"background-color":  "#f5e5b5",
-    "padding": "2rem 2rem",
+    "padding": "1rem 1rem",
 }
 
 
@@ -259,6 +259,7 @@ optionBacktest2 = html.Div([
         id='backtestRun',
         style={'width': '60%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
                 'background-color': "#111723", 'color': 'white', "top": "70%"}),
+    
 
 ], style=GRAPH_LEFT_MIDDLE)
 
@@ -319,8 +320,15 @@ tableBar = html.Div([
                         ])
 ], style=GRAPH_LEFT_DOWN)
 
+# Loading 
+loading =  dcc.Loading(
+            id="loading-1",
+            type="default",
+            children=html.Div(id="backtestPerfFig")
+        )
+        
 # Performance
-graphPerformance = html.Div(id='backtestPerfFig', style=GRAPH_RIGHT_TOP)
+graphPerformance = html.Div([html.Div(loading)], id='backtestPerfFig', style=GRAPH_RIGHT_TOP)
 
 # Composition
 graphComposition = html.Div(id='backtestCompFig', style=GRAPH_RIGHT_DOWN)
@@ -416,7 +424,6 @@ optionGraph = html.Div([
                 id='show',
                 style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
                         'background-color': "#111723", 'color': 'white', "top": "85%"}),
-
 ], style=GRAPH_LEFT)
 
 

@@ -23,6 +23,7 @@ page_3_layout = html.Div([
         dbc.Col([
             dbc.Row([graphPerformance]),
             dbc.Row([graphComposition]),
+
         ])
     ])
 ])
