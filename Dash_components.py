@@ -160,6 +160,24 @@ sideBar = html.Div([
 
 # BACK-TESTING
 # ----------------------------------------------------------------------------------------------------------------------
+# Loading 
+loading =  dcc.Loading(
+            id="loading-1",
+            type="default",
+            # fullscreen=True,
+            parent_style= {'width': '400px','height': '400px', 'margin': '20px'},
+            children=html.Div(id="backtestPerfFig")
+        )
+
+loading =  dcc.Loading(
+            id="loading-1",
+            type="default",
+            # fullscreen=True,
+            parent_style= {'width': '400px','height': '400px','margin':'0', 'top': '50%',
+  'left': '25%'},
+            children=html.Div(id="backtestPerfFig")
+        )
+        
 optionBacktest = html.Div([
     html.H5("BACKTESTING", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
     html.P("Test your investment strategy with a selected ML model, scenario generation method and the CVaR model for a given training and testing time period",
@@ -254,11 +272,7 @@ optionBacktest2 = html.Div([
         style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "35%"},
     ),
 
-
-    html.Button('Run Backtest',
-        id='backtestRun',
-        style={'width': '60%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                'background-color': "#111723", 'color': 'white', "top": "70%"}),
+    html.Button('Run Backtest', id='backtestRun', loading_state={'is_loading' : 'true'},  style={'width': '60%', 'height': 50, 'position':'absolute', 'margin-left': '10%', 'background-color': "#111723", 'color': 'white', "top": "70%"}),
     
 
 ], style=GRAPH_LEFT_MIDDLE)
@@ -320,13 +334,7 @@ tableBar = html.Div([
                         ])
 ], style=GRAPH_LEFT_DOWN)
 
-# Loading 
-loading =  dcc.Loading(
-            id="loading-1",
-            type="default",
-            children=html.Div(id="backtestPerfFig")
-        )
-        
+
 # Performance
 graphPerformance = html.Div([html.Div(loading)], id='backtestPerfFig', style=GRAPH_RIGHT_TOP)
 
@@ -381,11 +389,11 @@ optionML = html.Div([
         style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "55%"},
     ),
     # RUN Clustering
+
     html.Button('Run Clustering',
         id='clusterRun',
         style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
                 'background-color': "#111723", 'color': 'white', "top": "60%"}),
-
 
 ], style=GRAPH_LEFT)
 
