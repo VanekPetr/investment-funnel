@@ -173,8 +173,7 @@ loading =  dcc.Loading(
             id="loading-1",
             type="default",
             # fullscreen=True,
-            parent_style= {'width': '400px','height': '400px','margin':'0', 'top': '50%',
-  'left': '25%'},
+            parent_style= {'width': '400px','height': '400px','margin':'0', 'top': '50%', 'left': '40%'},
             children=html.Div(id="backtestPerfFig")
         )
         
