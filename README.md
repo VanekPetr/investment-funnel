@@ -1,14 +1,15 @@
-# TradeBot
-This is a PROTOTYPE VERSION of automated trading Robot.<br/>
-For a FULL VERSION please contact us at www.algostrata.com<br/>
+# Investment Funnel
+This investment tool is used by asset managers and university students (at Copenhagen University and Danish Technical University) 
+to get a better overview of the ETF market, to experiment with a different investment techniques & algorithms and finally
+to backtest their investment strategies.<br/>
 
-Our tool is based on various mathematical models and methods:<br/>
-STEP 1... Loading data from Yahoo! <br/>
-STEP 2... Quantitative analysis of our asset universe<br/>
-STEP 3... Machine learning algorithms to reduce the asset universe<br/>
-STEP 4... Scenario generation<br/>
-STEP 5... Mathematical optimization using the CVaR model<br/>
-STEP 6... Statistical analysis of generated trading strategy
+# Technologies
+Our tool is based on various optimization models and ML methods:<br/>
+Minimum Spanning Tree, Hierarchical Clustering of Assets, Monte Carlo, Bootstrapping, Stochastic CVaR Model, Benchmark generation
+
+# How to start in 3 steps
+STEP 1: pip install -r requirements.txt <br/>
+STEP 2: run Dash_app.py <br/>
+STEP 3: Use this login information. Username: Trader, Password: 42
 
 
-# Example

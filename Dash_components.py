@@ -343,11 +343,11 @@ optionML = html.Div([
             style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
 
     html.P("--- Time period for feature selection ---",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "25%"}),
+            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "20%"}),
     # Select time period
     dcc.DatePickerRange(
         id='picker-AI',
-        style={'position':'absolute', 'top': '28%', 'margin-left': '10%'}
+        style={'position':'absolute', 'top': '23%', 'margin-left': '10%'}
     ),
 
     # Select MST
@@ -360,13 +360,13 @@ optionML = html.Div([
             {'label': '4 MST runs', 'value': 4},
         ],
         placeholder="Select # of MST runs",
-        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "40%"},
+        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "35%"},
     ),
     # RUN MST
     html.Button('Run MST',
         id='mstRun',
         style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-               'background-color': "#111723", 'color': 'white', "top": "45%"}),
+               'background-color': "#111723", 'color': 'white', "top": "40%"}),
 
     # Select clustering
     dcc.Dropdown(
@@ -378,13 +378,13 @@ optionML = html.Div([
             {'label': '5 Clusters', 'value': 5},
         ],
         placeholder="Select # of clusters",
-        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "60%"},
+        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "55%"},
     ),
     # RUN Clustering
     html.Button('Run Clustering',
         id='clusterRun',
         style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                'background-color': "#111723", 'color': 'white', "top": "65%"}),
+                'background-color': "#111723", 'color': 'white', "top": "60%"}),
 
 
 ], style=GRAPH_LEFT)
@@ -400,16 +400,16 @@ graphML2 = html.Div(id='mlFig2', style=GRAPH_RIGHT_DOWN)
 optionGraph = html.Div([
     html.H5("INVESTMENT FUNNEL", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
     # Introduction
-    html.P("This tool is used for students and asset managers to get better overview of the ETF market, to experiemnt with a different investment techniques & algorithms and finally to backtest their investment strategies.",
+    html.P("This tool is used for students and asset managers to get better overview of the ETF market, to experiment with a different investment techniques & algorithms and finally to backtest their investment strategies.",
             style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
     # Description of the first page
-    html.P("On this first page you can select different time periods and compare ETF market in terms of gains and risks. Risk is here represented in terms of annualised standard deviation of returns and gain in terms of annualised returns. The largest possible time interval is already pre-selected for you. Have you already found your favourite ETF?",
+    html.P("On this first page you can select different time periods and compare ETF market in terms of gains and risks. Risk is here represented by annualised standard deviation of returns and gain in terms of annualised average returns. The largest possible time interval is already pre-selected for you. Have you already found your favourite ETF?",
             style={'text-aling': 'left', "position": "fixed", 'top': '20%', 'left': '11%', 'right':'71%'}),
     # Description of the first page
     html.P("Do you have your own investment strategy but before you apply it you want to cleverly decrease the number of all possible ETF choices? The second page of this tool will help you with a use of machine learning algorithms as Clustering or Minimum Spanning Tree.",
             style={'text-aling': 'left', "position": "fixed", 'top': '30%', 'left': '11%', 'right':'71%'}),
     # Description of the last page
-    html.P("In case you want to use this tool to create the best trading strategy, go to the last page named Backtesting. There you can configurate your optimal strategy with usage of the stochastic CVaR model which select the optimal portfolio maximizing expected returns given some risk benchmark. Select by yourself your prefered time periods for training of the model and for backtesting as well as your favourite models for feature selection and scenario generation. Lastly, do not forget about your risk benchmark which can be for example SPY ETF. Our optimal CVaR model will rebalance every 4 weeks so you can be sure that you are always on the right track for the best results.",
+    html.P("In case you want to use this tool to create the best trading strategy, go to the last page named Backtesting. There you can configurate your optimal strategy with a usage of the stochastic CVaR model which selects the optimal portfolio maximizing expected returns given some risk benchmark. Select by yourself your prefered time periods for training of the model and for backtesting as well as your favourite models for feature selection and scenario generation. Lastly, do not forget about your risk benchmark which can be for example SPY ETF. Our optimal CVaR model will rebalance every 4 weeks so you can be sure that you are always on the right track for the best results.",
             style={'text-aling': 'left', "position": "fixed", 'top': '39%', 'left': '11%', 'right':'71%'}),
 
     html.P("--- Selected dates for market overview ---",

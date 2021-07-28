@@ -156,7 +156,7 @@ class TradeBot(object):
             fig.add_annotation(x=riskLevels[k]-0.01, y=0.9, text=k, textangle=-90, showarrow=False)
         
         # RETURN LEVEL MARKER
-        fig.add_hline(y=0, line_width=1, line_color="rgba(233, 30, 99, 0.5)")
+        fig.add_hline(y=0, line_width=1.5, line_color="rgba(233, 30, 99, 0.5)")
 
         #TITLES 
         fig.update_layout(
