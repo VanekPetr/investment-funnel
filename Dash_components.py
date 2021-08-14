@@ -30,6 +30,38 @@ TOPBAR_STYLE = {
     "textAlign": "right",
 }
 
+OPTION_ELEMENT = {
+    "margin" : "2%",
+    "font-size" : "12px"
+}
+
+OPTION_BTN = {
+    'margin': '2%',
+    'height': '32px',
+    'background-color': "#111723", 
+    'color': 'white',
+    'font-size' : '12px'
+}
+
+MAIN_TITLE = {
+    "text-aling": "left",
+    "margin" : "2%",
+    "font-size" : "18px", 
+    "font-weight" : "800",
+}
+
+SUB_TITLE = {
+    "text-aling": "left",
+    "margin" : "2%",
+    "font-size" : "12px", 
+    "font-weight" : "800",
+}
+
+DESCRIP_INFO = {
+    "text-aling": "left",
+    "margin" : "2%",
+    "font-size" : "12px", 
+}
 
 SIDEBAR_STYLE = {
     "position": "fixed",
@@ -41,7 +73,6 @@ SIDEBAR_STYLE = {
     "background-color": "#111723",
 }
 
-
 GRAPH_LEFT = {
     "position": "fixed",
     "left": side_bar_width,
@@ -49,7 +80,10 @@ GRAPH_LEFT = {
     "width": '20%',
     'bottom': '0%',
     "background-color":  "#d4d5d6",
-    "padding": "1rem 1rem",
+    "padding": "8px",
+    'display': 'flex', 
+    'flex-direction':'column', 
+    'flex-flow': 'column wrap'
 }
 
 GRAPH_LEFT_TOP = {
@@ -345,16 +379,16 @@ graphComposition = html.Div(id='backtestCompFig', style=GRAPH_RIGHT_DOWN)
 # ----------------------------------------------------------------------------------------------------------------------
 
 optionML = html.Div([
-    html.H5("Minimum Spanning Tree and Clustering", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
-    html.P("Use one of our developed machine learning algorithms to decrease the number of ETFs in your asset universe. On the right side of this page you can compare outputs of Minimum Spanning Tree and Clustering in created graphs for a selected time period.",
-            style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
+    html.H5("Minimum Spanning Tree and Clustering", style=MAIN_TITLE),
+    html.P("Use machine learning algorithms to decrease the number of ETFs in your asset universe.",
+            style=DESCRIP_INFO),
 
-    html.P("--- Time period for feature selection ---",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "20%"}),
+    html.P("Time period for feature selection",
+            style=SUB_TITLE),
     # Select time period
     dcc.DatePickerRange(
         id='picker-AI',
-        style={'position':'absolute', 'top': '23%', 'margin-left': '10%'}
+        style=OPTION_ELEMENT
     ),
 
     # Select MST
@@ -367,13 +401,12 @@ optionML = html.Div([
             {'label': '4 MST runs', 'value': 4},
         ],
         placeholder="Select # of MST runs",
-        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "35%"},
+        style=OPTION_ELEMENT,
     ),
     # RUN MST
     html.Button('Run MST',
         id='mstRun',
-        style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-               'background-color': "#111723", 'color': 'white', "top": "40%"}),
+        style=OPTION_BTN),
 
     # Select clustering
     dcc.Dropdown(
@@ -385,14 +418,13 @@ optionML = html.Div([
             {'label': '5 Clusters', 'value': 5},
         ],
         placeholder="Select # of clusters",
-        style={'width': '85%', 'position': 'absolute', 'margin-left': '5%', "top": "55%"},
+        style=OPTION_ELEMENT,
     ),
     # RUN Clustering
 
     html.Button('Run Clustering',
         id='clusterRun',
-        style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                'background-color': "#111723", 'color': 'white', "top": "60%"}),
+        style=OPTION_BTN),
 
 ], style=GRAPH_LEFT)
 
@@ -405,32 +437,31 @@ graphML2 = html.Div(id='mlFig2', style=GRAPH_RIGHT_DOWN)
 # ----------------------------------------------------------------------------------------------------------------------
 
 optionGraph = html.Div([
-    html.H5("INVESTMENT FUNNEL", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
-    # Introduction
-    html.P("This tool is used for students and asset managers to get better overview of the ETF market, to experiment with a different investment techniques & algorithms and finally to backtest their investment strategies.",
-            style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
-    # Description of the first page
-    html.P("On this first page you can select different time periods and compare ETF market in terms of gains and risks. Risk is here represented by annualised standard deviation of returns and gain in terms of annualised average returns. The largest possible time interval is already pre-selected for you. Have you already found your favourite ETF?",
-            style={'text-aling': 'left', "position": "fixed", 'top': '20%', 'left': '11%', 'right':'71%'}),
-    # Description of the first page
-    html.P("Do you have your own investment strategy but before you apply it you want to cleverly decrease the number of all possible ETF choices? The second page of this tool will help you with a use of machine learning algorithms as Clustering or Minimum Spanning Tree.",
-            style={'text-aling': 'left', "position": "fixed", 'top': '30%', 'left': '11%', 'right':'71%'}),
-    # Description of the last page
-    html.P("In case you want to use this tool to create the best trading strategy, go to the last page named Backtesting. There you can configurate your optimal strategy with a usage of the stochastic CVaR model which selects the optimal portfolio maximizing expected returns given some risk benchmark. Select by yourself your prefered time periods for training of the model and for backtesting as well as your favourite models for feature selection and scenario generation. Lastly, do not forget about your risk benchmark which can be for example SPY ETF. Our optimal CVaR model will rebalance every 4 weeks so you can be sure that you are always on the right track for the best results.",
-            style={'text-aling': 'left', "position": "fixed", 'top': '39%', 'left': '11%', 'right':'71%'}),
+    html.H5("INVESTMENT FUNNEL", style=MAIN_TITLE),
+    # # Introduction
+    # html.P("This tool is used for students and asset managers to get better overview of the ETF market, to experiment with a different investment techniques & algorithms and finally to backtest their investment strategies.",
+    #         style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),
+    # # Description of the first page
+    # html.P("On this first page you can select different time periods and compare ETF market in terms of gains and risks. Risk is here represented by annualised standard deviation of returns and gain in terms of annualised average returns. The largest possible time interval is already pre-selected for you. Have you already found your favourite ETF?",
+    #         style={'text-aling': 'left', "position": "fixed", 'top': '20%', 'left': '11%', 'right':'71%'}),
+    # # Description of the first page
+    # html.P("Do you have your own investment strategy but before you apply it you want to cleverly decrease the number of all possible ETF choices? The second page of this tool will help you with a use of machine learning algorithms as Clustering or Minimum Spanning Tree.",
+    #         style={'text-aling': 'left', "position": "fixed", 'top': '30%', 'left': '11%', 'right':'71%'}),
+    # # Description of the last page
+    # html.P("In case you want to use this tool to create the best trading strategy, go to the last page named Backtesting. There you can configurate your optimal strategy with a usage of the stochastic CVaR model which selects the optimal portfolio maximizing expected returns given some risk benchmark. Select by yourself your prefered time periods for training of the model and for backtesting as well as your favourite models for feature selection and scenario generation. Lastly, do not forget about your risk benchmark which can be for example SPY ETF. Our optimal CVaR model will rebalance every 4 weeks so you can be sure that you are always on the right track for the best results.",
+    #         style={'text-aling': 'left', "position": "fixed", 'top': '39%', 'left': '11%', 'right':'71%'}),
 
-    html.P("--- Selected dates for market overview ---",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "72%"}),
+    html.P("Selected dates for market overview",
+            style=SUB_TITLE),
     # Date picker for plotting
     dcc.DatePickerRange(
         id='picker-show',
-        style={'position':'absolute', 'top': '75%', 'margin-left': '10%'}
+        style=OPTION_ELEMENT
     ),
     # Button to plot results
     html.Button('Show Plot',
                 id='show',
-                style={'width': '70%', 'height': 50, 'position':'absolute', 'margin-left': '10%',
-                        'background-color': "#111723", 'color': 'white', "top": "85%"}),
+                style=OPTION_BTN),
 ], style=GRAPH_LEFT)
 
 
