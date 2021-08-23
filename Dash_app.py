@@ -127,8 +127,8 @@ def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_nu
                                                                      nSimulations=scen_num,
                                                                      plot=True)
 
-    return dcc.Graph(figure=figPerf, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%', 'left': '0%'}),\
-           dcc.Graph(figure=figComp, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%', 'left': '0%'}), \
+    return dcc.Graph(figure=figPerf, style={'margin':'0%'}),\
+           dcc.Graph(figure=figComp, style={'margin':'0%'}), \
            results.to_dict('records'), results_benchmark.to_dict('records')
 
 @app.callback(
@@ -229,8 +229,7 @@ def plot_ml(click_mst, click_clust, mst, clust, start, end):
         # RUN THE MINIMUM SPANNING TREE METHOD
         fig = algo.mst(nMST=mst, plot=True)
         mst_click_prev = click_mst
-        save_Figure2 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
-                                                    'left': '0%'})
+        save_Figure2 = dcc.Graph(figure=fig, style={'margin':'0%'})
 
     if click_clust > clust_click_prev:
         startDate2 = start
@@ -238,8 +237,7 @@ def plot_ml(click_mst, click_clust, mst, clust, start, end):
         # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
         algo.setup_data(start=startDate2, end=endDate2, train_test=False)
         fig = algo.clustering(nClusters=clust, nAssets=2, plot=True)
-        save_Figure3 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
-                                                    'left': '0%'})
+        save_Figure3 = dcc.Graph(figure=fig, style={'margin':'0%'})
 
     return save_Figure2, save_Figure3, startDate2, endDate2, minDate, maxDate
 

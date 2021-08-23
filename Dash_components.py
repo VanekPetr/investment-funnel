@@ -31,7 +31,7 @@ TOPBAR_STYLE = {
 }
 
 OPTION_ELEMENT = {
-    "margin" : "2%",
+    "margin" : "1%",
     "font-size" : "12px"
 }
 
@@ -52,9 +52,11 @@ MAIN_TITLE = {
 
 SUB_TITLE = {
     "text-aling": "left",
-    "margin" : "2%",
+    "margin-top" : "3%",
+    "margin-bottom" : "1%",
+    "margin-left" : "2%",
     "font-size" : "12px", 
-    "font-weight" : "800",
+    "font-weight" : "600",
 }
 
 DESCRIP_INFO = {
@@ -83,78 +85,29 @@ GRAPH_LEFT = {
     "padding": "8px",
     'display': 'flex', 
     'flex-direction':'column', 
-    'flex-flow': 'column wrap'
-}
-
-GRAPH_LEFT_TOP = {
-    "position": "fixed",
-    "left": side_bar_width,
-    "top": top_height,
-    "width": '20%',
-    'bottom': '60%',
-    "background-color":  "#d4d5d6",
-    "padding": "1rem 1rem",
-}
-
-GRAPH_LEFT_SECOND = {
-    "position": "fixed",
-    "left": side_bar_width,
-    "top": "40%",
-    "width": '20%',
-    'bottom': '45%',
-    "background-color":  "#d4d5d6",
-    "padding": "1rem 1rem",
-}
-
-GRAPH_LEFT_MIDDLE = {
-    "position": "fixed",
-    "left": side_bar_width,
-    "top": '55%',
-    "width": '20%',
-    'bottom': '25%',
-    "background-color":  "#d4d5d6",
-    "padding": "1rem 1rem",
-}
-
-GRAPH_LEFT_DOWN = {
-    "position": "fixed",
-    "left": side_bar_width,
-    "top": "75%",
-    "width": '20%',
-    'bottom': '0%',
-    #"background-color":  "#8ab4de",
-    "padding": "1rem 1rem",
+    # 'flex-flow': 'column wrap'
+    'overflow' : 'auto',
 }
 
 GRAPH_RIGHT = {
     "position": "fixed",
     "left": '30%',
-    'right': 0,
+    'right': '0%',
     "top": top_height,
-    'bottom': 0,
-    #"background-color":  "#f5e5b5",
-    "padding": "1rem 1rem",
-}
-
-GRAPH_RIGHT_TOP = {
-    "position": "fixed",
-    "left": '30%',
-    'right': 0,
-    "top": top_height,
-    'bottom': '47%',
-    #"background-color":  "#8ab4de",
-    "padding": "1rem 1rem",
-}
-
-GRAPH_RIGHT_DOWN = {
-    "position": "fixed",
-    "left": '30%',
-    'right': 0,
-    "top": "53%",
     'bottom': '0%',
-    #"background-color":  "#f5e5b5",
-    "padding": "1rem 1rem",
+    "padding": "4px",
+    'display': 'flex', 
+    'flex-direction':'column', 
+    'overflow' : 'auto',
 }
+
+SUB_GRAPH_RIGHT =  {
+    "margin" : "1%",
+}
+
+
+
+
 
 
 '''
@@ -198,40 +151,28 @@ sideBar = html.Div([
 loading =  dcc.Loading(
             id="loading-1",
             type="default",
-            # fullscreen=True,
-            parent_style= {'width': '400px','height': '400px', 'margin': '20px'},
             children=html.Div(id="backtestPerfFig")
         )
 
-loading =  dcc.Loading(
-            id="loading-1",
-            type="default",
-            # fullscreen=True,
-            parent_style= {'width': '400px','height': '400px','margin':'0', 'top': '50%', 'left': '40%'},
-            children=html.Div(id="backtestPerfFig")
-        )
-        
 optionBacktest = html.Div([
-    html.H5("BACKTESTING", style={'text-aling': 'left', "position": "fixed", 'top': '10%', 'left': '11%'}),
+    #part1
+    html.H5("BACKTESTING", style=MAIN_TITLE),
     html.P("Test your investment strategy with a selected ML model, scenario generation method and the CVaR model for a given training and testing time period",
-            style={'text-aling': 'left', "position": "fixed", 'top': '12%', 'left': '11%', 'right':'71%'}),
-
-    html.P("--- Training period ---",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "40%"}),
+            style=DESCRIP_INFO),
+    html.P("Training period",
+            style=SUB_TITLE),
     dcc.DatePickerRange(
         id='picker-train',
-        style={'position':'absolute', 'top': '46%', 'margin-left': '10%'}
+        style=OPTION_ELEMENT
     ),
-
-    html.P("--- Testing period for backtest ---",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "60%"}),
+    html.P("Testing period for backtest",
+            style=SUB_TITLE),
     dcc.DatePickerRange(
         id='picker-test',
-        style={'position':'absolute', 'top': '66%', 'margin-left': '10%'}
+        style=OPTION_ELEMENT
     ),
-
-    html.P("--- Feature selection ---",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "80%"}),
+    html.P("Feature selection",
+            style=SUB_TITLE),
     dcc.Dropdown(
         id='select-ml',
         options=[
@@ -239,15 +180,12 @@ optionBacktest = html.Div([
             {'label': 'Clustering', 'value': 'Clustering'},
         ],
         placeholder="Select ML method",
-        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "85%"},
+        style=OPTION_ELEMENT,
     ),
-
     html.Div(id='slider-output-container-backtest-ml',
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "95%"}),
+            style=OPTION_ELEMENT),
 
-], style=GRAPH_LEFT_TOP)
-
-optionBacktest1 = html.Div([
+    #part2
     dcc.Slider(
         id='slider-backtest-ml',
         min=1,
@@ -255,7 +193,6 @@ optionBacktest1 = html.Div([
         step=1,
         value=2
     ),
-
     dcc.Slider(
         id='slider-backtest',
         min=1,
@@ -263,26 +200,21 @@ optionBacktest1 = html.Div([
         step=1,
         value=2
     ),
-
     html.Div(id='slider-output-container-backtest',
-             style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "34%"}),
-
-html.P("--- Scenarios ---",
-        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "65%"}),
-
-dcc.Dropdown(
-        id='select-scenarios',
-        options=[
-            {'label': 'Bootstrapping', 'value': 'Bootstrapping'},
-            {'label': 'Monte Carlo', 'value': 'MonteCarlo'}
-        ],
-        placeholder="Select scenario generation method",
-        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "80%"},
-    ),
-
-], style=GRAPH_LEFT_SECOND)
-
-optionBacktest2 = html.Div([
+             style=OPTION_ELEMENT),
+    html.P("Scenarios",
+            style=SUB_TITLE),
+    dcc.Dropdown(
+            id='select-scenarios',
+            options=[
+                {'label': 'Bootstrapping', 'value': 'Bootstrapping'},
+                {'label': 'Monte Carlo', 'value': 'MonteCarlo'}
+            ],
+            placeholder="Select scenario generation method",
+            style=OPTION_ELEMENT,
+        ),
+    
+    #part3
     dcc.Slider(
         id='my-slider2',
         min=250,
@@ -291,10 +223,9 @@ optionBacktest2 = html.Div([
         value=1000
     ),
     html.Div(id='slider-output-container2',
-             style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "10%"}),
-
-    html.P("--- Benchmark ---",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "25%"}),
+             style=OPTION_ELEMENT),
+    html.P("Benchmark",
+            style=SUB_TITLE),
     dcc.Dropdown(
         id='select-benchmark',
         options = [
@@ -302,33 +233,30 @@ optionBacktest2 = html.Div([
         ],
         placeholder="Select your ETF benchmark",
         multi=True,
-        style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "35%"},
+        style=OPTION_ELEMENT,
     ),
+    html.Button('Run Backtest', id='backtestRun', loading_state={'is_loading' : 'true'},  style=OPTION_BTN),
 
-    html.Button('Run Backtest', id='backtestRun', loading_state={'is_loading' : 'true'},  style={'width': '60%', 'height': 50, 'position':'absolute', 'margin-left': '10%', 'background-color': "#111723", 'color': 'white', "top": "70%"}),
-    
-
-], style=GRAPH_LEFT_MIDDLE)
+ ], style=GRAPH_LEFT)
 
 
 
 # Table
 tableBar = html.Div([
-    html.H5("RESULTS:", style={'text-aling': 'left', "position": "fixed", 'top': '77%', 'left': '11%'}),
+    html.H5("Results", style={'text-aling': 'left', 'margin-left': '2%'}),
 
     html.P("Table for our optimal portfolio",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "20%"}),
+            style={'width': '80%',  'margin-left': '2%',}),
     dash_table.DataTable(id='tableResult',
           columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
                    {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
                    {"name": 'Sharpe R', "id": 'Sharpe R'}],
           #fixed_rows={'headers': True},
-          style_table={"position": "fixed",
-                       'width':'17%',
-                       'margin-left':'1%',
-                       'margin-top': '4%',
-                       'overflowY':'scroll',
-                       'maxHeight':'85%'
+          style_table={
+                       'width':'48%',
+                       'margin':'2%',
+                    #    'overflowY':'scroll',
+                    #    'maxHeight':'85%'
           },
           style_cell={'textAlign': 'center'},
           style_as_list_view=True,
@@ -342,18 +270,17 @@ tableBar = html.Div([
           ]),
 
     html.P("Table for Benchmark",
-            style={'width': '80%', 'position': 'absolute', 'margin-left': '5%', "top": "55%"}),
+            style={'width': '80%','margin-left': '2%'}),
     dash_table.DataTable(id='tableResult-benchmark',
                         columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
                                  {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
                                  {"name": 'Sharpe R', "id": 'Sharpe R'}],
                         # fixed_rows={'headers': True},
-                        style_table={"position": "fixed",
-                                     'width': '17%',
-                                     'margin-left': '1%',
-                                     'margin-top': '9%',
-                                     'overflowY': 'scroll',
-                                     'maxHeight': '85%'
+                        style_table={
+                                    'width':'48%',
+                                    'margin':'2%',
+                                    #  'overflowY': 'scroll',
+                                    #  'maxHeight': '85%'
                                      },
                         style_cell={'textAlign': 'center'},
                         style_as_list_view=True,
@@ -363,16 +290,21 @@ tableBar = html.Div([
                                 'if': {'column_id': c},
                                 'textAlign': 'left'
                             } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
-
                         ])
-], style=GRAPH_LEFT_DOWN)
+], style=OPTION_ELEMENT)
 
 
 # Performance
-graphPerformance = html.Div([html.Div(loading)], id='backtestPerfFig', style=GRAPH_RIGHT_TOP)
+graphResults = html.Div([
+    html.Div([html.Div(loading)], id='backtestPerfFig', style=OPTION_ELEMENT),
+    html.Div(id='backtestCompFig', style=OPTION_ELEMENT),
+    tableBar
+], style=GRAPH_RIGHT)
+
+# graphPerformance = html.Div([html.Div(loading)], id='backtestPerfFig', style=GRAPH_RIGHT_TOP)
 
 # Composition
-graphComposition = html.Div(id='backtestCompFig', style=GRAPH_RIGHT_DOWN)
+# graphComposition = html.Div(id='backtestCompFig', style=GRAPH_RIGHT_DOWN)
 
 
 # AI Feature Selection
@@ -429,8 +361,10 @@ optionML = html.Div([
 ], style=GRAPH_LEFT)
 
 # Table
-graphML = html.Div(id='mlFig', style=GRAPH_RIGHT_TOP)
-graphML2 = html.Div(id='mlFig2', style=GRAPH_RIGHT_DOWN)
+graphML = html.Div([
+    html.Div(id='mlFig', style=SUB_GRAPH_RIGHT), #MST Graph
+    html.Div(id='mlFig2', style=SUB_GRAPH_RIGHT), #Clust Graph
+], style=GRAPH_RIGHT)
 
 
 # MARKET OVERVIEW
