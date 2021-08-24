@@ -7,7 +7,7 @@ from Dash_components import *
 '''
 page_3_layout = html.Div([
     # Row 1 - top bar
-    dbc.Row([topBar]),
+    # dbc.Row([topBar]),
     # Row 2 - body
     dbc.Row([
         # Row 2, Col 1 - navigation bar
@@ -27,7 +27,7 @@ page_3_layout = html.Div([
 '''
 page_2_layout = html.Div([
     # Row 1 - top bar
-    dbc.Row([topBar]),
+    # dbc.Row([topBar]),
     # Row 2 - body
     dbc.Row([
         # Row 2, Col 1 - navigation bar
@@ -47,7 +47,7 @@ page_2_layout = html.Div([
 '''
 page_1_layout = html.Div([
     # Row 1 - top bar
-    dbc.Row([topBar]),
+    # dbc.Row([topBar]),
     # Row 2 - body
     dbc.Row([
         # Row 2, Col 1 - navigation bar

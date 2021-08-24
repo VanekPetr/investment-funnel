@@ -17,8 +17,9 @@ from dataAnalyser import tickers
 # ----------------------------------------------------------------------------------------------------------------------
 '''
 
-top_height = '7%'
-side_bar_width = '10%'
+top_height = 0
+side_bar_width = '12%'
+option_width = '20%'
 
 TOPBAR_STYLE = {
     "position": "fixed",
@@ -46,8 +47,9 @@ OPTION_BTN = {
 MAIN_TITLE = {
     "text-aling": "left",
     "margin" : "2%",
-    "font-size" : "18px", 
-    "font-weight" : "800",
+    "margin-top":'16px',
+    "font-size" : "16px", 
+    "font-weight" : "600",
 }
 
 SUB_TITLE = {
@@ -56,30 +58,41 @@ SUB_TITLE = {
     "margin-bottom" : "1%",
     "margin-left" : "2%",
     "font-size" : "12px", 
-    "font-weight" : "600",
+    "font-weight" : "500",
+    "color" : "#191919"
 }
 
 DESCRIP_INFO = {
     "text-aling": "left",
     "margin" : "2%",
     "font-size" : "12px", 
+    "color" : "#5d5d5d"
 }
 
 SIDEBAR_STYLE = {
     "position": "fixed",
-    "top": top_height,
+    'top':0,
     "left": 0,
     "bottom": 0,
     "width": side_bar_width,
-    "padding": "2rem 1rem",
+    "padding": "1rem",
     "background-color": "#111723",
+    # "li:hover" : "#EF9761"
+    'display': 'flex', 
+    'flex-direction':'column', 
+    'overflow' : 'auto',
+}
+
+NAV_BTN = {
+    'a:color' : 'white',
+
 }
 
 GRAPH_LEFT = {
     "position": "fixed",
     "left": side_bar_width,
-    "top": top_height,
-    "width": '20%',
+    "top": 0,
+    "width": option_width,
     'bottom': '0%',
     "background-color":  "#d4d5d6",
     "padding": "8px",
@@ -91,9 +104,9 @@ GRAPH_LEFT = {
 
 GRAPH_RIGHT = {
     "position": "fixed",
-    "left": '30%',
+    "left": '32%',
     'right': '0%',
-    "top": top_height,
+    "top": 0,
     'bottom': '0%',
     "padding": "4px",
     'display': 'flex', 
@@ -123,15 +136,12 @@ encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 # Top bar with Grundfos logo
 topBar = html.Div([
-         html.Img(src= 'data:image/png;base64,{}'.format(encoded_image.decode()), style={'height': '85%', 'margin-top': 5, 'margin-right': 10})
+         html.Img(src= 'data:image/png;base64,{}'.format(encoded_image.decode()), style={'height': '16px', 'margin':'12px', 'margin-right': '16px'})
             ], style=TOPBAR_STYLE)
 
 # Side bar with navigation
 sideBar = html.Div([
-        html.P(
-            "Navigation", className="lead", style={'color': 'white'}
-        ),
-
+        html.Img(src= 'data:image/png;base64,{}'.format(encoded_image.decode()), style={'width': '144px', 'height': '12px', 'margin-top' : '16px', 'margin-bottom':'36px'}),
         dbc.Nav(
             [
                 dbc.NavLink("Market Overview", id='page0', href="/", active="exact"),
@@ -156,7 +166,7 @@ loading =  dcc.Loading(
 
 optionBacktest = html.Div([
     #part1
-    html.H5("BACKTESTING", style=MAIN_TITLE),
+    html.H5("Backtesting", style=MAIN_TITLE),
     html.P("Test your investment strategy with a selected ML model, scenario generation method and the CVaR model for a given training and testing time period",
             style=DESCRIP_INFO),
     html.P("Training period",
@@ -198,7 +208,7 @@ optionBacktest = html.Div([
         min=1,
         max=20,
         step=1,
-        value=2
+        value=2,
     ),
     html.Div(id='slider-output-container-backtest',
              style=OPTION_ELEMENT),
@@ -311,7 +321,7 @@ graphResults = html.Div([
 # ----------------------------------------------------------------------------------------------------------------------
 
 optionML = html.Div([
-    html.H5("Minimum Spanning Tree and Clustering", style=MAIN_TITLE),
+    html.H5("Minimum Spanning Tree & Clustering", style=MAIN_TITLE),
     html.P("Use machine learning algorithms to decrease the number of ETFs in your asset universe.",
             style=DESCRIP_INFO),
 
@@ -371,7 +381,7 @@ graphML = html.Div([
 # ----------------------------------------------------------------------------------------------------------------------
 
 optionGraph = html.Div([
-    html.H5("INVESTMENT FUNNEL", style=MAIN_TITLE),
+    html.H5("Investment Funnel", style=MAIN_TITLE),
     # # Introduction
     # html.P("This tool is used for students and asset managers to get better overview of the ETF market, to experiment with a different investment techniques & algorithms and finally to backtest their investment strategies.",
     #         style={'text-aling': 'left', "position": "fixed", 'top': '13%', 'left': '11%', 'right':'71%'}),

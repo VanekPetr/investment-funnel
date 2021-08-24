@@ -1,0 +1,59 @@
+
+/* Navigation button */
+.nav-pills .nav-link.active {
+    color: #fff;
+    background-color: #EF9761;
+}
+
+.nav-pills .nav-link:hover {
+    color: #EF9761;
+}
+
+.nav-pills .nav-link {
+    margin-top: 12px;
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+}
+
+
+/* Date input */
+/* .DateRangePickerInput {
+    margin: 2%;
+} */
+.DateInput_input {
+    font-weight: 300;
+    font-size: 14px;
+}
+
+/* Slider */
+
+.rc-slider-track {
+    background-color: #EF9761;
+}
+
+.rc-slider-handle {
+    border: solid 2px #c46b34;
+}
+
+.rc-slider-handle:hover {
+    border-color: #f3be9d;
+}
+
+.rc-slider-handle:active {
+    border-color: #EF9761;
+    box-shadow: 0 0 5px #c46b34;
+}
+
+#my-slider2 {
+    padding: 12px;
+} 
+
+/* General */
+
+button, input, optgroup, select, textarea {
+    line-height: 32px;
+}
+
+element.style {
+    padding: 12px;
+}
