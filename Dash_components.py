@@ -54,7 +54,7 @@ MAIN_TITLE = {
 
 SUB_TITLE = {
     "text-aling": "left",
-    "margin-top" : "3%",
+    "margin-top" : "6%",
     "margin-bottom" : "1%",
     "margin-left" : "2%",
     "font-size" : "12px", 

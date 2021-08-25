@@ -80,13 +80,13 @@ class TradeBot(object):
         composition = composition.loc[:, (composition != 0).any(axis=0)]
         data = []
         idx_color = 0
-        composition_color = px.colors.sequential.dense[2:] + px.colors.sequential.deep + px.colors.sequential.GnBu
+        # composition_color = px.colors.sequential.dense[2:] + px.colors.sequential.deep + px.colors.sequential.GnBu
         for isin in composition.columns:
             trace = go.Bar(
                 x=composition.index,
                 y=composition[isin],
                 name=str(isin),
-                marker_color=composition_color[idx_color]
+                # marker_color=composition_color[idx_color] #custome color
             )
             data.append(trace)
             idx_color += 1
@@ -127,8 +127,9 @@ class TradeBot(object):
                          y="Average Annual Returns",
                          hover_data=["Sharpe Ratio", "Name"],
                          color=setColor,
-                         title="The Relationship between Annual Returns and Standard Deviation of Returns from "
-                               + start[:10] + " to " + end[:10])
+                         title="Annual Returns and Standard Deviation of Returns from "
+                               + start[:10] + " to " + end[:10],
+                        )
 
         # AXIS IN PERCENTAGES
         fig.layout.yaxis.tickformat = ',.1%'
@@ -153,17 +154,17 @@ class TradeBot(object):
             actualRiskLevels.add(max(actualRiskLevels)+1)  # Add the final risk level       
         for l in actualRiskLevels:
             k = "Risk Class " + str(l)
-            fig.add_vline(x=riskLevels[k], line_width=2, line_dash="dash", line_color="grey")# annotation_text=k, annotation_position="top left")
-            fig.add_annotation(x=riskLevels[k]-0.01, y=0.9, text=k, textangle=-90, showarrow=False)
+            fig.add_vline(x=riskLevels[k], line_width=1, line_dash="dash", line_color="#7c90a0")# annotation_text=k, annotation_position="top left")
+            fig.add_annotation(x=riskLevels[k]-0.01, y=0.8, text=k, textangle=-90, showarrow=False)
         
         # RETURN LEVEL MARKER
         fig.add_hline(y=0, line_width=1.5, line_color="rgba(233, 30, 99, 0.5)")
 
         #TITLES 
+        fig.update_annotations(font_color="#000000")
         fig.update_layout(
             xaxis_title="Annualised standard deviation of returns (Risk)",
             yaxis_title="Annualised average returns",
-
         )
         #fig.show()
         return fig

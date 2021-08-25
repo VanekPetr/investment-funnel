@@ -6,7 +6,7 @@
 }
 
 .nav-pills .nav-link:hover {
-    color: #EF9761;
+    color: #ffd0b3;
 }
 
 .nav-pills .nav-link {
@@ -36,10 +36,15 @@
 }
 
 .rc-slider-handle:hover {
-    border-color: #f3be9d;
+    border-color: #f1d3c0;
 }
 
 .rc-slider-handle:active {
+    border-color: #EF9761;
+    box-shadow: 0 0 5px #c46b34;
+}
+
+.rc-slider-handle-click-focused:focus {
     border-color: #EF9761;
     box-shadow: 0 0 5px #c46b34;
 }
