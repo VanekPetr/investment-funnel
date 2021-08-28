@@ -21,9 +21,9 @@ import plotly.io as pio
 import math
 pio.renderers.default = "browser"
 
-data = pd.read_parquet('morningstar_isin.parquet')
+data = pd.read_parquet('algostrata_isin.parquet')
 tickers = data.columns.values
-data_name = pd.read_parquet('morningstar_name.parquet')
+data_name = pd.read_parquet('algostrata_name.parquet')
 names = data_name.columns.values
 
 class TradeBot(object):
