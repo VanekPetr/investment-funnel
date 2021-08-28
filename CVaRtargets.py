@@ -91,66 +91,66 @@ def PortfolioRiskTarget(scen, cvar_alpha):
     ----------------------------------------------------------------------
     Mathematical Optimization: TARGETS GENERATION
     ---------------------------------------------------------------------- 
-"""   
+"""
 
-def targetsCVaR(start_date, end_date, test_date, benchmark, test_index, budget, cvar_alpha):  
-    
+def targetsCVaR(start_date, end_date, test_date, benchmark, test_index, budget, cvar_alpha, data=[]):
+
     # Define Benchmark
     tickers = benchmark
 
-    # User pandas_reader.data.DataReader to load the desired data.
-    panel_data = data.DataReader(tickers, 'yahoo', start_date, end_date)
-    df_close = panel_data["Adj Close"]
+    ## For YAHOO version
+    # # User pandas_reader.data.DataReader to load the desired data.
+    # panel_data = data.DataReader(tickers, 'yahoo', start_date, end_date)
+    # df_close = panel_data["Adj Close"]
+    # # Get weekly data
+    # targetWeeklyRet = getWeeklyRet(data=df_close)
 
-    #Get weekly data 
-    targetWeeklyRet = getWeeklyRet(data = df_close) 
+    # df_test_index = pd.DataFrame(index=test_index)
+    # testWeeklyRet = pd.concat([df_test_index, testWeeklyRet], axis=1)
+    # testWeeklyRet = testWeeklyRet.fillna(0)
 
-    #Get weekly data for testing
+    ## For Morningstar data
+    targetWeeklyRet = data[tickers].copy()
+
+    # Get weekly data for testing
     testWeeklyRet = targetWeeklyRet[targetWeeklyRet.index >= test_date]
-    
-    df_test_index = pd.DataFrame(index = test_index)
-    testWeeklyRet = pd.concat([df_test_index,testWeeklyRet],axis = 1)
-    testWeeklyRet = testWeeklyRet.fillna(0)
 
-    #Number of weeks for testing 
+    # Number of weeks for testing
     N_test = len(testWeeklyRet.index)
 
-    #Get scenarios
+    # Get scenarios
     # The Monte Carlo Method
-    targetScen = BOOT(data = targetWeeklyRet,       #subsetMST nebo subsetCLUST
-                      nSim = 250,
-                      N_test = N_test) 
+    targetScen = BOOT(data=targetWeeklyRet,       # subsetMST or subsetCLUST
+                      nSim=250,
+                      N_test=N_test)
 
-
-    
     # Compute the optimal portfolio outperforming zero percentage return
-    #---------------------------------------------------------------------- 
-
-    p_points = len(targetScen[:,0,0])       #number of periods
-    s_points = len(targetScen[0,:,0])       #number of scenarios
+    # ----------------------------------------------------------------------
+    p_points = len(targetScen[:,0,0])       # number of periods
+    s_points = len(targetScen[0,:,0])       # number of scenarios
 
     # DATA FRAME TO STORE CVaR TARGETS
-    targets = pd.DataFrame(columns=["CVaR_Target"],index=list(range(p_points)))
+    targets = pd.DataFrame(columns=["CVaR_Target"], index=list(range(p_points)))
     # DATA FRAME TO STORE VALUE OF THE PORTFOLIO
-    portValue = pd.DataFrame(columns=["Benchmark_Value"],index=testWeeklyRet.index)
+    portValue = pd.DataFrame(columns=["Benchmark_Value"], index=testWeeklyRet.index)
 
     # COMPUTE CVaR TARGETS
     for p in range(p_points):
-        #create data frame with scenarios for a given period p
+        # create data frame with scenarios for a given period p
         scenDf = pd.DataFrame(targetScen[p,:,:],
                               columns=tickers,
-                              index=list(range(s_points)))  
-        #run CVaR model to pompute CVaR targets
+                              index=list(range(s_points)))
+
+        # run CVaR model to compute CVaR targets
         target_CVaR= PortfolioRiskTarget(scen=scenDf,
                                          cvar_alpha=cvar_alpha)
-        #save the result
-        targets.loc[p,"CVaR_Target"] = target_CVaR
+        # save the result
+        targets.loc[p, "CVaR_Target"] = target_CVaR
 
-    
     # COMPUTE PORTFOLIO VALUE
     for w in testWeeklyRet.index:
-        portValue.loc[w,"Benchmark_Value"] = sum((budget/len(tickers))*(1+testWeeklyRet.loc[w,:]))    
-        budget = sum(budget/len(tickers)*(1+testWeeklyRet.loc[w,:]))
+        portValue.loc[w, "Benchmark_Value"] = sum((budget/len(tickers))*(1+testWeeklyRet.loc[w, :]))
+        budget = sum(budget/len(tickers)*(1+testWeeklyRet.loc[w, :]))
 
     
     return targets, portValue

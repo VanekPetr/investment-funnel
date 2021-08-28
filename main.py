@@ -10,8 +10,9 @@ from Clustering import Cluster, pickCluster
 from ScenarioGeneration import MC, BOOT
 from CVaRtargets import targetsCVaR
 from CVaRmodel import modelCVaR
-
 from pandas_datareader import data
+from ETFlist import ETFlist
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -20,6 +21,10 @@ import plotly.io as pio
 import math
 pio.renderers.default = "browser"
 
+data = pd.read_parquet('morningstar_isin.parquet')
+tickers = data.columns.values
+data_name = pd.read_parquet('morningstar_name.parquet')
+names = data_name.columns.values
 
 class TradeBot(object):
     """
@@ -45,8 +50,9 @@ class TradeBot(object):
     #
 
     def __init__(self):
-        self.weeklyReturns = pd.read_parquet('etoro_etfs_weekly_returns_2011_2021.parquet')
-        self.tickers = self.weeklyReturns.columns.values
+        self.weeklyReturns = data
+        self.tickers = tickers
+        self.names = names
 
     # METHOD COMPUTING ANNUAL RETURNS, ANNUAL STD. DEV. & SHARPE RATIO OF ASSETS
     def __get_stat(self, start, end):
@@ -62,16 +68,29 @@ class TradeBot(object):
         # Write all results into a data frame
         statDf = pd.concat([mu_ga, stdev_a, sharpe], axis=1)
         statDf.columns = ["Average Annual Returns", "Standard Deviation of Returns", "Sharpe Ratio"]
-        statDf["Name"] = statDf.index                   # Add names into the table
+        statDf["ISIN"] = statDf.index                   # Add names into the table
+
+        # IS ETF OR NOT?
+        for isin in statDf.index:
+            if isin in ETFlist:
+                statDf.loc[isin, "Type"] = "ETF"
+            else:
+                statDf.loc[isin, "Type"] = "Mutual Fund"
 
         return statDf
 
     # METHOD TO PLOT THE BACKTEST RESULTS
     def __plot_backtest(self, performance, performanceBenchmark, composition, names):
+        ## FOR Yahoo
+        # performance.index = performance.index.date
+        ## FOR Morningstar
+        performance.index = pd.to_datetime(performance.index.values, utc=True)
+
         # PERFORMANCE
-        performance.index = performance.index.date
         df_to_plot = pd.concat([performance, performanceBenchmark], axis=1)
-        fig = px.line(df_to_plot, x=df_to_plot.index, y=df_to_plot.columns, title='Comparison of different strategies')
+        color_discrete_map = {'Portfolio_Value': '#21304f', 'Benchmark_Value': '#f58f02'}
+        fig = px.line(df_to_plot, x=df_to_plot.index, y=df_to_plot.columns,
+                      title='Comparison of different strategies', color_discrete_map=color_discrete_map)
         #fig.show()
         figPerf = fig
 
@@ -80,13 +99,14 @@ class TradeBot(object):
         composition = composition.loc[:, (composition != 0).any(axis=0)]
         data = []
         idx_color = 0
-        # composition_color = px.colors.sequential.dense[2:] + px.colors.sequential.deep + px.colors.sequential.GnBu
+        composition_color = px.colors.sequential.turbid + px.colors.sequential.Brwnyl \
+                            + px.colors.sequential.YlOrBr + px.colors.sequential.gray
         for isin in composition.columns:
             trace = go.Bar(
                 x=composition.index,
                 y=composition[isin],
                 name=str(isin),
-                # marker_color=composition_color[idx_color] #custome color
+                marker_color=composition_color[idx_color] #custome color
             )
             data.append(trace)
             idx_color += 1
@@ -105,28 +125,33 @@ class TradeBot(object):
         return figPerf, figComp
 
     # METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS
-    def plot_dots(self, start, end, ML=None, MLsubset=None):
+    def plot_dots(self, start, end, ML=None, MLsubset=None, fundSet=[]):
         # Get statistics for a given time period
         data = self.__get_stat(start, end)
+        data['Name'] = self.names
 
         # IF WE WANT TO HIGHLIGHT THE SUBSET OF ASSETS BASED ON ML
         if ML == "MST":
-            setColor = "Type"
-            data.loc[:, "Type"] = "ETFs"
+            data.loc[:, "Type"] = "Funds"
             for fund in MLsubset:
                 data.loc[fund, "Type"] = "MST subset"
         if ML == "Clustering":
-            setColor = "Type"
             data.loc[:, "Type"] = MLsubset.loc[:, "Cluster"]
-        if ML == None:
-            setColor = None
+
+        # If selected any fund for comparison
+        for fund in fundSet:
+            data.loc[fund, "Type"] = str(data.loc[fund, "ISIN"])
 
         # PLOTTING Data
+        color_discrete_map = {'Mutual Fund': '#21304f', 'ETF': '#f58f02',
+                              'Funds': '#21304f', "MST subset": '#f58f02',
+                              'Cluster 1': '#21304f', 'Cluster 2': '#f58f02'}
         fig = px.scatter(data,
                          x="Standard Deviation of Returns",
                          y="Average Annual Returns",
-                         hover_data=["Sharpe Ratio", "Name"],
-                         color=setColor,
+                         hover_data=["Sharpe Ratio", "Name", "ISIN"],
+                         color="Type",
+                         color_discrete_map=color_discrete_map,
                          title="Annual Returns and Standard Deviation of Returns from "
                                + start[:10] + " to " + end[:10],
                         )
@@ -148,14 +173,14 @@ class TradeBot(object):
         actualRiskLevels = set() # Define dynamic risk levels
         for i in range(1,8):
             k = "Risk Class " + str(i)
-            if (riskLevels[k] >=  minRisk and riskLevels[k] <= maxRisk):
+            if (riskLevels[k] >= minRisk) and (riskLevels[k] <= maxRisk):
                 actualRiskLevels.add(i)
         if max(actualRiskLevels) < 7:
             actualRiskLevels.add(max(actualRiskLevels)+1)  # Add the final risk level       
         for l in actualRiskLevels:
             k = "Risk Class " + str(l)
             fig.add_vline(x=riskLevels[k], line_width=1, line_dash="dash", line_color="#7c90a0")# annotation_text=k, annotation_position="top left")
-            fig.add_annotation(x=riskLevels[k]-0.01, y=0.8, text=k, textangle=-90, showarrow=False)
+            fig.add_annotation(x=riskLevels[k]-0.01, y=max(data["Average Annual Returns"]), text=k, textangle=-90, showarrow=False)
         
         # RETURN LEVEL MARKER
         fig.add_hline(y=0, line_width=1.5, line_color="rgba(233, 30, 99, 0.5)")
@@ -260,7 +285,8 @@ class TradeBot(object):
                                                 benchmark=benchmark,        # MSCI World benchmark
                                                 test_index=self.testDataset.index.date,
                                                 budget=100,
-                                                cvar_alpha=0.05)
+                                                cvar_alpha=0.05,
+                                                data=self.weeklyReturns)
 
         # MATHEMATICAL MODELING
         # ------------------------------------------------------------------

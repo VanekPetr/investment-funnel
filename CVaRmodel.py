@@ -330,19 +330,19 @@ def modelCVaR(testRet, scen, targets, budget, cvar_alpha, trans_cost, max_weight
         portValue.loc[w,"Portfolio_Value"] = sum(portAllocation.loc[0,assets]*portValueW*(1+testRet.loc[w,assets]))   
         portValueW = portValue.loc[w,"Portfolio_Value"]
 
-    
-    # THE SECOND AND ONGOING INVESTMENT PERIODS
-    #----------------------------------------------------------------------
+
+    ## THE SECOND AND ONGOING INVESTMENT PERIODS
+    # ----------------------------------------------------------------------
     for p in range(1,p_points):
-        #create data frame with scenarios for a given period p
+        # create data frame with scenarios for a given period p
         scenDf = pd.DataFrame(scen[p,:,:],
                               columns=testRet.columns,
                               index=list(range(s_points)))  
     
-        #compute expected returns of all assets
+        # compute expected returns of all assets
         EP = sum(prob*scenDf.loc[i,:] for i in scenDf.index)
 
-        #run CVaR model  
+        # run CVaR model
         p_alloc, CVaR_val, port_val = rebalancingModel(mu = EP,
                                                        scen = scenDf,
                                                        CVaR_target = targets.loc[p,"CVaR_Target"]*portValueW,
@@ -350,9 +350,9 @@ def modelCVaR(testRet, scen, targets, budget, cvar_alpha, trans_cost, max_weight
                                                        x_old = portAllocation.loc[p-1,assets]*portValueW,
                                                        trans_cost = trans_cost,
                                                        max_weight = max_weight)
-        #save the result
+        # save the result
         portCVaR.loc[p,"CVaR"] = CVaR_val
-        #save allocation
+        # save allocation
         portAllocation.loc[p,assets] = p_alloc
 
         portValueW = port_val

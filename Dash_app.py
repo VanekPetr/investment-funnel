@@ -252,17 +252,19 @@ def plot_ml(click_mst, click_clust, mst, clust, start, end):
      Output('picker-show', 'start_date'),
      Output('picker-show', 'end_date'),
      Output('picker-show', 'min_date_allowed'),
-     Output('picker-show', 'max_date_allowed')
+     Output('picker-show', 'max_date_allowed'),
+     Output('find-fund', 'value')
      ],
     [Input('show', 'n_clicks')],
     [State('picker-show', 'start_date'),
-     State('picker-show', 'end_date')],
+     State('picker-show', 'end_date'),
+     State('find-fund', 'value')],
 )
-def plot_dots(click, start, end):
+def plot_dots(click, start, end, search):
     global algo
     global startDate, endDate
     global minDate, maxDate
-    global first_run_page1, save_Figure
+    global first_run_page1, save_Figure, save_Search
 
     if first_run_page1 < 1:
         algo = TradeBot()
@@ -272,23 +274,23 @@ def plot_dots(click, start, end):
         maxDate = algo.weeklyReturns.index[-2]
 
         save_Figure = None
+        save_Search = []
         first_run_page1 = 1
 
-        return save_Figure, startDate, endDate, minDate, maxDate
+        return save_Figure, startDate, endDate, minDate, maxDate, save_Search
 
     try:
         if click > 0:
             startDate = start
             endDate = end
+            save_Search = search
 
-            fig = algo.plot_dots(start=str(start), end=str(end))
+            fig = algo.plot_dots(start=str(start), end=str(end), fundSet=save_Search)
             save_Figure = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
                                                        'left': '0%'})
-            return save_Figure, startDate, endDate, minDate, maxDate
+            return save_Figure, startDate, endDate, minDate, maxDate, save_Search
     except:
-        return save_Figure, startDate, endDate, minDate, maxDate
-
-
+        return save_Figure, startDate, endDate, minDate, maxDate, save_Search
 
 '''
 # ----------------------------------------------------------------------------------------------------------------------
