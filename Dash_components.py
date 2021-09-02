@@ -7,10 +7,7 @@ import math
 from dash_extensions import Download
 import base64
 from datetime import date
-from dataAnalyser import tickers
-from main import tickers
-
-
+from main import names
 
 
 '''
@@ -241,7 +238,7 @@ optionBacktest = html.Div([
     dcc.Dropdown(
         id='select-benchmark',
         options = [
-            {'label': value, 'value': value} for value in tickers
+            {'label': value, 'value': value} for value in names
         ],
         placeholder="Select your ETF benchmark",
         multi=True,
@@ -398,7 +395,7 @@ optionGraph = html.Div([
     dcc.Dropdown(
         id='find-fund',
         options = [
-            {'label': value, 'value': value} for value in tickers
+            {'label': value, 'value': value} for value in names
         ],
         placeholder="Select here",
         multi=True,

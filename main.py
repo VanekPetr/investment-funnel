@@ -70,12 +70,14 @@ class TradeBot(object):
         statDf.columns = ["Average Annual Returns", "Standard Deviation of Returns", "Sharpe Ratio"]
         statDf["ISIN"] = statDf.index                   # Add names into the table
 
-        # IS ETF OR NOT?
+        # IS ETF OR NOT? Set size
         for isin in statDf.index:
             if isin in ETFlist:
                 statDf.loc[isin, "Type"] = "ETF"
+                statDf.loc[isin, "Size"] = 1
             else:
                 statDf.loc[isin, "Type"] = "Mutual Fund"
+                statDf.loc[isin, "Size"] = 1
 
         return statDf
 
@@ -140,8 +142,9 @@ class TradeBot(object):
 
         # If selected any fund for comparison
         for fund in fundSet:
-            data.loc[fund, "Type"] = str(data.loc[fund, "ISIN"])
-
+            isin_idx = list(self.names).index(fund)
+            data.loc[self.tickers[isin_idx], "Type"] = str(data.loc[self.tickers[isin_idx], "Name"])
+            data.loc[self.tickers[isin_idx], "Size"] = 3
         # PLOTTING Data
         color_discrete_map = {'Mutual Fund': '#21304f', 'ETF': '#f58f02',
                               'Funds': '#21304f', "MST subset": '#f58f02',
@@ -151,6 +154,8 @@ class TradeBot(object):
                          y="Average Annual Returns",
                          hover_data=["Sharpe Ratio", "Name", "ISIN"],
                          color="Type",
+                         size="Size",
+                         size_max=8,
                          color_discrete_map=color_discrete_map,
                          title="Annual Returns and Standard Deviation of Returns from "
                                + start[:10] + " to " + end[:10],
@@ -185,13 +190,20 @@ class TradeBot(object):
         # RETURN LEVEL MARKER
         fig.add_hline(y=0, line_width=1.5, line_color="rgba(233, 30, 99, 0.5)")
 
-        #TITLES 
+        # TITLES
         fig.update_annotations(font_color="#000000")
         fig.update_layout(
             xaxis_title="Annualised standard deviation of returns (Risk)",
             yaxis_title="Annualised average returns",
         )
-        #fig.show()
+        # Position of legend
+        fig.update_layout(legend=dict(
+            yanchor="bottom",
+            y=0.01,
+            xanchor="left",
+            x=0.01
+        ))
+
         return fig
 
     # METHOD TO PREPARE DATA FOR ML AND BACKTESTING
@@ -258,6 +270,9 @@ class TradeBot(object):
     # METHOD TO COMPUTE THE BACKTEST
     def backtest(self, assets, benchmark, scenarios, nSimulations, plot=True):
 
+        # Find Benchmarks' ISIN codes
+        benchmark_isin = [self.tickers[list(self.names).index(name)] for name in benchmark]
+
         # SELECT THE WORKING SUBSET
         if assets == 'MST':
             subset = self.subsetMST
@@ -282,7 +297,7 @@ class TradeBot(object):
         targets, benchmarkPortVal = targetsCVaR(start_date=self.start,
                                                 end_date=self.end,
                                                 test_date=self.startTestDate,
-                                                benchmark=benchmark,        # MSCI World benchmark
+                                                benchmark=benchmark_isin,        # MSCI World benchmark
                                                 test_index=self.testDataset.index.date,
                                                 budget=100,
                                                 cvar_alpha=0.05,
