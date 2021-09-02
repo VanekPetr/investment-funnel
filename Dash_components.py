@@ -113,14 +113,6 @@ GRAPH_RIGHT = {
     'overflow' : 'auto',
 }
 
-SUB_GRAPH_RIGHT =  {
-    "margin" : "1%",
-}
-
-
-
-
-
 
 '''
 # ----------------------------------------------------------------------------------------------------------------------
@@ -324,56 +316,48 @@ optionML = html.Div([
     html.P("Use machine learning algorithms to decrease the number of ETFs in your asset universe.",
             style=DESCRIP_INFO),
 
-    html.P("Time period for feature selection",
-            style=SUB_TITLE),
+    html.P("Time period for feature selection", style=SUB_TITLE),
     # Select time period
     dcc.DatePickerRange(
         id='picker-AI',
         style=OPTION_ELEMENT
     ),
 
+    html.P("AI/ML model", style=SUB_TITLE),
     # Select MST
     dcc.Dropdown(
-        id='mst-dropdown',
+        id='model-dropdown',
         options=[
-            {'label': '1 MST run', 'value': 1},
-            {'label': '2 MST runs', 'value': 2},
-            {'label': '3 MST runs', 'value': 3},
-            {'label': '4 MST runs', 'value': 4},
+            {'label': 'Minimum Spanning Tree', 'value': 'MST'},
+            {'label': 'Clustering', 'value': 'Cluster'}
         ],
-        placeholder="Select # of MST runs",
+        placeholder="Select algorithm",
         style=OPTION_ELEMENT,
     ),
-    # RUN MST
-    html.Button('Run MST',
-        id='mstRun',
-        style=OPTION_BTN),
 
+    html.P("# of Clusters or # of MST runs", style=SUB_TITLE),
     # Select clustering
     dcc.Dropdown(
-        id='cluster-dropdown',
+        id='ML-num-dropdown',
         options=[
-            {'label': '2 Clusters', 'value': 2},
-            {'label': '3 Clusters', 'value': 3},
-            {'label': '4 Clusters', 'value': 4},
-            {'label': '5 Clusters', 'value': 5},
+            {'label': '2', 'value': 2},
+            {'label': '3', 'value': 3},
+            {'label': '4', 'value': 4},
+            {'label': '5', 'value': 5},
         ],
-        placeholder="Select # of clusters",
+        placeholder="Select number",
         style=OPTION_ELEMENT,
     ),
     # RUN Clustering
 
-    html.Button('Run Clustering',
-        id='clusterRun',
+    html.Button('Compute',
+        id='MLRun',
         style=OPTION_BTN),
 
 ], style=GRAPH_LEFT)
 
 # Table
-graphML = html.Div([
-    html.Div(id='mlFig', style=SUB_GRAPH_RIGHT), #MST Graph
-    html.Div(id='mlFig2', style=SUB_GRAPH_RIGHT), #Clust Graph
-], style=GRAPH_RIGHT)
+graphML = html.Div(id='mlFig', style=GRAPH_RIGHT)
 
 
 # MARKET OVERVIEW

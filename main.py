@@ -145,6 +145,7 @@ class TradeBot(object):
             isin_idx = list(self.names).index(fund)
             data.loc[self.tickers[isin_idx], "Type"] = str(data.loc[self.tickers[isin_idx], "Name"])
             data.loc[self.tickers[isin_idx], "Size"] = 3
+
         # PLOTTING Data
         color_discrete_map = {'Mutual Fund': '#21304f', 'ETF': '#f58f02',
                               'Funds': '#21304f', "MST subset": '#f58f02',
@@ -152,13 +153,14 @@ class TradeBot(object):
         fig = px.scatter(data,
                          x="Standard Deviation of Returns",
                          y="Average Annual Returns",
-                         hover_data=["Sharpe Ratio", "Name", "ISIN"],
                          color="Type",
                          size="Size",
                          size_max=8,
+                         hover_name="Name",
+                         hover_data={"Sharpe Ratio": True, "ISIN": True, "Size": False},
                          color_discrete_map=color_discrete_map,
                          title="Annual Returns and Standard Deviation of Returns from "
-                               + start[:10] + " to " + end[:10],
+                               + start[:10] + " to " + end[:10]
                         )
 
         # AXIS IN PERCENTAGES
