@@ -239,7 +239,7 @@ def plot_ml(click_ML, model, num_iter, start, end):
         AItable["Standard Deviation of Returns"] = round(AItable["Standard Deviation of Returns"], 2)
         AItable["Average Annual Returns"] = round(AItable["Average Annual Returns"], 2)
 
-        AI_text_number = 'Number of selected assets is: ' + str(len(AItable))
+        AI_text_number = 'Number of selected assets: ' + str(len(AItable))
 
     return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number
 
