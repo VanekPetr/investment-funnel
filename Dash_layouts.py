@@ -6,15 +6,13 @@ from Dash_components import *
 # ----------------------------------------------------------------------------------------------------------------------
 '''
 page_3_layout = html.Div([
-    # Row 1 - top bar
-    # dbc.Row([topBar]),
-    # Row 2 - body
+    # Row 1 - body
     dbc.Row([
-        # Row 2, Col 1 - navigation bar
+        # Row 1, Col 1 - navigation bar
         dbc.Col([sideBar]),
-        # Row 2, col 2 - text description
+        # Row 1, col 2 - text description
         dbc.Col([optionBacktest]),
-        # Row 2, Col 3 - table
+        # Row 1, Col 3 - table
         dbc.Col([graphResults]),
     ])
 ])
@@ -26,15 +24,13 @@ page_3_layout = html.Div([
 # ----------------------------------------------------------------------------------------------------------------------
 '''
 page_2_layout = html.Div([
-    # Row 1 - top bar
-    # dbc.Row([topBar]),
-    # Row 2 - body
+    # Row 1 - body
     dbc.Row([
-        # Row 2, Col 1 - navigation bar
+        # Row 1, Col 1 - navigation bar
         dbc.Col([sideBar]),
-        # Row 2, col 2 - set-up
+        # Row 1, col 2 - set-up
         dbc.Col([optionML]),
-        # Row 2, Col 3 - table
+        # Row 1, Col 3 - table
         dbc.Col([graphML])
     ])
 ])
@@ -46,15 +42,13 @@ page_2_layout = html.Div([
 # ----------------------------------------------------------------------------------------------------------------------
 '''
 page_1_layout = html.Div([
-    # Row 1 - top bar
-    # dbc.Row([topBar]),
-    # Row 2 - body
+    # Row 1 - body
     dbc.Row([
-        # Row 2, Col 1 - navigation bar
+        # Row 1, Col 1 - navigation bar
         dbc.Col([sideBar]),
-        # Row 2, col 2 - text description
+        # Row 1, col 2 - text description
         dbc.Col([optionGraph]),
-        # Row 2, Col 3 - table
+        # Row 1, Col 3 - table
         dbc.Col([graphOverview])
     ])
 ])

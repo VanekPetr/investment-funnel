@@ -1,6 +1,7 @@
 global df_etim
 import dash  # version 1.13.1
 import dash_auth
+import numpy as np
 from dash.dependencies import Input, Output, State
 from dash_extensions.snippets import send_data_frame
 from dash.exceptions import PreventUpdate
@@ -25,8 +26,10 @@ temp_name = ''
 just_retrained = False
 
 global first_run_page1, first_run_page2, first_run_page3
-global mst_click_prev
+global ML_click_prev, AItable
 ML_click_prev = 0
+AItable = pd.DataFrame(np.array([['No result', 'No result', 'No result', 'No result', 'No result']]),
+                       columns=['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns', 'Standard Deviation of Returns'])
 first_run_page1, first_run_page2, first_run_page3 = 0, 0, 0
 
 '''
@@ -172,8 +175,6 @@ def update_test_date(selected_date):
     return final_date, maxDate, minDate, maxDate, minDate, maxDate, minDate, final_date
 
 
-
-
 # AI Feature Selection
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -183,7 +184,9 @@ def update_test_date(selected_date):
      Output('picker-AI', 'start_date'),
      Output('picker-AI', 'end_date'),
      Output('picker-AI', 'min_date_allowed'),
-     Output('picker-AI', 'max_date_allowed')
+     Output('picker-AI', 'max_date_allowed'),
+     Output('AIResult', 'data'),
+     Output('AInumber', 'children')
      ],
     [Input('MLRun', 'n_clicks')],
     [State('model-dropdown', 'value'),
@@ -198,14 +201,15 @@ def plot_ml(click_ML, model, num_iter, start, end):
     global minDate, maxDate
     global first_run_page2
     global ML_click_prev, clust_click_prev
-    global save_Figure2
+    global save_Figure2, AItable, AI_text_number
 
     if first_run_page2 < 1:
         first_run_page2 = 1
         startDate2 = startDate
         endDate2 = endDate
         save_Figure2 = None
-        return save_Figure2, startDate, endDate, minDate, maxDate
+        AI_text_number = "No selected asset."
+        return save_Figure2, startDate, endDate, minDate, maxDate, AItable.to_dict('records'), AI_text_number
 
     if click_ML is None:
         click_ML = ML_click_prev
@@ -221,18 +225,23 @@ def plot_ml(click_ML, model, num_iter, start, end):
         if model == "MST":
             # RUN THE MINIMUM SPANNING TREE METHOD
             fig = algo.mst(nMST=num_iter, plot=True)
+            AIsubset = algo.subsetMST
             ML_click_prev = click_ML
-            save_Figure2 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%',
-                                                        'top': '0%', 'left': '0%'})
+            save_Figure2 = dcc.Graph(figure=fig, style={'height':'800px', 'margin':'0%'})
         # CLUSTERING
         else:
-            fig = algo.clustering(nClusters=num_iter, nAssets=2, plot=True)
-            save_Figure2 = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%',
-                                                        'top': '0%', 'left': '0%'})
+            fig = algo.clustering(nClusters=num_iter, nAssets=10, plot=True)
+            AIsubset = algo.subsetCLUST
+            save_Figure2 = dcc.Graph(figure=fig, style={'height':'800px', 'margin':'0%'})
+        AItable = algo.AIdata.loc[list(AIsubset), ['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
+                                                   'Standard Deviation of Returns']]
+        # ROUNDING
+        AItable["Standard Deviation of Returns"] = round(AItable["Standard Deviation of Returns"], 2)
+        AItable["Average Annual Returns"] = round(AItable["Average Annual Returns"], 2)
 
-    return save_Figure2, startDate2, endDate2, minDate, maxDate
+        AI_text_number = 'Number of selected as: ' + str(len(AItable))
 
-
+    return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number
 
 # MARKET OVERVIEW
 # ----------------------------------------------------------------------------------------------------------------------

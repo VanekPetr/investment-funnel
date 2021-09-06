@@ -69,6 +69,7 @@ class TradeBot(object):
         statDf = pd.concat([mu_ga, stdev_a, sharpe], axis=1)
         statDf.columns = ["Average Annual Returns", "Standard Deviation of Returns", "Sharpe Ratio"]
         statDf["ISIN"] = statDf.index                   # Add names into the table
+        statDf["Name"] = self.names
 
         # IS ETF OR NOT? Set size
         for isin in statDf.index:
@@ -130,7 +131,6 @@ class TradeBot(object):
     def plot_dots(self, start, end, ML=None, MLsubset=None, fundSet=[]):
         # Get statistics for a given time period
         data = self.__get_stat(start, end)
-        data['Name'] = self.names
 
         # IF WE WANT TO HIGHLIGHT THE SUBSET OF ASSETS BASED ON ML
         if ML == "MST":
@@ -213,6 +213,7 @@ class TradeBot(object):
         self.start = start
         self.end = end
         self.train_test = train_test
+        self.AIdata = self.__get_stat(start, end)
 
         # Get data for a given time interval
         data = self.weeklyReturns[(self.weeklyReturns.index >= start) & (self.weeklyReturns.index <= end)].copy()

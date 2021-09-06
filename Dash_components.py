@@ -240,8 +240,6 @@ optionBacktest = html.Div([
 
  ], style=GRAPH_LEFT)
 
-
-
 # Table
 tableBar = html.Div([
     html.H5("Results", style={'text-aling': 'left', 'margin-left': '2%'}),
@@ -293,7 +291,6 @@ tableBar = html.Div([
                             } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
                         ])
 ], style=OPTION_ELEMENT)
-
 
 # Performance
 graphResults = html.Div([
@@ -356,8 +353,36 @@ optionML = html.Div([
 
 ], style=GRAPH_LEFT)
 
-# Table
-graphML = html.Div(id='mlFig', style=GRAPH_RIGHT)
+selectionBar = html.Div([
+    html.H5("Selected assets", style={'text-aling': 'left', 'margin-left': '2%'}),
+    html.Div(id="AInumber", style={'text-aling': 'left', 'margin-left': '2%'}),
+    dash_table.DataTable(id='AIResult',
+          columns=[{"name": 'Name', "id": 'Name'},
+                   {"name": 'ISIN', "id": 'ISIN'},
+                   {"name":'Sharpe Ratio', "id":'Sharpe Ratio'},
+                   {"name": 'Annual Returns', "id":'Average Annual Returns'},
+                   {"name":'STD',"id":'Standard Deviation of Returns'}],
+          style_table={
+                       'width':'48%',
+                       'margin':'2%',
+          },
+          style_cell={'textAlign': 'center'},
+          style_as_list_view=True,
+          style_header={'fontWeight': 'bold'},
+          style_cell_conditional=[
+                {
+                    'if': {'column_id': c},
+                    'textAlign': 'left'
+                } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
+
+          ])
+], style=OPTION_ELEMENT)
+
+# AI Feature selection graph
+graphML = html.Div([
+    html.Div(id='mlFig', style=OPTION_ELEMENT),
+    selectionBar
+], style=GRAPH_RIGHT)
 
 
 # MARKET OVERVIEW
