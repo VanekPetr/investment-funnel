@@ -13,24 +13,18 @@ from Dash_layouts import *
 from dash_extensions.snippets import send_file
 from main import TradeBot
 
-global temp_storage
-global Prev_save_click
-global prev_new_row_click
-global just_retrained
-prev_new_row_click = 0
-Prev_save_click = 0
-temp_storage = 0
-temp_click = 1
-temp2_click = 0
-temp_name = ''
-just_retrained = False
+global first_run_page1, first_run_page2, first_run_page3, first_run_page3_2
+global ML_click_prev, click_prev
+global AItable, OPTtable, BENCHtable
 
-global first_run_page1, first_run_page2, first_run_page3
-global ML_click_prev, AItable
-ML_click_prev = 0
 AItable = pd.DataFrame(np.array([['No result', 'No result', 'No result', 'No result', 'No result']]),
                        columns=['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns', 'Standard Deviation of Returns'])
-first_run_page1, first_run_page2, first_run_page3 = 0, 0, 0
+OPTtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
+                       columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
+BENCHtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
+                       columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
+first_run_page1, first_run_page2, first_run_page3, first_run_page3_2 = 0, 0, 0, 0
+ML_click_prev, click_prev = 0, 0
 
 '''
 # ----------------------------------------------------------------------------------------------------------------------
@@ -97,7 +91,14 @@ def display_page(pathname):
     [Output('backtestPerfFig', 'children'),
      Output('backtestCompFig', 'children'),
      Output('tableResult', 'data'),
-     Output('tableResult-benchmark', 'data')],
+     Output('tableResult-benchmark', 'data'),
+     Output('select-ml', 'value'),
+     Output('slider-backtest-ml', 'value'),
+     Output('slider-backtest', 'value'),
+     Output('select-scenarios', 'value'),
+     Output('my-slider2', 'value'),
+     Output('select-benchmark', 'value'),
+     ],
     [Input('backtestRun', 'n_clicks')],
     [State('select-ml', 'value'),
      State('slider-backtest-ml', 'value'),
@@ -108,14 +109,30 @@ def display_page(pathname):
      State('picker-train', 'start_date'),
      State('picker-train', 'end_date'),
      State('picker-test', 'start_date'),
-     State('picker-test', 'end_date')],
-    prevent_initial_call=True
+     State('picker-test', 'end_date')]
 )
 def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_num, benchmark,
                   start_data, end_train, start_test, end_data):
     global algo
+    global first_run_page3_2, click_prev
+    global OPTtable, BENCHtable
+    global save_Figure3, save_Figure3_comp
+    global save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
 
-    if click > 0:
+    if first_run_page3_2 < 1:
+        first_run_page3_2 = 1
+        save_Figure3, save_Figure3_comp = None, None
+        save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench = None, 2, 5, None, 1000, None
+
+        return save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'), \
+               save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
+
+    if click is None:
+        click = click_prev
+    elif click < click_prev:
+        click = click_prev + 1
+
+    if click > click_prev:
         # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
         algo.setup_data(start=start_data, end=end_data, train_test=True, end_train=end_train, start_test=start_test)
         # RUN ML algo
@@ -124,15 +141,23 @@ def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_nu
         else:
             algo.clustering(nClusters=num_runs, nAssets=num_clusters, plot=False)
         # RUN THE BACKTEST
-        results, results_benchmark, figPerf, figComp = algo.backtest(assets=ml_method,
-                                                                     benchmark=benchmark,
-                                                                     scenarios=scen_method,
-                                                                     nSimulations=scen_num,
-                                                                     plot=True)
+        OPTtable, BENCHtable, figPerf, figComp = algo.backtest(assets=ml_method,
+                                                               benchmark=benchmark,
+                                                               scenarios=scen_method,
+                                                               nSimulations=scen_num,
+                                                               plot=True)
+        # Save page values
+        save_Figure3 = dcc.Graph(figure=figPerf, style={'margin':'0%'})
+        save_Figure3_comp = dcc.Graph(figure=figComp, style={'margin':'0%'})
+        save_ml = ml_method
+        save_ml_num = num_runs
+        save_clust_top = num_clusters
+        save_scen = scen_method
+        save_ml_num = scen_num
+        save_bench = benchmark
 
-    return dcc.Graph(figure=figPerf, style={'margin':'0%'}),\
-           dcc.Graph(figure=figComp, style={'margin':'0%'}), \
-           results.to_dict('records'), results_benchmark.to_dict('records')
+    return save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'), \
+           save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
 
 @app.callback(
     Output('slider-output-container2', 'children'),
@@ -186,7 +211,9 @@ def update_test_date(selected_date):
      Output('picker-AI', 'min_date_allowed'),
      Output('picker-AI', 'max_date_allowed'),
      Output('AIResult', 'data'),
-     Output('AInumber', 'children')
+     Output('AInumber', 'children'),
+     Output('model-dropdown', 'value'),
+     Output('ML-num-dropdown', 'value')
      ],
     [Input('MLRun', 'n_clicks')],
     [State('model-dropdown', 'value'),
@@ -199,17 +226,16 @@ def plot_ml(click_ML, model, num_iter, start, end):
     global algo
     global startDate, endDate, startDate2, endDate2
     global minDate, maxDate
-    global first_run_page2
-    global ML_click_prev, clust_click_prev
-    global save_Figure2, AItable, AI_text_number
+    global first_run_page2, ML_click_prev
+    global save_Figure2, AItable, AI_text_number, save_model, save_MLnum
 
     if first_run_page2 < 1:
         first_run_page2 = 1
         startDate2 = startDate
         endDate2 = endDate
-        save_Figure2 = None
+        save_Figure2, save_model, save_MLnum = None, None, None
         AI_text_number = "No selected asset."
-        return save_Figure2, startDate, endDate, minDate, maxDate, AItable.to_dict('records'), AI_text_number
+        return save_Figure2, startDate, endDate, minDate, maxDate, AItable.to_dict('records'), AI_text_number, save_model, save_MLnum
 
     if click_ML is None:
         click_ML = ML_click_prev
@@ -219,6 +245,8 @@ def plot_ml(click_ML, model, num_iter, start, end):
     if click_ML > ML_click_prev:
         startDate2 = start
         endDate2 = end
+        save_model = model
+        save_MLnum = num_iter
         # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
         algo.setup_data(start=startDate2, end=endDate2, train_test=False)
         # MST
@@ -241,7 +269,7 @@ def plot_ml(click_ML, model, num_iter, start, end):
 
         AI_text_number = 'Number of selected assets: ' + str(len(AItable))
 
-    return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number
+    return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number, save_model, save_MLnum
 
 # MARKET OVERVIEW
 # ----------------------------------------------------------------------------------------------------------------------
