@@ -83,22 +83,27 @@ class TradeBot(object):
         return statDf
 
     # METHOD TO PLOT THE BACKTEST RESULTS
-    def __plot_backtest(self, performance, performanceBenchmark, composition, names):
+    def __plot_backtest(self, performance, performanceBenchmark, composition, names, tickers):
         ## FOR Yahoo
         # performance.index = performance.index.date
         ## FOR Morningstar
         performance.index = pd.to_datetime(performance.index.values, utc=True)
 
-        # PERFORMANCE
+        # ** PERFORMANCE GRAPH **
         df_to_plot = pd.concat([performance, performanceBenchmark], axis=1)
         color_discrete_map = {'Portfolio_Value': '#21304f', 'Benchmark_Value': '#f58f02'}
         fig = px.line(df_to_plot, x=df_to_plot.index, y=df_to_plot.columns,
                       title='Comparison of different strategies', color_discrete_map=color_discrete_map)
-        #fig.show()
         figPerf = fig
 
-        # COMPOSITION
-        composition.columns = list(names)
+        # ** COMPOSITION GRAPH **
+        # change ISIN to NAMES in allocation df
+        composition_names = []
+        for ticker in composition.columns:
+            ticker_index = list(tickers).index(ticker)
+            composition_names.append(list(names)[ticker_index])
+        composition.columns = composition_names
+
         composition = composition.loc[:, (composition != 0).any(axis=0)]
         data = []
         idx_color = 0
@@ -319,9 +324,10 @@ class TradeBot(object):
         # ------------------------------------------------------------------
         if plot:
             figPerf, figComp = self.__plot_backtest(performance=portValue.copy(),
-                                                   performanceBenchmark=benchmarkPortVal.copy(),
-                                                   composition=portAllocation,
-                                                   names=subset)
+                                                    performanceBenchmark=benchmarkPortVal.copy(),
+                                                    composition=portAllocation,
+                                                    names=self.names,
+                                                    tickers=self.tickers)
 
         # RETURN STATISTICS
         # ------------------------------------------------------------------

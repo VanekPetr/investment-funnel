@@ -153,7 +153,7 @@ def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_nu
         save_ml_num = num_runs
         save_clust_top = num_clusters
         save_scen = scen_method
-        save_ml_num = scen_num
+        save_scen_num = scen_num
         save_bench = benchmark
 
     return save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'), \

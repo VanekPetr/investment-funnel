@@ -281,7 +281,7 @@ def firstPeriodModel(mu,scen,CVaR_target,cvar_alpha,budget,trans_cost, max_weigh
     ----------------------------------------------------------------------
 """
 
-def modelCVaR(testRet, scen, targets, budget, cvar_alpha, trans_cost, max_weight):  
+def modelCVaR(testRet, scen, targets, budget, cvar_alpha, trans_cost, max_weight):
 
     p_points = len(scen[:,0,0])         #number of periods
     s_points = len(scen[0,:,0])         #number of scenarios
@@ -294,7 +294,7 @@ def modelCVaR(testRet, scen, targets, budget, cvar_alpha, trans_cost, max_weight
     # DATA FRAME TO STORE VALUE OF THE PORTFOLIO
     portValue = pd.DataFrame(columns=["Portfolio_Value"],index=testRet.index)
     # DATA FRAME TO STORE PORTFOLIO ALLOCATION
-    portAllocation = pd.DataFrame(columns=assets,index=list(range(p_points)))
+    portAllocation = pd.DataFrame(columns=assets, index=list(range(p_points)))
 
 
     
@@ -360,7 +360,6 @@ def modelCVaR(testRet, scen, targets, budget, cvar_alpha, trans_cost, max_weight
         for w in testRet.index[(p*4):(4+p*4)]:
             portValue.loc[w,"Portfolio_Value"] = sum(portAllocation.loc[p,assets]*portValueW*(1+testRet.loc[w,assets]))   
             portValueW = portValue.loc[w,"Portfolio_Value"]
-        
     
     return portAllocation, portValue, portCVaR
 
