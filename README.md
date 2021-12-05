@@ -29,7 +29,8 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Petr Vanek** - *Initial work* - [VanekPetr](https://github.com/VanekPetr)
+* **Petr Vanek** - *Co-founder & Initial work* - [VanekPetr](https://github.com/VanekPetr)
+* **Kourosh Marjani Rasmussen** - *Co-founder & Initial work* - [AlgoStrata](https://algostrata.com)
 
 ## License
 
