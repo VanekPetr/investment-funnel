@@ -1,4 +1,3 @@
-global df_etim
 import dash  # version 1.13.1
 import dash_auth
 import numpy as np
@@ -7,6 +6,7 @@ from dash.dependencies import Input, Output, State
 from app.Dash_layouts import *
 from models.main import TradeBot
 
+global df_etim
 global first_run_page1, first_run_page2, first_run_page3, first_run_page3_2
 global ML_click_prev, click_prev
 global AItable, OPTtable, BENCHtable
