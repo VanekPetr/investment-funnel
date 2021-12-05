@@ -3,7 +3,7 @@ import dash_auth
 import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from app.Dash_layouts import *
+from Dash_layouts import *
 from models.main import TradeBot
 
 global df_etim
