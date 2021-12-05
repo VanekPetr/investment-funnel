@@ -4,26 +4,26 @@ Created on Wed Nov 11 15:50:42 2020
 @author: Petr Vanek
 """
 
-from dataAnalyser import meanRetAn, finalStat
-from MST import MinimumSpanningTree
-from Clustering import Cluster, pickCluster
-from ScenarioGeneration import MC, BOOT
-from CVaRtargets import targetsCVaR
-from CVaRmodel import modelCVaR
+from models.dataAnalyser import meanRetAn, finalStat
+from models.MST import MinimumSpanningTree
+from models.Clustering import Cluster, pickCluster
+from models.ScenarioGeneration import MC, BOOT
+from models.CVaRtargets import targetsCVaR
+from models.CVaRmodel import modelCVaR
 from pandas_datareader import data
-from ETFlist import ETFlist
+from data.ETFlist import ETFlist
 
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
-import math
+
 pio.renderers.default = "browser"
 
-data = pd.read_parquet('algostrata_isin.parquet')
+data = pd.read_parquet('data/algostrata_isin.parquet')
 tickers = data.columns.values
-data_name = pd.read_parquet('algostrata_name.parquet')
+data_name = pd.read_parquet('data/algostrata_name.parquet')
 names = data_name.columns.values
 
 class TradeBot(object):

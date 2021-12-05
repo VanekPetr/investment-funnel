@@ -2,16 +2,10 @@ global df_etim
 import dash  # version 1.13.1
 import dash_auth
 import numpy as np
+import pandas as pd
 from dash.dependencies import Input, Output, State
-from dash_extensions.snippets import send_data_frame
-from dash.exceptions import PreventUpdate
-import plotly.express as px
-import datetime
-import os
-from urllib.parse import quote as urlquote
-from Dash_layouts import *
-from dash_extensions.snippets import send_file
-from main import TradeBot
+from app.Dash_layouts import *
+from models.main import TradeBot
 
 global first_run_page1, first_run_page2, first_run_page3, first_run_page3_2
 global ML_click_prev, click_prev

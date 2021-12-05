@@ -6,12 +6,6 @@ Created on Wed Nov 18 15:45:27 2020
 @author: Petr Vanek
 """
 
-"""
-Scenario Generation Methods
-"""
-
-# LIBRARY
-#-------------------------------------------------------------------------
 import numpy as np
 import math 
 
@@ -78,5 +72,3 @@ def BOOT(data, nSim, N_test):
             monthly_sim[p,s,:] += -1
             
     return(monthly_sim)   
-
-    

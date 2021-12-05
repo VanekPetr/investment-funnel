@@ -9,11 +9,7 @@ Created on Fri Nov 20 08:00:08 2020
 
 import pulp
 import pandas as pd
-from pandas_datareader import data
-
-from dataAnalyser import getWeeklyRet
-from ScenarioGeneration import BOOT
-
+from models.ScenarioGeneration import BOOT
 
 # FUNCTION RUNNING THE OPTIMIZATION
 #---------------------------------------------------------------------- 
