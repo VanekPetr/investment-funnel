@@ -12,6 +12,14 @@ STEP 1: pip install -r requirements.txt <br/>
 STEP 2: run Dash_app.py <br/>
 STEP 3: Use this login information. Username: Trader, Password: 42
 
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/VanekPetr/investment-funnel/tags). 
+
+## Authors
+
+* **Petr Vanek** - *Initial work* - [VanekPetr](https://github.com/VanekPetr)
+
 ## License
 
 This repository is licensed under [CC-BY-4.0](LICENSE) (c) 2019 GitHub, Inc.
