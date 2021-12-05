@@ -1,7 +1,7 @@
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html
+from dash import dcc
 import dash_bootstrap_components as dbc
-import dash_table
+from dash import dash_table
 import base64
 from models.main import names
 
@@ -118,7 +118,7 @@ GRAPH_RIGHT = {
 
 # GENERAL
 # ----------------------------------------------------------------------------------------------------------------------
-image_filename = 'assets/ALGO_logo.png'  # replace with your own image
+image_filename = 'app/assets/ALGO_logo.png'  # replace with your own image
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 # Top bar with Algostrata logo
