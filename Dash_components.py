@@ -118,7 +118,7 @@ GRAPH_RIGHT = {
 
 # GENERAL
 # ----------------------------------------------------------------------------------------------------------------------
-image_filename = 'app/assets/ALGO_logo.png'  # replace with your own image
+image_filename = 'assets/ALGO_logo.png'  # replace with your own image
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 # Top bar with Algostrata logo

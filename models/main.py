@@ -19,9 +19,9 @@ from pandas_datareader import data
 
 pio.renderers.default = "browser"
 
-data = pd.read_parquet('app/data/algostrata_isin.parquet')
+data = pd.read_parquet('data/algostrata_isin.parquet')
 tickers = data.columns.values
-data_name = pd.read_parquet('app/data/algostrata_name.parquet')
+data_name = pd.read_parquet('data/algostrata_name.parquet')
 names = data_name.columns.values
 
 class TradeBot(object):
