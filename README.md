@@ -12,4 +12,8 @@ STEP 1: pip install -r requirements.txt <br/>
 STEP 2: run Dash_app.py <br/>
 STEP 3: Use this login information. Username: Trader, Password: 42
 
+## License
+
+This repository is licensed under [CC-BY-4.0](../LICENSE) (c) 2019 GitHub, Inc.
+
 
