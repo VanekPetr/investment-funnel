@@ -14,6 +14,6 @@ STEP 3: Use this login information. Username: Trader, Password: 42
 
 ## License
 
-This repository is licensed under [CC-BY-4.0](../LICENSE) (c) 2019 GitHub, Inc.
+This repository is licensed under [CC-BY-4.0](LICENSE) (c) 2019 GitHub, Inc.
 
 
