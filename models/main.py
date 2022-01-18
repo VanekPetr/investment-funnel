@@ -19,6 +19,7 @@ from pandas_datareader import data
 
 pio.renderers.default = "browser"
 
+# Get data
 data = pd.read_parquet('data/algostrata_isin.parquet')
 tickers = data.columns.values
 data_name = pd.read_parquet('data/algostrata_name.parquet')
