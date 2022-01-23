@@ -14,9 +14,9 @@ global AItable, OPTtable, BENCHtable
 AItable = pd.DataFrame(np.array([['No result', 'No result', 'No result', 'No result', 'No result']]),
                        columns=['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns', 'Standard Deviation of Returns'])
 OPTtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
-                       columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
+                        columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
 BENCHtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
-                       columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
+                          columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
 first_run_page1, first_run_page2, first_run_page3, first_run_page3_2 = 0, 0, 0, 0
 ML_click_prev, click_prev = 0, 0
 
@@ -61,6 +61,7 @@ app.layout = load_page()
 # ----------------------------------------------------------------------------------------------------------------------
 '''
 
+
 # WHICH WEBPAGE
 @app.callback(
     Output('page-content', 'children'),
@@ -79,7 +80,6 @@ def display_page(pathname):
 
 # BACK-TESTING
 # ----------------------------------------------------------------------------------------------------------------------
-
 # PLOT GRAPH WITH DOTS
 @app.callback(
     [Output('backtestPerfFig', 'children'),
@@ -131,18 +131,17 @@ def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_nu
         algo.setup_data(start=start_data, end=end_data, train_test=True, end_train=end_train, start_test=start_test)
         # RUN ML algo
         if ml_method == 'MST':
-            algo.mst(nMST=num_runs, plot=False)
+            algo.mst(n_mst_runs=num_runs, plot=False)
         else:
-            algo.clustering(nClusters=num_runs, nAssets=num_clusters, plot=False)
+            algo.clustering(n_clusters=num_runs, n_assets=num_clusters, plot=False)
         # RUN THE BACKTEST
         OPTtable, BENCHtable, figPerf, figComp = algo.backtest(assets=ml_method,
                                                                benchmark=benchmark,
                                                                scenarios=scen_method,
-                                                               nSimulations=scen_num,
-                                                               plot=True)
+                                                               n_simulations=scen_num)
         # Save page values
-        save_Figure3 = dcc.Graph(figure=figPerf, style={'margin':'0%'})
-        save_Figure3_comp = dcc.Graph(figure=figComp, style={'margin':'0%'})
+        save_Figure3 = dcc.Graph(figure=figPerf, style={'margin': '0%'})
+        save_Figure3_comp = dcc.Graph(figure=figComp, style={'margin': '0%'})
         save_ml = ml_method
         save_ml_num = num_runs
         save_clust_top = num_clusters
@@ -153,11 +152,13 @@ def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_nu
     return save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'), \
            save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
 
+
 @app.callback(
     Output('slider-output-container2', 'children'),
     [Input('my-slider2', 'value')])
 def update_output(value):
     return '# of scenarios: {}'.format(value)
+
 
 @app.callback(
     Output('slider-output-container-backtest', 'children'),
@@ -165,11 +166,13 @@ def update_output(value):
 def update_output_cluster(value):
     return 'In case of CLUSTERING: # of the best performing assets selected from each cluster: {}'.format(value)
 
+
 @app.callback(
     Output('slider-output-container-backtest-ml', 'children'),
     [Input('slider-backtest-ml', 'value')])
 def update_output_MLtype(value):
     return '# of clusters or # of MST runs: {}'.format(value)
+
 
 @app.callback(
     [Output('picker-test', 'start_date'),
@@ -196,7 +199,6 @@ def update_test_date(selected_date):
 
 # AI Feature Selection
 # ----------------------------------------------------------------------------------------------------------------------
-
 # PLOT ML MST GRAPH
 @app.callback(
     [Output('mlFig', 'children'),
@@ -229,7 +231,8 @@ def plot_ml(click_ML, model, num_iter, start, end):
         endDate2 = endDate
         save_Figure2, save_model, save_MLnum = None, None, None
         AI_text_number = "No selected asset."
-        return save_Figure2, startDate, endDate, minDate, maxDate, AItable.to_dict('records'), AI_text_number, save_model, save_MLnum
+        return save_Figure2, startDate, endDate, minDate, maxDate, AItable.to_dict('records'), AI_text_number,\
+               save_model, save_MLnum
 
     if click_ML is None:
         click_ML = ML_click_prev
@@ -246,15 +249,15 @@ def plot_ml(click_ML, model, num_iter, start, end):
         # MST
         if model == "MST":
             # RUN THE MINIMUM SPANNING TREE METHOD
-            fig = algo.mst(nMST=num_iter, plot=True)
+            fig = algo.mst(n_mst_runs=num_iter, plot=True)
             AIsubset = algo.subsetMST
             ML_click_prev = click_ML
-            save_Figure2 = dcc.Graph(figure=fig, style={'height':'800px', 'margin':'0%'})
+            save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
         # CLUSTERING
         else:
-            fig = algo.clustering(nClusters=num_iter, nAssets=10, plot=True)
+            fig = algo.clustering(n_clusters=num_iter, n_assets=10, plot=True)
             AIsubset = algo.subsetCLUST
-            save_Figure2 = dcc.Graph(figure=fig, style={'height':'800px', 'margin':'0%'})
+            save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
         AItable = algo.AIdata.loc[list(AIsubset), ['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
                                                    'Standard Deviation of Returns']]
         # ROUNDING
@@ -263,11 +266,12 @@ def plot_ml(click_ML, model, num_iter, start, end):
 
         AI_text_number = 'Number of selected assets: ' + str(len(AItable))
 
-    return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number, save_model, save_MLnum
+    return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number,\
+           save_model, save_MLnum
+
 
 # MARKET OVERVIEW
 # ----------------------------------------------------------------------------------------------------------------------
-
 # PLOT GRAPH WITH DOTS
 @app.callback(
     [Output('dotsFig', 'children'),
@@ -307,12 +311,13 @@ def plot_dots(click, start, end, search):
             endDate = end
             save_Search = search
 
-            fig = algo.plot_dots(start=str(start), end=str(end), fundSet=save_Search)
-            save_Figure = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%', 'top': '0%',
-                                                       'left': '0%'})
+            fig = algo.plot_dots(start=str(start), end=str(end), fund_set=save_Search)
+            save_Figure = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%',
+                                                       'top': '0%', 'left': '0%'})
             return save_Figure, startDate, endDate, minDate, maxDate, save_Search
     except:
         return save_Figure, startDate, endDate, minDate, maxDate, save_Search
+
 
 '''
 # ----------------------------------------------------------------------------------------------------------------------
