@@ -117,8 +117,8 @@ def targetsCVaR(start_date, end_date, test_date, benchmark, test_index, budget, 
     # Get scenarios
     # The Monte Carlo Method
     targetScen = BOOT(data=targetWeeklyRet,       # subsetMST or subsetCLUST
-                      nSim=250,
-                      N_test=N_test)
+                      n_simulations=250,
+                      n_test=N_test)
 
     # Compute the optimal portfolio outperforming zero percentage return
     # ----------------------------------------------------------------------
