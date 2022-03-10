@@ -1,52 +1,29 @@
-from loguru import logger
 import yfinance as yf
-import datetime
+from loguru import logger
+from investment_club.nord_and_lysa_etfs import lysa_stock_etfs, lysa_bond_etfs, nord_etfs
+from investment_club.nord_and_lysa_portfolios import nord_5, nord_13, nord_20
+from investment_club.nord_and_lysa_portfolios import lysa_100, lysa_75_25, lysa_50_50
 
-# *** Prepare our data ***
-# Dictionary with ETF's full name and its ticker
-lysa_stock_etfs = {
-    'Vanguard US': 'VUN.TO',
-    'Vanguard North America': 'VNRT',   # Nan
-    'Vanguard Europe': 'VGK',
-    'Vanguard Emerging Markets': 'VWO',
-    'Vanguard Global Small-Cap': 'VB',
-    'iShares US': 'ITOT',
-    'Vanguard Japan': 'VJPN',   # Nan
-    'Vanguard Pacific': 'VPL',
-    'Lyxor Europe': 'DR'    # Nan
-}
 
-lysa_bond_etfs = {
-    'Vanguard Europe Government Bond': 'VETY',  # Nan
-    'iShares Europe Government Bond': 'LU',
-    'Vanguard Global Bond': 'BNDW',
-    'Vanguard Global Short-Term Bond': 'BSV',
-    'Vanguard Euro Investment Grade Bond': 'VECP',
-    'Vanguard Eurozone Inflation-Linked Bond': 'VTIP',
-    'Vanguard Global Aggregate Bond': 'VGAB',   # Nan
-    'iShares Global Inflation Linked Govt Bond': 'IGIL',    # Nan
-    'Vanguard EUR Corporate Bond': 'VECP',  # Nan
-    'iShares Core € Corp Bond': 'IEAC'  # Nan
-}
+def download_data(start_date, end_date):
+    """
+    Function to download all needed ETF data for NORD and Lysa portfolios
+    """
 
-nord_etfs = {
-    '... the rest if for Edin :)': 'ticker name which can be found for example on etf.com'
-}
+    all_tickers = []
+    # Get list of all tickers
+    for dictionary in [lysa_stock_etfs, lysa_bond_etfs, nord_etfs]:
+        all_tickers.extend(dictionary.values())
 
-# *** Prepare data for yFinance ***
-all_tickers = []
-# Get list of all tickers
-for dictionary in [lysa_stock_etfs, lysa_bond_etfs]:    # add nord_etfs here when ready
-    all_tickers.extend(dictionary.values())
+    # Download price data from Yahoo! finance based on list of ETF tickers and start/end dates
+    try:
+        daily_prices = yf.download(all_tickers, start=start_date, end=end_date)['Adj Close']
+    except Exception as e:
+        logger.warning(f"Problem when downloading our data with an error: {e}")
+        daily_prices = None
 
-# *** Download the data ***
-# Select start and end date for you data
-start_date = '2020-11-20'
-end_date = '2022-01-20'
+    return daily_prices
 
-# Download price data from Yahoo! finance based on list of ETF tickers and start/end dates
-try:
-    daily_prices = yf.download(all_tickers, start=start_date, end=end_date)['Adj Close']
-except Exception as e:
-    logger.warning(f"Problem when downloading our data with an error: {e}")
 
+if __name__ == "__main__":
+    daily_prices_df = download_data(start_date='2020-11-20', end_date='2022-01-20')
