@@ -1,13 +1,9 @@
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html
+from dash import dcc
 import dash_bootstrap_components as dbc
-import pandas as pd
-import dash_table
-import math
-from dash_extensions import Download
+from dash import dash_table
 import base64
-from datetime import date
-from main import names
+from models.main import names
 
 
 '''
@@ -31,8 +27,8 @@ TOPBAR_STYLE = {
 }
 
 OPTION_ELEMENT = {
-    "margin" : "1%",
-    "font-size" : "12px"
+    "margin": "1%",
+    "font-size": "12px"
 }
 
 OPTION_BTN = {
@@ -40,37 +36,37 @@ OPTION_BTN = {
     'height': '32px',
     'background-color': "#111723", 
     'color': 'white',
-    'font-size' : '12px'
+    'font-size': '12px'
 }
 
 MAIN_TITLE = {
     "text-aling": "left",
-    "margin" : "2%",
-    "margin-top":'16px',
-    "font-size" : "16px", 
-    "font-weight" : "600",
+    "margin": "2%",
+    "margin-top": '16px',
+    "font-size": "16px",
+    "font-weight": "600",
 }
 
 SUB_TITLE = {
     "text-aling": "left",
-    "margin-top" : "6%",
-    "margin-bottom" : "1%",
-    "margin-left" : "2%",
-    "font-size" : "12px", 
-    "font-weight" : "500",
-    "color" : "#191919"
+    "margin-top": "6%",
+    "margin-bottom": "1%",
+    "margin-left": "2%",
+    "font-size": "12px",
+    "font-weight": "500",
+    "color": "#191919"
 }
 
 DESCRIP_INFO = {
     "text-aling": "left",
-    "margin" : "2%",
-    "font-size" : "12px", 
-    "color" : "#5d5d5d"
+    "margin": "2%",
+    "font-size": "12px",
+    "color": "#5d5d5d"
 }
 
 SIDEBAR_STYLE = {
     "position": "fixed",
-    'top':0,
+    'top': 0,
     "left": 0,
     "bottom": 0,
     "width": side_bar_width,
@@ -78,12 +74,12 @@ SIDEBAR_STYLE = {
     "background-color": "#111723",
     # "li:hover" : "#EF9761"
     'display': 'flex', 
-    'flex-direction':'column', 
-    'overflow' : 'auto',
+    'flex-direction': 'column',
+    'overflow': 'auto',
 }
 
 NAV_BTN = {
-    'a:color' : 'white',
+    'a:color': 'white',
 
 }
 
@@ -96,9 +92,9 @@ GRAPH_LEFT = {
     "background-color":  "#d4d5d6",
     "padding": "8px",
     'display': 'flex', 
-    'flex-direction':'column', 
+    'flex-direction': 'column',
     # 'flex-flow': 'column wrap'
-    'overflow' : 'auto',
+    'overflow': 'auto',
 }
 
 GRAPH_RIGHT = {
@@ -109,8 +105,8 @@ GRAPH_RIGHT = {
     'bottom': '0%',
     "padding": "4px",
     'display': 'flex', 
-    'flex-direction':'column', 
-    'overflow' : 'auto',
+    'flex-direction': 'column',
+    'overflow': 'auto',
 }
 
 
@@ -122,17 +118,19 @@ GRAPH_RIGHT = {
 
 # GENERAL
 # ----------------------------------------------------------------------------------------------------------------------
-image_filename = 'assets/ALGO_logo.png' # replace with your own image
+image_filename = 'assets/ALGO_logo.png'  # replace with your own image
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
-# Top bar with Algostrata logo
+# Top bar with AlgoStrata logo
 topBar = html.Div([
-         html.Img(src= 'data:image/png;base64,{}'.format(encoded_image.decode()), style={'height': '16px', 'margin':'12px', 'margin-right': '16px'})
+         html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),
+                  style={'height': '16px', 'margin': '12px', 'margin-right': '16px'})
             ], style=TOPBAR_STYLE)
 
-# Side bar with navigation
+# sidebar with navigation
 sideBar = html.Div([
-        html.Img(src= 'data:image/png;base64,{}'.format(encoded_image.decode()), style={'width': '144px', 'height': '12px', 'margin-top' : '16px', 'margin-bottom':'36px'}),
+        html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),
+                 style={'width': '144px', 'height': '12px', 'margin-top': '16px', 'margin-bottom': '36px'}),
         dbc.Nav(
             [
                 dbc.NavLink("Market Overview", id='page0', href="/", active="exact"),
@@ -149,31 +147,31 @@ sideBar = html.Div([
 # BACK-TESTING
 # ----------------------------------------------------------------------------------------------------------------------
 # Loading 
-loading =  dcc.Loading(
-            id="loading-1",
-            type="default",
-            children=html.Div(id="backtestPerfFig")
-        )
+loading = dcc.Loading(
+    id="loading-1",
+    type="default",
+    children=html.Div(id="backtestPerfFig")
+)
 
 optionBacktest = html.Div([
-    #part1
+    # part1
     html.H5("Backtesting", style=MAIN_TITLE),
     html.P("Test your investment strategy with a selected ML model, scenario generation method and the CVaR model for a given training and testing time period",
-            style=DESCRIP_INFO),
+           style=DESCRIP_INFO),
     html.P("Training period",
-            style=SUB_TITLE),
+           style=SUB_TITLE),
     dcc.DatePickerRange(
         id='picker-train',
         style=OPTION_ELEMENT
     ),
     html.P("Testing period for backtest",
-            style=SUB_TITLE),
+           style=SUB_TITLE),
     dcc.DatePickerRange(
         id='picker-test',
         style=OPTION_ELEMENT
     ),
     html.P("Feature selection",
-            style=SUB_TITLE),
+           style=SUB_TITLE),
     dcc.Dropdown(
         id='select-ml',
         options=[
@@ -184,9 +182,9 @@ optionBacktest = html.Div([
         style=OPTION_ELEMENT,
     ),
     html.Div(id='slider-output-container-backtest-ml',
-            style=OPTION_ELEMENT),
+             style=OPTION_ELEMENT),
 
-    #part2
+    # part2
     dcc.Slider(
         id='slider-backtest-ml',
         min=1,
@@ -204,7 +202,7 @@ optionBacktest = html.Div([
     html.Div(id='slider-output-container-backtest',
              style=OPTION_ELEMENT),
     html.P("Scenarios",
-            style=SUB_TITLE),
+           style=SUB_TITLE),
     dcc.Dropdown(
             id='select-scenarios',
             options=[
@@ -215,7 +213,7 @@ optionBacktest = html.Div([
             style=OPTION_ELEMENT,
         ),
     
-    #part3
+    # part3
     dcc.Slider(
         id='my-slider2',
         min=250,
@@ -226,17 +224,17 @@ optionBacktest = html.Div([
     html.Div(id='slider-output-container2',
              style=OPTION_ELEMENT),
     html.P("Benchmark",
-            style=SUB_TITLE),
+           style=SUB_TITLE),
     dcc.Dropdown(
         id='select-benchmark',
-        options = [
+        options=[
             {'label': value, 'value': value} for value in names
         ],
         placeholder="Select your ETF benchmark",
         multi=True,
         style=OPTION_ELEMENT,
     ),
-    html.Button('Run Backtest', id='backtestRun', loading_state={'is_loading' : 'true'},  style=OPTION_BTN),
+    html.Button('Run Backtest', id='backtestRun', loading_state={'is_loading': 'true'},  style=OPTION_BTN),
 
  ], style=GRAPH_LEFT)
 
@@ -245,17 +243,15 @@ tableBar = html.Div([
     html.H5("Results", style={'text-aling': 'left', 'margin-left': '2%'}),
 
     html.P("Table for our optimal portfolio",
-            style={'width': '80%',  'margin-left': '2%',}),
+           style={'width': '80%',  'margin-left': '2%', }),
     dash_table.DataTable(id='tableResult',
           columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
                    {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
                    {"name": 'Sharpe R', "id": 'Sharpe R'}],
-          #fixed_rows={'headers': True},
+          # fixed_rows={'headers': True},
           style_table={
-                       'width':'48%',
-                       'margin':'2%',
-                    #    'overflowY':'scroll',
-                    #    'maxHeight':'85%'
+                       'width': '48%',
+                       'margin': '2%',
           },
           style_cell={'textAlign': 'center'},
           style_as_list_view=True,
@@ -269,27 +265,27 @@ tableBar = html.Div([
           ]),
 
     html.P("Table for Benchmark",
-            style={'width': '80%','margin-left': '2%'}),
+           style={'width': '80%', 'margin-left': '2%'}),
     dash_table.DataTable(id='tableResult-benchmark',
-                        columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
-                                 {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
-                                 {"name": 'Sharpe R', "id": 'Sharpe R'}],
-                        # fixed_rows={'headers': True},
-                        style_table={
-                                    'width':'48%',
-                                    'margin':'2%',
+                         columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
+                                  {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
+                                  {"name": 'Sharpe R', "id": 'Sharpe R'}],
+                         # fixed_rows={'headers': True},
+                         style_table={
+                                    'width': '48%',
+                                    'margin': '2%',
                                     #  'overflowY': 'scroll',
                                     #  'maxHeight': '85%'
                                      },
-                        style_cell={'textAlign': 'center'},
-                        style_as_list_view=True,
-                        style_header={'fontWeight': 'bold'},
-                        style_cell_conditional=[
+                         style_cell={'textAlign': 'center'},
+                         style_as_list_view=True,
+                         style_header={'fontWeight': 'bold'},
+                         style_cell_conditional=[
                             {
                                 'if': {'column_id': c},
                                 'textAlign': 'left'
                             } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
-                        ])
+                         ])
 ], style=OPTION_ELEMENT)
 
 # Performance
@@ -307,11 +303,10 @@ graphResults = html.Div([
 
 # AI Feature Selection
 # ----------------------------------------------------------------------------------------------------------------------
-
 optionML = html.Div([
     html.H5("Minimum Spanning Tree & Clustering", style=MAIN_TITLE),
     html.P("Use machine learning algorithms to decrease the number of ETFs in your asset universe.",
-            style=DESCRIP_INFO),
+           style=DESCRIP_INFO),
 
     html.P("Time period for feature selection", style=SUB_TITLE),
     # Select time period
@@ -348,9 +343,8 @@ optionML = html.Div([
     # RUN Clustering
 
     html.Button('Compute',
-        id='MLRun',
-        style=OPTION_BTN),
-
+                id='MLRun',
+                style=OPTION_BTN),
 ], style=GRAPH_LEFT)
 
 selectionBar = html.Div([
@@ -359,12 +353,12 @@ selectionBar = html.Div([
     dash_table.DataTable(id='AIResult',
           columns=[{"name": 'Name', "id": 'Name'},
                    {"name": 'ISIN', "id": 'ISIN'},
-                   {"name":'Sharpe Ratio', "id":'Sharpe Ratio'},
-                   {"name": 'Annual Returns', "id":'Average Annual Returns'},
-                   {"name":'STD',"id":'Standard Deviation of Returns'}],
+                   {"name": 'Sharpe Ratio', "id": 'Sharpe Ratio'},
+                   {"name": 'Annual Returns', "id": 'Average Annual Returns'},
+                   {"name": 'STD', "id": 'Standard Deviation of Returns'}],
           style_table={
-                       'width':'48%',
-                       'margin':'2%',
+                       'width': '48%',
+                       'margin': '2%',
           },
           style_cell={'textAlign': 'center'},
           style_as_list_view=True,
@@ -387,11 +381,10 @@ graphML = html.Div([
 
 # MARKET OVERVIEW
 # ----------------------------------------------------------------------------------------------------------------------
-
 optionGraph = html.Div([
     html.H5("Investment Funnel", style=MAIN_TITLE),
     html.P("Selected dates for market overview",
-            style=SUB_TITLE),
+           style=SUB_TITLE),
     # Date picker for plotting
     dcc.DatePickerRange(
         id='picker-show',
@@ -400,10 +393,10 @@ optionGraph = html.Div([
 
     # Option to search for a fund
     html.P("Find your fund",
-            style=SUB_TITLE),
+           style=SUB_TITLE),
     dcc.Dropdown(
         id='find-fund',
-        options = [
+        options=[
             {'label': value, 'value': value} for value in names
         ],
         placeholder="Select here",
@@ -418,7 +411,6 @@ optionGraph = html.Div([
 
 
 ], style=GRAPH_LEFT)
-
 
 # Table
 graphOverview = html.Div(id='dotsFig', style=GRAPH_RIGHT)
