@@ -3,51 +3,51 @@ import numpy as np
 
 
 # Function computing the geometric mean of annual returns
-def meanRetAn(data):
-    Result = 1
+def mean_an_returns(data):
+    result = 1
 
     for i in range(len(data.index)):
-        Result *= (1 + data.iloc[i, :])
+        result *= (1 + data.iloc[i, :])
 
-    Result = Result ** (1 / float(len(data.index) / 52)) - 1
+    result = result ** (1 / float(len(data.index) / 52)) - 1
 
-    return Result
+    return result
 
 
 # Function computing the final statistics of the backtesting
-def finalStat(data):
+def final_stats(data):
     # TABLE WITH AVG RET AND STD OF RET
     data = data.pct_change()
     data = data.drop(data.index[:1])
 
-    mu_ga = round(meanRetAn(data), 2)  # annual geometric mean
-    stdev_a = round(data.std(axis=0) * np.sqrt(52), 2)  # standard deviation of Annual Returns
+    mu_ga = round(mean_an_returns(data), 2)  # annual geometric mean
+    std_dev_a = round(data.std(axis=0) * np.sqrt(52), 2)  # standard deviation of Annual Returns
 
-    statDf = pd.concat([mu_ga, stdev_a], axis=1)  # table
-    statName = ["Average Annual Returns", "Standard Deviation of Returns"]
-    statDf.columns = statName  # add names
+    stat_df = pd.concat([mu_ga, std_dev_a], axis=1)  # table
+    stat_names = ["Average Annual Returns", "Standard Deviation of Returns"]
+    stat_df.columns = stat_names  # add names
 
     # COMPUTE SHARPE RATIO AND ADD IT INTO THE TABLE
-    sharpe = round(statDf.loc[:, "Average Annual Returns"] / statDf.loc[:, "Standard Deviation of Returns"], 2)
-    statDf = pd.concat([statDf, sharpe], axis=1)  # add sharpe ratio into the table
-    statName = ["Avg An Ret", "Std Dev of Ret", "Sharpe R"]
-    statDf.columns = statName
+    sharpe = round(stat_df.loc[:, "Average Annual Returns"] / stat_df.loc[:, "Standard Deviation of Returns"], 2)
+    stat_df = pd.concat([stat_df, sharpe], axis=1)  # add sharpe ratio into the table
+    stat_names = ["Avg An Ret", "Std Dev of Ret", "Sharpe R"]
+    stat_df.columns = stat_names
 
-    return statDf
+    return stat_df
 
 
 # Function returning weekly returns
-def getWeeklyRet(data):
+def get_weekly_returns(data):
     # DEFINE IF WE WORK WITH ISIN CODES OR NAMES OF MUTUAL FUNDS
-    workPrices = data
+    prices_df = data
     # MODIFY THE DATA
-    pricesWed = workPrices[workPrices.index.weekday == 2]  # Only wednesdays
+    prices_on_wed = prices_df[prices_df.index.weekday == 2]  # Only wednesdays
 
     # Get weekly returns
-    weeklyReturns = pricesWed.pct_change()
-    weeklyReturns = weeklyReturns.drop(weeklyReturns.index[:1])  # drop first NaN row
+    weekly_returns = prices_on_wed.pct_change()
+    weekly_returns = weekly_returns.drop(weekly_returns.index[:1])  # drop first NaN row
 
-    return weeklyReturns
+    return weekly_returns
 
 
 tickers = ['AAXJ', 'ACWI', 'AGG', 'AMLP', 'AOA', 'AOK', 'AOR', 'BIL', 'BKLN', 'BLV', 'BND', 'BSV', 'CORN', 'CQQQ',

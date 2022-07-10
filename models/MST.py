@@ -4,9 +4,9 @@ import networkx as nx
 from sklearn.decomposition import PCA
 
 
-def MinimumSpanningTree(dataset):
+def minimum_spanning_tree(dataset):
     corr = dataset.corr(method="spearman")              # calculate the correlation
-    distance_corr = (2 * (1 - corr)) ** 0.5                   # calculate the distance
+    distance_corr = (2 * (1 - corr)) ** 0.5             # calculate the distance
     mask = np.triu(np.ones_like(corr, dtype=np.bool))   # get only the upper half of the matrix
     distance_corr = distance_corr * mask 
    
@@ -20,14 +20,14 @@ def MinimumSpanningTree(dataset):
     links_filtered = links.loc[(links["var1"] != links["var2"])]     # filter out self-correlations
     
     # Create the graph
-    G = nx.Graph() 
+    created_graph = nx.Graph()
     for i in range(len(corr)):                                         # add nodes
-        G.add_node(corr.index[i])
+        created_graph.add_node(corr.index[i])
     tuples = list(links_filtered.itertuples(index=False, name=None))    # add edges with weight
-    G.add_weighted_edges_from(tuples)
+    created_graph.add_weighted_edges_from(tuples)
     
     # Create a MST from the full graph
-    mst = nx.minimum_spanning_tree(G)
+    mst = nx.minimum_spanning_tree(created_graph)
     
     # Save the nodes with degree one
     degrees = [val for (node, val) in mst.degree()]
@@ -47,7 +47,7 @@ def MinimumSpanningTree(dataset):
     pca.fit(corr_subset)
     value = 0
     for i in range(1, corr_subset.shape[1]):
-        value = value + i*pca.explained_variance_ratio_[i-1]
-    pdi = 2*value - 1
+        value = value + i * pca.explained_variance_ratio_[i-1]
+    pdi = 2 * value - 1
 
     return subset, subset_df, corr_avg, pdi
