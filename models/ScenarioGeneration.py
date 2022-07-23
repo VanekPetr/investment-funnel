@@ -1,11 +1,14 @@
 import numpy as np
 import math
 
+"""
+    ----------------------------------------------------------------------
+    Scenario Generation: THE MONTE CARLO METHOD
+    ----------------------------------------------------------------------
+"""
 
-# ----------------------------------------------------------------------
-# Scenario Generation: THE MONTE CARLO METHOD
-# ----------------------------------------------------------------------
-def monte_carlo(data, n_simulations, n_test):
+
+def MC(data, n_simulations, n_test):
     """
     Monte Carlo simulations
     """
@@ -16,17 +19,17 @@ def monte_carlo(data, n_simulations, n_test):
     n_simulations = n_simulations  # 250 scenarios for each period
     n_indices = data.shape[1]
 
-    sigma = np.cov(data, rowvar=False)  # The covariance matrix
+    SIGMA = np.cov(data, rowvar=False)  # The covariance matrix 
     # RHO = np.corrcoef(ret_train, rowvar=False)    # The correlation matrix 
-    mu = np.mean(data, axis=0)  # The mean array
+    MU = np.mean(data, axis=0)  # The mean array
     # sd = np.sqrt(np.diagonal(SIGMA))              # The standard deviation
-    n_rolls = math.floor(n_test/n_iter)
+    n_rolls = math.floor((n_test) / n_iter)
 
     sim = np.zeros((n_test, n_simulations, n_indices), dtype=float)  # Match GAMS format
 
     print('-------Simulating Weekly Returns-------')
     for week in range(n_test):
-        sim[week, :, :] = np.random.multivariate_normal(mean=mu, cov=sigma, size=n_simulations)
+        sim[week, :, :] = np.random.multivariate_normal(mean=MU, cov=SIGMA, size=n_simulations)
 
     monthly_sim = np.zeros((n_rolls, n_simulations, n_indices))
 
@@ -41,10 +44,14 @@ def monte_carlo(data, n_simulations, n_test):
     return monthly_sim
 
 
-# ----------------------------------------------------------------------
-# Scenario Generation: THE BOOTSTRAPPING METHOD
-# ----------------------------------------------------------------------
-def bootstrapping(data, n_simulations, n_test):
+"""
+    ----------------------------------------------------------------------
+    Scenario Generation: THE BOOTSTRAPPING METHOD
+    ----------------------------------------------------------------------
+"""
+
+
+def BOOT(data, n_simulations, n_test):
     n_iter = 4  # 4 weeks compounded in our scenario                                                         
     n_train_weeks = len(data.index) - n_test
     n_indices = data.shape[1]

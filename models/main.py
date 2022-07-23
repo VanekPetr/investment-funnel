@@ -3,12 +3,12 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
-from models.dataAnalyser import mean_an_returns, final_stats
-from models.MST import minimum_spanning_tree
-from models.Clustering import cluster, pick_cluster
-from models.ScenarioGeneration import monte_carlo, bootstrapping
-from models.CVaRtargets import get_cvar_targets
-from models.CVaRmodel import cvar_model
+from models.dataAnalyser import meanRetAn, finalStat
+from models.MST import MinimumSpanningTree
+from models.Clustering import Cluster, pickCluster
+from models.ScenarioGeneration import MC, BOOT
+from models.CVaRtargets import targetsCVaR
+from models.CVaRmodel import modelCVaR
 from data.ETFlist import ETFlist
 from pandas_datareader import data
 
@@ -58,12 +58,12 @@ class TradeBot(object):
         weekly_data = self.weeklyReturns[(self.weeklyReturns.index >= start) & (self.weeklyReturns.index <= end)].copy()
 
         # Create table with summary statistics
-        mu_ga = mean_an_returns(weekly_data)  # Annualised geometric mean of returns
-        std_dev_a = weekly_data.std(axis=0) * np.sqrt(52)  # Annualised standard deviation of returns
-        sharpe = round(mu_ga / std_dev_a, 2)  # Sharpe ratio of each financial product
+        mu_ga = meanRetAn(weekly_data)  # Annualised geometric mean of returns
+        stdev_a = weekly_data.std(axis=0) * np.sqrt(52)  # Annualised standard deviation of returns
+        sharpe = round(mu_ga / stdev_a, 2)  # Sharpe ratio of each financial product
 
         # Write all results into a data frame
-        stat_df = pd.concat([mu_ga, std_dev_a, sharpe], axis=1)
+        stat_df = pd.concat([mu_ga, stdev_a, sharpe], axis=1)
         stat_df.columns = ["Average Annual Returns", "Standard Deviation of Returns", "Sharpe Ratio"]
         stat_df["ISIN"] = stat_df.index  # Add names into the table
         stat_df["Name"] = self.names
@@ -79,8 +79,7 @@ class TradeBot(object):
 
         return stat_df
 
-    @staticmethod
-    def __plot_backtest(performance, performance_benchmark, composition, names, tickers):
+    def __plot_backtest(self, performance, performance_benchmark, composition, names, tickers):
         """
         METHOD TO PLOT THE BACKTEST RESULTS
         """
@@ -109,10 +108,8 @@ class TradeBot(object):
         composition = composition.loc[:, (composition != 0).any(axis=0)]
         data = []
         idx_color = 0
-        composition_color = (px.colors.sequential.turbid
-                             + px.colors.sequential.Brwnyl
-                             + px.colors.sequential.YlOrBr
-                             + px.colors.sequential.gray)
+        composition_color = px.colors.sequential.turbid + px.colors.sequential.Brwnyl + px.colors.sequential.YlOrBr \
+                            + px.colors.sequential.gray
         for isin in composition.columns:
             trace = go.Bar(
                 x=composition.index,
@@ -271,7 +268,7 @@ class TradeBot(object):
         # Starting subset of data for MST
         self.subsetMST_df = self.trainDataset
         for i in range(n_mst_runs):
-            self.subsetMST, self.subsetMST_df, self.corrMST_avg, self.PDI_MST = minimum_spanning_tree(self.subsetMST_df)
+            self.subsetMST, self.subsetMST_df, self.corrMST_avg, self.PDI_MST = MinimumSpanningTree(self.subsetMST_df)
 
         # PLOTTING RESULTS
         if plot:
@@ -284,13 +281,13 @@ class TradeBot(object):
         """
         
         # CLUSTER DATA
-        clusters = cluster(self.trainDataset, n_clusters, dendrogram=False)
+        clusters = Cluster(self.trainDataset, n_clusters, dendogram=False)
 
         # SELECT ASSETS
-        self.subsetCLUST, self.subsetCLUST_df = pick_cluster(data=self.trainDataset,
-                                                             stat=self.dataPlot,
-                                                             ml=clusters,
-                                                             n_assets=n_assets)  # Number of assets from each cluster
+        self.subsetCLUST, self.subsetCLUST_df = pickCluster(data=self.trainDataset,
+                                                            stat=self.dataPlot,
+                                                            ML=clusters,
+                                                            nAssets=n_assets)  # Number of assets from each cluster
 
         # PLOTTING DATA
         if plot:
@@ -316,35 +313,35 @@ class TradeBot(object):
         # SCENARIO GENERATION
         # ---------------------------------------------------------------------------------------------------
         if scenarios == 'MonteCarlo':
-            scenarios = monte_carlo(data=self.trainDataset.loc[:, self.trainDataset.columns.isin(subset)],
-                                    # subsetMST_df or subsetCLUST_df
-                                    n_simulations=n_simulations,
-                                    n_test=self.lenTest)
+            scenarios = MC(data=self.trainDataset.loc[:, self.trainDataset.columns.isin(subset)],
+                           # subsetMST_df or subsetCLUST_df
+                           n_simulations=n_simulations,
+                           n_test=self.lenTest)
         else:
-            scenarios = bootstrapping(data=self.weeklyReturns[subset],  # subsetMST or subsetCLUST
-                                      n_simulations=n_simulations,  # number of scenarios per period
-                                      n_test=self.lenTest)
+            scenarios = BOOT(data=self.weeklyReturns[subset],  # subsetMST or subsetCLUST
+                             n_simulations=n_simulations,  # number of scenarios per period
+                             n_test=self.lenTest)
 
         # TARGETS GENERATION
         # ---------------------------------------------------------------------------------------------------
-        targets, benchmark_port_val = get_cvar_targets(start_date=self.start,
-                                                       end_date=self.end,
-                                                       test_date=self.startTestDate,
-                                                       benchmark=benchmark_isin,  # MSCI World benchmark
-                                                       test_index=self.testDataset.index.date,
-                                                       budget=100,
-                                                       cvar_alpha=0.05,
-                                                       data=self.weeklyReturns)
+        targets, benchmark_port_val = targetsCVaR(start_date=self.start,
+                                                  end_date=self.end,
+                                                  test_date=self.startTestDate,
+                                                  benchmark=benchmark_isin,  # MSCI World benchmark
+                                                  test_index=self.testDataset.index.date,
+                                                  budget=100,
+                                                  cvar_alpha=0.05,
+                                                  data=self.weeklyReturns)
 
         # MATHEMATICAL MODELING
         # ------------------------------------------------------------------
-        port_allocation, port_value, port_cvar = cvar_model(test_ret=self.testDataset[subset],
-                                                            scenarios=scenarios,  # Scenarios
-                                                            targets=targets,  # Target
-                                                            budget=100,
-                                                            cvar_alpha=0.05,
-                                                            trans_cost=0.001,
-                                                            max_weight=1)
+        port_allocation, port_value, port_cvar = modelCVaR(testRet=self.testDataset[subset],
+                                                           scen=scenarios,  # Scenarios
+                                                           targets=targets,  # Target
+                                                           budget=100,
+                                                           cvar_alpha=0.05,
+                                                           trans_cost=0.001,
+                                                           max_weight=1)
         # PLOTTING
         # ------------------------------------------------------------------
         fig_performance, fig_composition = self.__plot_backtest(performance=port_value.copy(),
@@ -355,8 +352,8 @@ class TradeBot(object):
 
         # RETURN STATISTICS
         # ------------------------------------------------------------------
-        optimal_portfolio_stat = final_stats(port_value)
-        benchmark_stat = final_stats(benchmark_port_val)
+        optimal_portfolio_stat = finalStat(port_value)
+        benchmark_stat = finalStat(benchmark_port_val)
 
         return optimal_portfolio_stat, benchmark_stat, fig_performance, fig_composition
 

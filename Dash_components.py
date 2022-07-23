@@ -1,8 +1,8 @@
-import dash_bootstrap_components as dbc
-import base64
 from dash import html
 from dash import dcc
+import dash_bootstrap_components as dbc
 from dash import dash_table
+import base64
 from models.main import names
 
 
@@ -40,7 +40,7 @@ OPTION_BTN = {
 }
 
 MAIN_TITLE = {
-    "text-align": "left",
+    "text-aling": "left",
     "margin": "2%",
     "margin-top": '16px',
     "font-size": "16px",
@@ -48,7 +48,7 @@ MAIN_TITLE = {
 }
 
 SUB_TITLE = {
-    "text-align": "left",
+    "text-aling": "left",
     "margin-top": "6%",
     "margin-bottom": "1%",
     "margin-left": "2%",
@@ -156,8 +156,7 @@ loading = dcc.Loading(
 optionBacktest = html.Div([
     # part1
     html.H5("Backtesting", style=MAIN_TITLE),
-    html.P("Test your investment strategy with a selected ML model, scenario generation method and the CVaR model " +
-           "for a given training and testing time period",
+    html.P("Test your investment strategy with a selected ML model, scenario generation method and the CVaR model for a given training and testing time period",
            style=DESCRIP_INFO),
     html.P("Training period",
            style=SUB_TITLE),
@@ -246,21 +245,24 @@ tableBar = html.Div([
     html.P("Table for our optimal portfolio",
            style={'width': '80%',  'margin-left': '2%', }),
     dash_table.DataTable(id='tableResult',
-                         columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
-                                  {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
-                                  {"name": 'Sharpe R', "id": 'Sharpe R'}],
-                         # fixed_rows={'headers': True},
-                         style_table={'width': '48%', 'margin': '2%'},
-                         style_cell={'textAlign': 'center'},
-                         style_as_list_view=True,
-                         style_header={'fontWeight': 'bold'},
-                         style_cell_conditional=[
-                             {
-                                 'if': {'column_id': c},
-                                 'textAlign': 'left'
-                             } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
+          columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
+                   {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
+                   {"name": 'Sharpe R', "id": 'Sharpe R'}],
+          # fixed_rows={'headers': True},
+          style_table={
+                       'width': '48%',
+                       'margin': '2%',
+          },
+          style_cell={'textAlign': 'center'},
+          style_as_list_view=True,
+          style_header={'fontWeight': 'bold'},
+          style_cell_conditional=[
+                {
+                    'if': {'column_id': c},
+                    'textAlign': 'left'
+                } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
 
-                         ]),
+          ]),
 
     html.P("Table for Benchmark",
            style={'width': '80%', 'margin-left': '2%'}),
@@ -346,25 +348,28 @@ optionML = html.Div([
 ], style=GRAPH_LEFT)
 
 selectionBar = html.Div([
-    html.H5("Selected assets", style={'text-align': 'left', 'margin-left': '2%'}),
-    html.Div(id="AInumber", style={'text-align': 'left', 'margin-left': '2%'}),
+    html.H5("Selected assets", style={'text-aling': 'left', 'margin-left': '2%'}),
+    html.Div(id="AInumber", style={'text-aling': 'left', 'margin-left': '2%'}),
     dash_table.DataTable(id='AIResult',
-                         columns=[{"name": 'Name', "id": 'Name'},
-                                  {"name": 'ISIN', "id": 'ISIN'},
-                                  {"name": 'Sharpe Ratio', "id": 'Sharpe Ratio'},
-                                  {"name": 'Annual Returns', "id": 'Average Annual Returns'},
-                                  {"name": 'STD', "id": 'Standard Deviation of Returns'}],
-                         style_table={'width': '48%', 'margin': '2%'},
-                         style_cell={'textAlign': 'center'},
-                         style_as_list_view=True,
-                         style_header={'fontWeight': 'bold'},
-                         style_cell_conditional=[
-                             {
-                                 'if': {'column_id': c},
-                                 'textAlign': 'left'
-                             } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
+          columns=[{"name": 'Name', "id": 'Name'},
+                   {"name": 'ISIN', "id": 'ISIN'},
+                   {"name": 'Sharpe Ratio', "id": 'Sharpe Ratio'},
+                   {"name": 'Annual Returns', "id": 'Average Annual Returns'},
+                   {"name": 'STD', "id": 'Standard Deviation of Returns'}],
+          style_table={
+                       'width': '48%',
+                       'margin': '2%',
+          },
+          style_cell={'textAlign': 'center'},
+          style_as_list_view=True,
+          style_header={'fontWeight': 'bold'},
+          style_cell_conditional=[
+                {
+                    'if': {'column_id': c},
+                    'textAlign': 'left'
+                } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
 
-                         ])
+          ])
 ], style=OPTION_ELEMENT)
 
 # AI Feature selection graph

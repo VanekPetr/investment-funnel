@@ -326,4 +326,3 @@ def plot_dots(click, start, end, search):
 '''
 if __name__ == '__main__':
     app.run_server(debug=False, dev_tools_hot_reload=False)
-    # TODO!! change log same as for project avocado
