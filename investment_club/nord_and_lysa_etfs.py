@@ -20,18 +20,18 @@ lysa_bond_etfs = {
     'Vanguard Global Short-Term Bond': 'BSV',
     'Vanguard Euro Investment Grade Bond': 'VECP',
     'Vanguard Eurozone Inflation-Linked Bond': 'VTIP',
-    'Vanguard Global Aggregate Bond': 'VGAB.TO',   # Toronto Real Time Price. Currency in CAD (only in CAD in Yahoofinance)
+    'Vanguard Global Aggregate Bond': 'VGAB.TO',    # Toronto Real Time Price. Currency in CAD (only in CAD in Yahoofinance)
     'iShares Global Inflation Linked Govt Bond': 'IGIL.L',    # LSE Delayed Price. Currency in USD
     'Vanguard EUR Corporate Bond': 'VECP.DE',  # XETRA Delayed Price. Currency in EUR
     'iShares Core € Corp Bond': 'IEAC.L'  # LSE Delayed Price. Currency in EUR
 }
 
 nord_etfs = {
-    'DB Xtrackers II Eurozone Government Bond UCITS': 'DBXN.DE',   # XETRA Delayed Price. Currency in EUR
+    'DB Xtrackers II Eurozone Government Bond UCITS': 'DBXN.DE',    # XETRA Delayed Price. Currency in EUR
     'iShares Core MSCI World UCITS': 'SWDA.MI',   # Milan Delayed Price. Currency in EUR
-    'DB Xtrackers II EUR Corporate Bond UCITS': 'XBLC.MI',   #  Milan Delayed Price. Currency in EUR
+    'DB Xtrackers II EUR Corporate Bond UCITS': 'XBLC.MI',   # Milan Delayed Price. Currency in EUR
     'iShares Core S&P 500 UCITS': 'CSPX.L',  # LSE Delayed Price. Currency in USD
-    'iShares Core Euro STOXX 50 UCITS': 'SXRT.DE',   #  XETRA Delayed Price. Currency in EUR
+    'iShares Core Euro STOXX 50 UCITS': 'SXRT.DE',   # XETRA Delayed Price. Currency in EUR
     'iShares Core MSCI EM IMI UCITS': 'EIMI.L',   # LSE Delayed Price. Currency in USD
     'iShares Core MSCI Japan IMI UCITS': 'IJPA.L'  # LSE Delayed Price. Currency in USD
 }

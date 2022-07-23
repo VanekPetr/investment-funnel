@@ -1,72 +1,52 @@
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 20 08:00:08 2020
-
-@author: Petr Vanek
-"""
-
 import pulp
 import pandas as pd
-from models.ScenarioGeneration import BOOT
+from models.ScenarioGeneration import bootstrapping
+from loguru import logger
+
 
 # FUNCTION RUNNING THE OPTIMIZATION
-#---------------------------------------------------------------------- 
-def PortfolioRiskTarget(scen, cvar_alpha):
+# ----------------------------------------------------------------------
+def portfolio_risk_target(scenarios, cvar_alpha):
     
     # Fixed x
-    x = pd.DataFrame(columns=scen.columns,index=["1/N position"])
-    x.loc["1/N position",:] = 1/len(scen.columns)   
-    
+    x = pd.DataFrame(columns=scenarios.columns, index=["1/N position"])
+    x.loc["1/N position", :] = 1/len(scenarios.columns)   
     
     # define index
-    i_idx = scen.columns
-    j_idx = scen.index
+    i_idx = scenarios.columns
+    j_idx = scenarios.index
     
     # number of scenarios
-    N = scen.shape[0]    
-    
+    scenario_n = scenarios.shape[0]    
     
     # loss deviation
-    VarDev = pulp.LpVariable.dicts("VarDev", ( (t) for t in j_idx ),
-                                   lowBound=0, cat='Continuous')
+    var_dev = pulp.LpVariable.dicts("VarDev", (t for t in j_idx), lowBound=0, cat='Continuous')
         
     # value at risk
-    VaR = pulp.LpVariable("VaR", lowBound=0, cat='Continuous')
-    CVaR = pulp.LpVariable("CVaR", lowBound=0, cat='Continuous')
-    
-        
-    #####################################
+    var = pulp.LpVariable("VaR", lowBound=0, cat='Continuous')
+    cvar = pulp.LpVariable("CVaR", lowBound=0, cat='Continuous')
+      
     # define model
     model = pulp.LpProblem("Targets Optimization", pulp.LpMinimize)
      
-    #####################################
     # Objective Function
-    model += CVaR
+    model += cvar
                       
-    #####################################
-    # constraints
-                      
+    # *** CONSTRAINS ***               
     # Var deviation constrain
     for t in j_idx:
-        model += -pulp.lpSum([scen.loc[t, i] * x[i] for i in i_idx]) - VaR <= VarDev[t]
+        model += -pulp.lpSum([scenarios.loc[t, i] * x[i] for i in i_idx]) - var <= var_dev[t]
     
     # CVaR constrain
-    model += VaR + 1/(N*cvar_alpha)*pulp.lpSum([VarDev[t] for t in j_idx]) == CVaR
+    model += var + 1/(scenario_n * cvar_alpha) * pulp.lpSum([var_dev[t] for t in j_idx]) == cvar
 
     # Budget constrain
     model += pulp.lpSum([x[i] for i in i_idx]) == 1
 
     # solve model
     model.solve()
-    
-    # print an error if the model is not optimal
-    if pulp.LpStatus[model.status] != 'Optimal':
-        print("Whoops! There is an error! The model has error status:" + pulp.LpStatus[model.status] )
         
-    
-    #Get positions    
+    # Get positions    
     if pulp.LpStatus[model.status] == 'Optimal':
      
         # print variables
@@ -75,79 +55,73 @@ def PortfolioRiskTarget(scen, cvar_alpha):
             var_model[variable.name] = variable.varValue
          
         # solution with variable names   
-        var_model = pd.Series(var_model,index=var_model.keys())
-         
-    
-    
-    # return portfolio, CVaR, and alpha
-    return var_model["CVaR"]
+        var_model = pd.Series(var_model, index=var_model.keys())
+        
+        return var_model["CVaR"]
+    else:
+        logger.exception(f"LP does not find optimal solution for CVaR targets with: {pulp.LpStatus[model.status]}")
 
 
-"""
-    ----------------------------------------------------------------------
-    Mathematical Optimization: TARGETS GENERATION
-    ---------------------------------------------------------------------- 
-"""
-
-def targetsCVaR(start_date, end_date, test_date, benchmark, test_index, budget, cvar_alpha, data=[]):
+# ----------------------------------------------------------------------
+# Mathematical Optimization: TARGETS GENERATION
+# ---------------------------------------------------------------------- 
+def get_cvar_targets(start_date, end_date, test_date, benchmark, test_index, budget, cvar_alpha, data=[]):
 
     # Define Benchmark
     tickers = benchmark
 
-    ## For YAHOO version
+    # *** For YAHOO version ***
     # # User pandas_reader.data.DataReader to load the desired data.
     # panel_data = data.DataReader(tickers, 'yahoo', start_date, end_date)
     # df_close = panel_data["Adj Close"]
     # # Get weekly data
-    # targetWeeklyRet = getWeeklyRet(data=df_close)
+    # target_weekly_ret = get_weekly_returns(data=df_close)
 
     # df_test_index = pd.DataFrame(index=test_index)
-    # testWeeklyRet = pd.concat([df_test_index, testWeeklyRet], axis=1)
-    # testWeeklyRet = testWeeklyRet.fillna(0)
+    # test_weekly_ret = pd.concat([df_test_index, test_weekly_ret], axis=1)
+    # test_weekly_ret = test_weekly_ret.fillna(0)
 
-    ## For Morningstar data
-    targetWeeklyRet = data[tickers].copy()
+    # *** For Morningstar data ***
+    target_weekly_ret = data[tickers].copy()
 
     # Get weekly data for testing
-    testWeeklyRet = targetWeeklyRet[targetWeeklyRet.index >= test_date]
+    test_weekly_ret = target_weekly_ret[target_weekly_ret.index >= test_date]
 
     # Number of weeks for testing
-    N_test = len(testWeeklyRet.index)
+    weeks_n = len(test_weekly_ret.index)
 
     # Get scenarios
     # The Monte Carlo Method
-    targetScen = BOOT(data=targetWeeklyRet,       # subsetMST or subsetCLUST
-                      n_simulations=250,
-                      n_test=N_test)
+    target_scenarios = bootstrapping(data=target_weekly_ret,       # subsetMST or subsetCLUST
+                                     n_simulations=250,
+                                     n_test=weeks_n)
 
     # Compute the optimal portfolio outperforming zero percentage return
     # ----------------------------------------------------------------------
-    p_points = len(targetScen[:,0,0])       # number of periods
-    s_points = len(targetScen[0,:,0])       # number of scenarios
+    p_points = len(target_scenarios[:, 0, 0])       # number of periods
+    s_points = len(target_scenarios[0, :, 0])       # number of scenarios
 
     # DATA FRAME TO STORE CVaR TARGETS
     targets = pd.DataFrame(columns=["CVaR_Target"], index=list(range(p_points)))
     # DATA FRAME TO STORE VALUE OF THE PORTFOLIO
-    portValue = pd.DataFrame(columns=["Benchmark_Value"], index=testWeeklyRet.index)
+    portfolio_value = pd.DataFrame(columns=["Benchmark_Value"], index=test_weekly_ret.index)
 
     # COMPUTE CVaR TARGETS
     for p in range(p_points):
         # create data frame with scenarios for a given period p
-        scenDf = pd.DataFrame(targetScen[p,:,:],
-                              columns=tickers,
-                              index=list(range(s_points)))
+        scenario_df = pd.DataFrame(target_scenarios[p, :, :],
+                                   columns=tickers,
+                                   index=list(range(s_points)))
 
         # run CVaR model to compute CVaR targets
-        target_CVaR= PortfolioRiskTarget(scen=scenDf,
-                                         cvar_alpha=cvar_alpha)
+        cvar_target = portfolio_risk_target(scenarios=scenario_df,
+                                            cvar_alpha=cvar_alpha)
         # save the result
-        targets.loc[p, "CVaR_Target"] = target_CVaR
+        targets.loc[p, "CVaR_Target"] = cvar_target
 
     # COMPUTE PORTFOLIO VALUE
-    for w in testWeeklyRet.index:
-        portValue.loc[w, "Benchmark_Value"] = sum((budget/len(tickers))*(1+testWeeklyRet.loc[w, :]))
-        budget = sum(budget/len(tickers)*(1+testWeeklyRet.loc[w, :]))
+    for w in test_weekly_ret.index:
+        portfolio_value.loc[w, "Benchmark_Value"] = sum((budget/len(tickers)) * (1 + test_weekly_ret.loc[w, :]))
+        budget = sum(budget/len(tickers) * (1+test_weekly_ret.loc[w, :]))
 
-    
-    return targets, portValue
-
+    return targets, portfolio_value
