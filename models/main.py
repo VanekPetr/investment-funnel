@@ -15,9 +15,9 @@ from pandas_datareader import data
 pio.renderers.default = "browser"
 
 # Get data
-data = pd.read_parquet('data/algostrata_isin.parquet')
+data = pd.read_parquet('data/all_etfs_rets.parquet.gzip')
 tickers = data.columns.values
-data_name = pd.read_parquet('data/algostrata_name.parquet')
+data_name = pd.read_parquet('data/all_etfs_rets_name.parquet.gzip')
 names = data_name.columns.values
 
 
@@ -74,7 +74,7 @@ class TradeBot(object):
                 stat_df.loc[isin, "Type"] = "ETF"
                 stat_df.loc[isin, "Size"] = 1
             else:
-                stat_df.loc[isin, "Type"] = "Mutual Fund"
+                stat_df.loc[isin, "Type"] = "ETF"
                 stat_df.loc[isin, "Size"] = 1
 
         return stat_df
@@ -161,7 +161,7 @@ class TradeBot(object):
             data.loc[self.tickers[isin_idx], "Size"] = 3
 
         # PLOTTING Data
-        color_discrete_map = {'Mutual Fund': '#21304f', 'ETF': '#f58f02',
+        color_discrete_map = {'ETF': '#21304f', 'Mutual Fund': '#f58f02',
                               'Funds': '#21304f', "MST subset": '#f58f02',
                               'Cluster 1': '#21304f', 'Cluster 2': '#f58f02'}
         fig = px.scatter(data,

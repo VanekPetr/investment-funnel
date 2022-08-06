@@ -30,6 +30,7 @@ VALID_USERNAME_PASSWORD_PAIRS = {
     'Petr': 'algo94',
     'CHY': 'algo123',
     'PFO2021': 'student',
+    'PFO2022': 'student',
     'Trader': '42'
 }
 # Initialize the app
