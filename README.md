@@ -1,5 +1,5 @@
 # Investment Funnel
-![investment-funnel](https://socialify.git.ci/vanekpetr/investment-funnel/image?description=1&font=KoHo&forks=1&issues=1&language=1&owner=1&pattern=Floating%20Cogs&pulls=1&stargazers=1&theme=Dark) 
+![investment-funnel](https://socialify.git.ci/VanekPetr/investment-funnel/image?font=Inter&issues=1&language=1&owner=1&stargazers=1&theme=Dark) 
 <p align="center">
 <img src="https://img.shields.io/badge/python%20-%2314354C.svg?&style=for-the-badge&logo=python&logoColor=white" align="center">
 <img src="https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white" align="center">
