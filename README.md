@@ -38,7 +38,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 * **Petr Vanek** - *Co-founder & Initial work* - [VanekPetr](https://github.com/VanekPetr)
 * **Kourosh Marjani Rasmussen** - *Co-founder* - [AlgoStrata](https://algostrata.com)
-
+* **Arnar Tjörvi Charlesson** - *Contributor* - [Arnar](https://github.com/arnarc)
 ## License
 
 This repository is licensed under [CC-BY-4.0](LICENSE) (c) 2019 GitHub, Inc.
