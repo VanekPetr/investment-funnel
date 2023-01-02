@@ -1,4 +1,15 @@
-from Dash_components import *
+import dash_bootstrap_components as dbc
+from dash import html
+from Dash_components import (
+    sideBar,
+    optionBacktest,
+    graphResults,
+    optionML,
+    graphML,
+    optionGraph,
+    graphOverview
+)
+
 
 '''
 # ----------------------------------------------------------------------------------------------------------------------
