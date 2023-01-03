@@ -2,9 +2,11 @@ import dash  # version 1.13.1
 import dash_auth
 import numpy as np
 import pandas as pd
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
-from Dash_layouts import *
 from models.main import TradeBot
+from dash import dcc, html
+from Dash_layouts import page_1_layout, page_2_layout, page_3_layout
 
 global df_etim
 global first_run_page1, first_run_page2, first_run_page3, first_run_page3_2
