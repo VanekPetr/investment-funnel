@@ -116,31 +116,41 @@ GRAPH_RIGHT = {
 
 # GENERAL
 # ----------------------------------------------------------------------------------------------------------------------
-image_filename = 'dashboard/assets/ALGO_logo.png'  # replace with your own image
+image_filename = 'assets/ALGO_logo.png'  # replace with your own image
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 # Top bar with AlgoStrata logo
-topBar = html.Div([
-         html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),
-                  style={'height': '16px', 'margin': '12px', 'margin-right': '16px'})
-            ], style=TOPBAR_STYLE)
+# topBar = html.Div([
+#          html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),
+#                   style={'height': '16px', 'margin': '12px', 'margin-right': '16px'})
+#             ], style=TOPBAR_STYLE)
 
 # sidebar with navigation
 sideBar = html.Div([
-        html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),
-                 style={'width': '144px', 'height': '12px', 'margin-top': '16px', 'margin-bottom': '36px'}),
-        dbc.Nav(
-            [
-                dbc.NavLink("Market Overview", id='page0', href="/", active="exact"),
-                dbc.NavLink("AI Feature Selection", id='page1', href="/page-1", active="exact", n_clicks=0),
-                dbc.NavLink("Backtesting", id='page2', href="/page-2", active="exact"),
-                dbc.NavLink("My Portfolio", id='page3', href="/page-3", active="exact"),
-            ],
-            vertical=True,
-            pills=True,
-        ),
-    ], style=SIDEBAR_STYLE,
-)
+    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),
+             style={"position": "fixed", 'width': '9%', 'margin-top': '16px'}),
+    html.H5("Investment Funnel", style={'color': '#ffd0b3', "position": "fixed", 'top': '7%'}),
+    dbc.Nav(
+        [
+            dbc.NavLink("Market Overview", id='page0', href="/", active="exact"),
+            dbc.NavLink("AI Feature Selection", id='page1', href="/page-1", active="exact", n_clicks=0),
+            dbc.NavLink("Backtesting", id='page2', href="/page-2", active="exact")
+        ],
+        vertical=True,
+        pills=True,
+        style={"position": "fixed", 'top': '9%'}
+    ),
+    html.H5("Investment Fund", style={'color': '#ffd0b3', "position": "fixed", 'top': '21%'}),
+    dbc.Nav(
+        [
+            dbc.NavLink("Portfolio", id='page3', href="/page-3", active="exact"),
+            dbc.NavLink("Rebalancing", id='page4', href="/page-4", active="exact"),
+        ],
+        vertical=True,
+        pills=True,
+        style={"position": "fixed", 'top': '23%'}
+    )
+], style=SIDEBAR_STYLE)
 
 
 # BACK-TESTING

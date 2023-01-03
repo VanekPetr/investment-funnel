@@ -1,8 +1,8 @@
 import gamstransfer as gt
 import pandas as pd
 import os
-from data_preparation.yahoo_download import download_data
-from data_preparation.yahoo_data_clean import clean_data
+from data_preprocessing.yahoo_download import download_data
+from data_preprocessing.yahoo_data_clean import clean_data
 
 
 def save_into_gdx(monthly_returns_df):
