@@ -1,9 +1,7 @@
 import dash_bootstrap_components as dbc
 import base64
-from dash import html
-from dash import dcc
-from dash import dash_table
-from models.main import names
+from dash import html, dcc, dash_table
+from dashboard.main import names
 
 
 '''
@@ -118,7 +116,7 @@ GRAPH_RIGHT = {
 
 # GENERAL
 # ----------------------------------------------------------------------------------------------------------------------
-image_filename = 'assets/ALGO_logo.png'  # replace with your own image
+image_filename = 'dashboard/assets/ALGO_logo.png'  # replace with your own image
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 # Top bar with AlgoStrata logo
@@ -136,6 +134,7 @@ sideBar = html.Div([
                 dbc.NavLink("Market Overview", id='page0', href="/", active="exact"),
                 dbc.NavLink("AI Feature Selection", id='page1', href="/page-1", active="exact", n_clicks=0),
                 dbc.NavLink("Backtesting", id='page2', href="/page-2", active="exact"),
+                dbc.NavLink("My Portfolio", id='page3', href="/page-3", active="exact"),
             ],
             vertical=True,
             pills=True,
@@ -409,3 +408,19 @@ optionGraph = html.Div([
 
 # Table
 graphOverview = html.Div(id='dotsFig', style=GRAPH_RIGHT)
+
+
+optionMyPortfolio = html.Div([
+    html.H5("My Portfolio", style=MAIN_TITLE),
+
+    # Option to search for a fund
+    html.P("Calculate current portfolio performance",
+           style=SUB_TITLE),
+
+    # Button to plot results
+    html.Button('Recalculate',
+                id='recalculate',
+                style=OPTION_BTN),
+
+
+], style=GRAPH_LEFT)

@@ -1,14 +1,32 @@
 import dash_bootstrap_components as dbc
 from dash import html
-from Dash_components import (
+from dashboard.app_components import (
     sideBar,
     optionBacktest,
     graphResults,
     optionML,
     graphML,
     optionGraph,
-    graphOverview
+    graphOverview,
+    optionMyPortfolio
 )
+
+'''
+# ----------------------------------------------------------------------------------------------------------------------
+# MY PORTFOLIO
+# ----------------------------------------------------------------------------------------------------------------------
+'''
+page_4_layout = html.Div([
+    # Row 1 - body
+    dbc.Row([
+        # Row 1, Col 1 - navigation bar
+        dbc.Col([sideBar]),
+        # Row 1, col 2 - text description
+        dbc.Col([optionMyPortfolio]),
+        # Row 1, Col 3 - table
+        dbc.Col([graphResults]),
+    ])
+])
 
 
 '''
