@@ -21,12 +21,7 @@ pip install -r requirements.txt
 ```
 STEP 2: run Dash application
 ``` bash
-python Dash_app.py 
-```
-STEP 3: Use this login information
-``` bash
-Username: Trader
-Password: 42
+python app.py 
 ```
 
 
