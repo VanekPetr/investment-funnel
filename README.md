@@ -14,7 +14,7 @@ and finally to backtest their investment strategies.<br/>
 Our tool is based on various optimization models and ML methods:<br/>
 Minimum Spanning Tree, Hierarchical Clustering of Assets, Monte Carlo, Bootstrapping, Stochastic CVaR Model, Benchmark generation
 
-# How to start in 3 steps
+# How to start in 2 steps
 STEP 1: install requirements
 ``` bash
 pip install -r requirements.txt
