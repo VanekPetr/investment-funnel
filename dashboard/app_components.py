@@ -140,15 +140,15 @@ sideBar = html.Div([
         pills=True,
         style={"position": "fixed", 'top': '9%'}
     ),
-    html.H5("Investment Fund", style={'color': '#ffd0b3', "position": "fixed", 'top': '21%'}),
+    html.H5("Investment Fund", style={'color': '#ffd0b3', "position": "fixed", 'bottom': '21%'}),
     dbc.Nav(
         [
-            dbc.NavLink("Portfolio", id='page3', href="/page-3", active="exact"),
-            dbc.NavLink("Rebalancing", id='page4', href="/page-4", active="exact"),
+            dbc.NavLink("Portfolio TBD", id='page3', href="/page-3", active="exact"),
+            dbc.NavLink("Rebalancing TBD", id='page4', href="/page-4", active="exact"),
         ],
         vertical=True,
         pills=True,
-        style={"position": "fixed", 'top': '23%'}
+        style={"position": "fixed", 'bottom': '12%'}
     )
 ], style=SIDEBAR_STYLE)
 
