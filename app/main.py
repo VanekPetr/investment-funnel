@@ -9,15 +9,15 @@ from models.Clustering import cluster, pick_cluster
 from models.ScenarioGeneration import monte_carlo, bootstrapping
 from models.CVaRtargets import get_cvar_targets
 from models.CVaRmodel import cvar_model
-from dashboard.financial_data.ETFlist import ETFlist
+from data.ETFlist import ETFlist
 from pandas_datareader import data
 
 pio.renderers.default = "browser"
 
 # Get data
-data = pd.read_parquet('dashboard/financial_data/all_etfs_rets.parquet.gzip')
+data = pd.read_parquet('data/all_etfs_rets.parquet.gzip')
 tickers = data.columns.values
-data_name = pd.read_parquet('dashboard/financial_data/all_etfs_rets_name.parquet.gzip')
+data_name = pd.read_parquet('data/all_etfs_rets_name.parquet.gzip')
 names = data_name.columns.values
 
 

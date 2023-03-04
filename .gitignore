@@ -131,7 +131,7 @@ dmypy.json
 # Custom
 .DS_Store
 __pycache__
-models/__pycache__
-dashboard/financial_data/__pycache__
+app/models/__pycache__
+app/data/__pycache__
 .idea
 lib

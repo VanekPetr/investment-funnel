@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from dashboard.main import TradeBot
+from main import TradeBot
 from dash import dcc
-from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
+from app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
 
 global df_etim
 global first_run_page1, first_run_page2, first_run_page3, first_run_page3_2

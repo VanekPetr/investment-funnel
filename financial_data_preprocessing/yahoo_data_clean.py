@@ -1,5 +1,5 @@
 import pandas as pd
-from data_preprocessing.yahoo_download import download_data
+from financial_data_preprocessing.yahoo_download import download_data
 
 
 def clean_data(data_raw, ticker_to_name_mapping=None, into_gdx=False):

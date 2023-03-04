@@ -1,6 +1,0 @@
-data_preprocessing
-dashboard/financial_data/algostrata_isin.parquet
-dashboard/financial_data/algostrata_name.parquet
-dashboard/financial_data/etf_symbols.csv
-dashboard/financial_data/etoro_etfs.txt
-dashboard/financial_data/top_200_etfs.csv

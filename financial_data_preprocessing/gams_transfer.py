@@ -1,8 +1,8 @@
 import gamstransfer as gt
 import pandas as pd
 import os
-from data_preprocessing.yahoo_download import download_data
-from data_preprocessing.yahoo_data_clean import clean_data
+from financial_data_preprocessing.yahoo_download import download_data
+from financial_data_preprocessing.yahoo_data_clean import clean_data
 
 
 def save_into_gdx(monthly_returns_df):
@@ -38,12 +38,12 @@ def save_into_gdx(monthly_returns_df):
     etf_returns = m.addParameter('AssetReturns', domain=[date, asset], records=returns_gams,
                                  description='Weekly adjusted returns')
 
-    m.write(os.path.join(working_dir, 'data/input_data.gdx'))
+    m.write(os.path.join(working_dir, 'financial_data/input_data.gdx'))
 
 
 if __name__ == '__main__':
     # Load tickers' names
-    path_to_tickers = 'data/top_2000_etfs.xlsx'
+    path_to_tickers = 'financial_data/top_2000_etfs.xlsx'
     data_excel = pd.read_excel(path_to_tickers)
     tickers = data_excel['List of Top 100 ETFs'].to_list()[1:]
     mapping = dict(zip(data_excel['List of Top 100 ETFs'].to_list()[1:], data_excel['Unnamed: 1'].to_list()[1:]))
