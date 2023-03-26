@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 import base64
 from dash import html, dcc, dash_table
-from main import names
+from models.main import names
 
 
 '''

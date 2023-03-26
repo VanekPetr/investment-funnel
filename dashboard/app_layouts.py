@@ -1,6 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html
-from app_components import (
+from dashboard.app_components import (
     sideBar,
     optionBacktest,
     graphResults,
