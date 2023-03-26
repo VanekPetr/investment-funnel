@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 16 11:56:20 2020
-@author: Petr Vanek
-"""
-
 # THE ETF LIST TO DIVERSIFY BETWEEN MUTUAL FUNDS AND ETFs
 # ------------------------------------------------------------------
 ETFlist = [
