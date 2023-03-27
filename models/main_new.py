@@ -13,12 +13,6 @@ from financial_data.ETFlist import ETFlist
 
 pio.renderers.default = "browser"
 
-# Get data
-data = pd.read_parquet('financial_data/all_etfs_rets.parquet.gzip')
-tickers = data.columns.values
-data_name = pd.read_parquet('financial_data/all_etfs_rets_name.parquet.gzip')
-names = data_name.columns.values
-
 
 class TradeBot(object):
     """
@@ -26,27 +20,10 @@ class TradeBot(object):
     optimization suggesting optimal portfolio of assets.
     """
 
-    # def __init__(self, start, end, assets):
-    #     # DOWNLOAD THE ADJUSTED DAILY PRICES FROM YAHOO DATABASE
-    #     dailyPrices = data.DataReader(assets, 'yahoo', start, end)["Adj Close"]
-    #     ## Extra
-    #     # test = dailyPrices
-    #     # for k in range(len(test.columns)):
-    #     #     for i in range(len(test.index)):
-    #     #         if math.isnan(float(test.iloc[i, k])):
-    #     #             test.iloc[i, k] = test.iloc[i-1, k]
-    #     # dailyPrices=test
-    #     # GET WEEKLY RETURNS
-    #     # Get prices only for Wednesdays and delete Nan columns
-    #     pricesWed = dailyPrices[dailyPrices.index.weekday == 2].dropna(axis=1)
-    #     # Get weekly returns
-    #     self.weeklyReturns = pricesWed.pct_change().drop(pricesWed.index[0])  # drop first NaN row
-    #
-
     def __init__(self):
-        self.weeklyReturns = data
-        self.tickers = tickers
-        self.names = names
+        self.weeklyReturns = pd.read_parquet('../financial_data/all_etfs_rets.parquet.gzip')
+        self.tickers = self.weeklyReturns.columns.values
+        self.names = pd.read_parquet('../financial_data/all_etfs_rets_name.parquet.gzip').columns.values
 
     def __get_stat(self, start, end):
         """
@@ -226,7 +203,7 @@ class TradeBot(object):
 
         return fig
 
-    def setup_data(self, start, end, train_test, train_ratio=0.5, end_train=None, start_test=None):
+    def setup_data(self, start, end, train_test, end_train=None, start_test=None):
         """
         METHOD TO PREPARE DATA FOR ML AND BACKTESTING
         """
@@ -241,13 +218,7 @@ class TradeBot(object):
 
         # IF WE DIVIDE DATASET
         if train_test:
-            # # DIVIDE DATA INTO TRAINING AND TESTING PARTS
-            # breakPoint = int(np.floor(len(data.index) * train_ratio))
-            #
-            # # DEFINITION OF TRAINING AND TESTING DATASETS
-            # self.trainDataset = data.iloc[0:breakPoint, :]
-            # self.testDataset = data.iloc[breakPoint:, :]
-
+            # DIVIDE DATA INTO TRAINING AND TESTING PARTS
             self.trainDataset = data[data.index <= end_train]
             self.testDataset = data[data.index > start_test]
 
@@ -267,37 +238,41 @@ class TradeBot(object):
         """
         METHOD TO RUN MST METHOD AND PRINT RESULTS
         """
+        fig, subset_mst = None, []
         
         # Starting subset of data for MST
-        self.subsetMST_df = self.trainDataset
+        subset_mst_df = self.trainDataset
         for i in range(n_mst_runs):
-            self.subsetMST, self.subsetMST_df, self.corrMST_avg, self.PDI_MST = minimum_spanning_tree(self.subsetMST_df)
+            subset_mst, subset_mst_df, corr_mst_avg, pdi_mst = minimum_spanning_tree(subset_mst_df)
 
         # PLOTTING RESULTS
-        if plot:
-            fig = self.plot_dots(start=self.start, end=self.endTrainDate, ml="MST", ml_subset=self.subsetMST)
-            return fig
+        if plot and len(subset_mst) > 0:
+            fig = self.plot_dots(start=self.start, end=self.endTrainDate, ml="MST", ml_subset=subset_mst)
+
+        return fig, subset_mst
 
     def clustering(self, n_clusters, n_assets, plot):
         """
         METHOD TO RUN MST METHOD AND PRINT RESULTS
         """
-        
+        fig = None
+
         # CLUSTER DATA
         clusters = cluster(self.trainDataset, n_clusters, dendrogram=False)
 
         # SELECT ASSETS
-        self.subsetCLUST, self.subsetCLUST_df = pick_cluster(data=self.trainDataset,
-                                                             stat=self.dataPlot,
-                                                             ml=clusters,
-                                                             n_assets=n_assets)  # Number of assets from each cluster
+        subset_clustering, subset_clustering_df = pick_cluster(data=self.trainDataset,
+                                                               stat=self.dataPlot,
+                                                               ml=clusters,
+                                                               n_assets=n_assets)  # Number of assets from each cluster
 
         # PLOTTING DATA
         if plot:
             fig = self.plot_dots(start=self.start, end=self.endTrainDate, ml="Clustering", ml_subset=clusters)
-            return fig
 
-    def backtest(self, assets, benchmark, scenarios, n_simulations):
+        return fig, subset_clustering
+
+    def backtest(self, subset_of_assets, benchmark, scenarios, n_simulations):
         """
         METHOD TO COMPUTE THE BACKTEST
         """
@@ -305,23 +280,15 @@ class TradeBot(object):
         # Find Benchmarks' ISIN codes
         benchmark_isin = [self.tickers[list(self.names).index(name)] for name in benchmark]
 
-        # SELECT THE WORKING SUBSET
-        if assets == 'MST':
-            subset = self.subsetMST
-        elif assets == 'Clustering':
-            subset = self.subsetCLUST
-        else:
-            subset = assets
-
         # SCENARIO GENERATION
         # ---------------------------------------------------------------------------------------------------
         if scenarios == 'MonteCarlo':
-            scenarios = monte_carlo(data=self.trainDataset.loc[:, self.trainDataset.columns.isin(subset)],
+            scenarios = monte_carlo(data=self.trainDataset.loc[:, self.trainDataset.columns.isin(subset_of_assets)],
                                     # subsetMST_df or subsetCLUST_df
                                     n_simulations=n_simulations,
                                     n_test=self.lenTest)
         else:
-            scenarios = bootstrapping(data=self.weeklyReturns[subset],  # subsetMST or subsetCLUST
+            scenarios = bootstrapping(data=self.weeklyReturns[subset_of_assets],  # subsetMST or subsetCLUST
                                       n_simulations=n_simulations,  # number of scenarios per period
                                       n_test=self.lenTest)
 
@@ -338,7 +305,7 @@ class TradeBot(object):
 
         # MATHEMATICAL MODELING
         # ------------------------------------------------------------------
-        port_allocation, port_value, port_cvar = cvar_model(test_ret=self.testDataset[subset],
+        port_allocation, port_value, port_cvar = cvar_model(test_ret=self.testDataset[subset_of_assets],
                                                             scenarios=scenarios,  # Scenarios
                                                             targets=targets,  # Target
                                                             budget=100,
@@ -370,13 +337,16 @@ if __name__ == "__main__":
     algo.plot_dots(start="2018-09-24", end="2019-09-01")
 
     # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
-    algo.setup_data(start="2015-12-23", end="2018-08-22", train_test=True, train_ratio=0.6)
+    algo.setup_data(start="2015-12-23", end="2018-08-22", train_test=True, end_train="2017-07-01", start_test="2017-08-01")
 
     # RUN THE MINIMUM SPANNING TREE METHOD
-    algo.mst(n_mst_runs=3, plot=True)
+    _, mst_subset_of_assets = algo.mst(n_mst_runs=3, plot=True)
 
     # RUN THE CLUSTERING METHOD
-    algo.clustering(n_clusters=3, n_assets=10, plot=True)
+    _, clustering_subset_of_assets = algo.clustering(n_clusters=3, n_assets=10, plot=True)
 
     # RUN THE BACKTEST
-    results = algo.backtest(assets='MST', benchmark=['URTH'], scenarios='Bootstrapping', n_simulations=500)
+    results = algo.backtest(subset_of_assets=mst_subset_of_assets,
+                            benchmark=['S&P 500 Growth ETF'],
+                            scenarios='Bootstrapping',
+                            n_simulations=500)

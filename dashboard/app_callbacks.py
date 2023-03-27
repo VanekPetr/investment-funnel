@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from models.main import TradeBot
+from models.main_new import TradeBot
 from dash import dcc
 from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
 
@@ -112,13 +112,11 @@ def get_callbacks(app):
         return save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'), \
                save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
 
-
     @app.callback(
         Output('slider-output-container2', 'children'),
         [Input('my-slider2', 'value')])
     def update_output(value):
         return '# of scenarios: {}'.format(value)
-
 
     @app.callback(
         Output('slider-output-container-backtest', 'children'),
@@ -126,13 +124,11 @@ def get_callbacks(app):
     def update_output_cluster(value):
         return 'In case of CLUSTERING: # of the best performing assets selected from each cluster: {}'.format(value)
 
-
     @app.callback(
         Output('slider-output-container-backtest-ml', 'children'),
         [Input('slider-backtest-ml', 'value')])
     def update_output_MLtype(value):
         return '# of clusters or # of MST runs: {}'.format(value)
-
 
     @app.callback(
         [Output('picker-test', 'start_date'),
@@ -155,7 +151,6 @@ def get_callbacks(app):
             final_date = selected_date
 
         return final_date, maxDate, minDate, maxDate, minDate, maxDate, minDate, final_date
-
 
     # AI Feature Selection
     # ----------------------------------------------------------------------------------------------------------------------
@@ -228,7 +223,6 @@ def get_callbacks(app):
 
         return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number,\
                save_model, save_MLnum
-
 
     # MARKET OVERVIEW
     # ----------------------------------------------------------------------------------------------------------------------
