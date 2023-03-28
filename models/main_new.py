@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import os
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -11,8 +12,14 @@ from models.ScenarioGeneration import monte_carlo, bootstrapping
 from models.CVaRtargets import get_cvar_targets
 from models.CVaRmodel import cvar_model
 from financial_data.ETFlist import ETFlist
+from pathlib import Path
 
 pio.renderers.default = "browser"
+ROOT_DIR = Path(__file__).parent.parent
+# Load our data
+weekly_returns = pd.read_parquet(os.path.join(ROOT_DIR, 'financial_data/all_etfs_rets.parquet.gzip'))
+tickers = weekly_returns.columns.values
+names = pd.read_parquet(os.path.join(ROOT_DIR, 'financial_data/all_etfs_rets_name.parquet.gzip')).columns.values
 
 
 class TradeBot(object):
@@ -22,9 +29,9 @@ class TradeBot(object):
     """
 
     def __init__(self):
-        self.weeklyReturns = pd.read_parquet('financial_data/all_etfs_rets.parquet.gzip')
-        self.tickers = self.weeklyReturns.columns.values
-        self.names = pd.read_parquet('financial_data/all_etfs_rets_name.parquet.gzip').columns.values
+        self.weeklyReturns = weekly_returns
+        self.tickers = tickers
+        self.names = names
 
     @staticmethod
     def __plot_backtest(
