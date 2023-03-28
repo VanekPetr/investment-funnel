@@ -1,8 +1,10 @@
 import numpy as np
 import pandas as pd
+import os
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
+from typing import Tuple, Union
 from models.dataAnalyser import mean_an_returns, final_stats
 from models.MST import minimum_spanning_tree
 from models.Clustering import cluster, pick_cluster
@@ -10,14 +12,14 @@ from models.ScenarioGeneration import monte_carlo, bootstrapping
 from models.CVaRtargets import get_cvar_targets
 from models.CVaRmodel import cvar_model
 from financial_data.ETFlist import ETFlist
+from pathlib import Path
 
 pio.renderers.default = "browser"
-
-# Get data
-data = pd.read_parquet('financial_data/all_etfs_rets.parquet.gzip')
-tickers = data.columns.values
-data_name = pd.read_parquet('financial_data/all_etfs_rets_name.parquet.gzip')
-names = data_name.columns.values
+ROOT_DIR = Path(__file__).parent.parent
+# Load our data
+weekly_returns = pd.read_parquet(os.path.join(ROOT_DIR, 'financial_data/all_etfs_rets.parquet.gzip'))
+tickers = weekly_returns.columns.values
+names = pd.read_parquet(os.path.join(ROOT_DIR, 'financial_data/all_etfs_rets_name.parquet.gzip')).columns.values
 
 
 class TradeBot(object):
@@ -26,68 +28,21 @@ class TradeBot(object):
     optimization suggesting optimal portfolio of assets.
     """
 
-    # def __init__(self, start, end, assets):
-    #     # DOWNLOAD THE ADJUSTED DAILY PRICES FROM YAHOO DATABASE
-    #     dailyPrices = data.DataReader(assets, 'yahoo', start, end)["Adj Close"]
-    #     ## Extra
-    #     # test = dailyPrices
-    #     # for k in range(len(test.columns)):
-    #     #     for i in range(len(test.index)):
-    #     #         if math.isnan(float(test.iloc[i, k])):
-    #     #             test.iloc[i, k] = test.iloc[i-1, k]
-    #     # dailyPrices=test
-    #     # GET WEEKLY RETURNS
-    #     # Get prices only for Wednesdays and delete Nan columns
-    #     pricesWed = dailyPrices[dailyPrices.index.weekday == 2].dropna(axis=1)
-    #     # Get weekly returns
-    #     self.weeklyReturns = pricesWed.pct_change().drop(pricesWed.index[0])  # drop first NaN row
-    #
-
     def __init__(self):
-        self.weeklyReturns = data
+        self.weeklyReturns = weekly_returns
         self.tickers = tickers
         self.names = names
 
-    def __get_stat(self, start, end):
-        """
-        METHOD COMPUTING ANNUAL RETURNS, ANNUAL STD. DEV. & SHARPE RATIO OF ASSETS
-        """
-
-        # ANALYZE THE DATA for a given time period
-        weekly_data = self.weeklyReturns[(self.weeklyReturns.index >= start) & (self.weeklyReturns.index <= end)].copy()
-
-        # Create table with summary statistics
-        mu_ga = mean_an_returns(weekly_data)  # Annualised geometric mean of returns
-        std_dev_a = weekly_data.std(axis=0) * np.sqrt(52)  # Annualised standard deviation of returns
-        sharpe = round(mu_ga / std_dev_a, 2)  # Sharpe ratio of each financial product
-
-        # Write all results into a data frame
-        stat_df = pd.concat([mu_ga, std_dev_a, sharpe], axis=1)
-        stat_df.columns = ["Average Annual Returns", "Standard Deviation of Returns", "Sharpe Ratio"]
-        stat_df["ISIN"] = stat_df.index  # Add names into the table
-        stat_df["Name"] = self.names
-
-        # IS ETF OR NOT? Set size
-        for isin in stat_df.index:
-            if isin in ETFlist:
-                stat_df.loc[isin, "Type"] = "ETF"
-                stat_df.loc[isin, "Size"] = 1
-            else:
-                stat_df.loc[isin, "Type"] = "ETF"
-                stat_df.loc[isin, "Size"] = 1
-
-        return stat_df
-
     @staticmethod
-    def __plot_backtest(performance, performance_benchmark, composition, names, tickers):
-        """
-        METHOD TO PLOT THE BACKTEST RESULTS
-        """
+    def __plot_backtest(
+        performance: pd.DataFrame,
+        performance_benchmark: pd.DataFrame,
+        composition: pd.DataFrame,
+        names: list,
+        tickers: list
+    ) -> Tuple[px.line, go.Figure]:
+        """ METHOD TO PLOT THE BACKTEST RESULTS """
 
-        # FOR Yahoo
-        # performance.index = performance.index.date
-
-        # FOR Morningstar
         performance.index = pd.to_datetime(performance.index.values, utc=True)
 
         # ** PERFORMANCE GRAPH **
@@ -138,13 +93,47 @@ class TradeBot(object):
 
         return fig_performance, fig_composition
 
-    def plot_dots(self, start, end, ml=None, ml_subset=None, fund_set=[]):
-        """
-        METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS
-        """
+    def get_stat(self, start_date: str, end_date: str) -> pd.DataFrame:
+        """ METHOD COMPUTING ANNUAL RETURNS, ANNUAL STD. DEV. & SHARPE RATIO OF ASSETS """
+
+        # ANALYZE THE DATA for a given time period
+        weekly_data = self.weeklyReturns[(self.weeklyReturns.index >= start_date)
+                                         & (self.weeklyReturns.index <= end_date)].copy()
+
+        # Create table with summary statistics
+        mu_ga = mean_an_returns(weekly_data)  # Annualised geometric mean of returns
+        std_dev_a = weekly_data.std(axis=0) * np.sqrt(52)  # Annualised standard deviation of returns
+        sharpe = round(mu_ga / std_dev_a, 2)  # Sharpe ratio of each financial product
+
+        # Write all results into a data frame
+        stat_df = pd.concat([mu_ga, std_dev_a, sharpe], axis=1)
+        stat_df.columns = ["Average Annual Returns", "Standard Deviation of Returns", "Sharpe Ratio"]
+        stat_df["ISIN"] = stat_df.index  # Add names into the table
+        stat_df["Name"] = self.names
+
+        # IS ETF OR NOT? Set size
+        for isin in stat_df.index:
+            if isin in ETFlist:
+                stat_df.loc[isin, "Type"] = "ETF"
+                stat_df.loc[isin, "Size"] = 1
+            else:
+                stat_df.loc[isin, "Type"] = "ETF"
+                stat_df.loc[isin, "Size"] = 1
+
+        return stat_df
+
+    def plot_dots(
+        self,
+        start_date: str,
+        end_date: str,
+        ml: str = '',
+        ml_subset: Union[list, pd.DataFrame] = None,
+        fund_set: list = []
+    ) -> px.scatter:
+        """ METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS """
 
         # Get statistics for a given time period
-        data = self.__get_stat(start, end)
+        data = self.get_stat(start_date, end_date)
 
         # IF WE WANT TO HIGHLIGHT THE SUBSET OF ASSETS BASED ON ML
         if ml == "MST":
@@ -173,7 +162,8 @@ class TradeBot(object):
                          hover_name="Name",
                          hover_data={"Sharpe Ratio": True, "ISIN": True, "Size": False},
                          color_discrete_map=color_discrete_map,
-                         title="Annual Returns and Standard Deviation of Returns from " + start[:10] + " to " + end[:10]
+                         title="Annual Returns and Standard Deviation of Returns from "
+                               + start_date[:10] + " to " + end_date[:10]
                          )
 
         # AXIS IN PERCENTAGES
@@ -226,119 +216,98 @@ class TradeBot(object):
 
         return fig
 
-    def setup_data(self, start, end, train_test, train_ratio=0.5, end_train=None, start_test=None):
-        """
-        METHOD TO PREPARE DATA FOR ML AND BACKTESTING
-        """
-        
-        self.start = start
-        self.end = end
-        self.train_test = train_test
-        self.AIdata = self.__get_stat(start, end)
-
-        # Get data for a given time interval
-        data = self.weeklyReturns[(self.weeklyReturns.index >= start) & (self.weeklyReturns.index <= end)].copy()
-
-        # IF WE DIVIDE DATASET
-        if train_test:
-            # # DIVIDE DATA INTO TRAINING AND TESTING PARTS
-            # breakPoint = int(np.floor(len(data.index) * train_ratio))
-            #
-            # # DEFINITION OF TRAINING AND TESTING DATASETS
-            # self.trainDataset = data.iloc[0:breakPoint, :]
-            # self.testDataset = data.iloc[breakPoint:, :]
-
-            self.trainDataset = data[data.index <= end_train]
-            self.testDataset = data[data.index > start_test]
-
-            # Get dates
-            self.endTrainDate = str(self.trainDataset.index.date[-1])
-            self.startTestDate = str(self.testDataset.index.date[0])
-
-            self.dataPlot = self.__get_stat(start, self.endTrainDate)
-            self.lenTest = len(self.testDataset.index)
-        else:
-            self.trainDataset = data
-            self.endTrainDate = str(self.trainDataset.index.date[-1])
-            self.dataPlot = self.__get_stat(start, end)
-            self.lenTest = 0
-
-    def mst(self, n_mst_runs, plot):
-        """
-        METHOD TO RUN MST METHOD AND PRINT RESULTS
-        """
+    def mst(
+        self, start_date: str, end_date: str, n_mst_runs: int, plot: bool = False
+    ) -> Tuple[Union[None, px.scatter], list]:
+        """ METHOD TO RUN MST METHOD AND PRINT RESULTS """
+        fig, subset_mst = None, []
         
         # Starting subset of data for MST
-        self.subsetMST_df = self.trainDataset
+        subset_mst_df = self.weeklyReturns[(self.weeklyReturns.index >= start_date)
+                                           & (self.weeklyReturns.index <= end_date)].copy()
+
         for i in range(n_mst_runs):
-            self.subsetMST, self.subsetMST_df, self.corrMST_avg, self.PDI_MST = minimum_spanning_tree(self.subsetMST_df)
+            subset_mst, subset_mst_df, corr_mst_avg, pdi_mst = minimum_spanning_tree(subset_mst_df)
 
         # PLOTTING RESULTS
-        if plot:
-            fig = self.plot_dots(start=self.start, end=self.endTrainDate, ml="MST", ml_subset=self.subsetMST)
-            return fig
+        if plot and len(subset_mst) > 0:
+            end_df_date = str(subset_mst_df.index.date[-1])
+            fig = self.plot_dots(start_date=start_date, end_date=end_df_date, ml="MST", ml_subset=subset_mst)
 
-    def clustering(self, n_clusters, n_assets, plot):
+        return fig, subset_mst
+
+    def clustering(
+        self, start_date: str, end_date: str, n_clusters: int, n_assets: int, plot: bool = False
+    ) -> Tuple[Union[None, px.scatter], list]:
         """
         METHOD TO RUN MST METHOD AND PRINT RESULTS
         """
-        
+        fig = None
+        dataset = self.weeklyReturns[(self.weeklyReturns.index >= start_date)
+                                     & (self.weeklyReturns.index <= end_date)].copy()
         # CLUSTER DATA
-        clusters = cluster(self.trainDataset, n_clusters, dendrogram=False)
+        clusters = cluster(dataset, n_clusters, dendrogram=False)
 
         # SELECT ASSETS
-        self.subsetCLUST, self.subsetCLUST_df = pick_cluster(data=self.trainDataset,
-                                                             stat=self.dataPlot,
-                                                             ml=clusters,
-                                                             n_assets=n_assets)  # Number of assets from each cluster
+        end_dataset_date = str(dataset.index.date[-1])
+        clustering_stats = self.get_stat(start_date, end_dataset_date)
+        subset_clustering, subset_clustering_df = pick_cluster(data=dataset,
+                                                               stat=clustering_stats,
+                                                               ml=clusters,
+                                                               n_assets=n_assets)  # Number of assets from each cluster
 
         # PLOTTING DATA
         if plot:
-            fig = self.plot_dots(start=self.start, end=self.endTrainDate, ml="Clustering", ml_subset=clusters)
-            return fig
+            fig = self.plot_dots(start_date=start_date, end_date=end_dataset_date, ml="Clustering", ml_subset=clusters)
 
-    def backtest(self, assets, benchmark, scenarios, n_simulations):
-        """
-        METHOD TO COMPUTE THE BACKTEST
-        """
+        return fig, subset_clustering
+
+    def backtest(
+        self,
+        start_train_date: str,
+        end_train_date: str,
+        start_test_date: str,
+        end_test_date: str,
+        subset_of_assets: list,
+        benchmarks: list,
+        scenarios_type: str,
+        n_simulations: int
+    ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure]:
+        """ METHOD TO COMPUTE THE BACKTEST """
 
         # Find Benchmarks' ISIN codes
-        benchmark_isin = [self.tickers[list(self.names).index(name)] for name in benchmark]
+        benchmark_isin = [self.tickers[list(self.names).index(name)] for name in benchmarks]
 
-        # SELECT THE WORKING SUBSET
-        if assets == 'MST':
-            subset = self.subsetMST
-        elif assets == 'Clustering':
-            subset = self.subsetCLUST
-        else:
-            subset = assets
+        # Get train and testing datasets
+        train_dataset = self.weeklyReturns[(self.weeklyReturns.index >= start_train_date)
+                                           & (self.weeklyReturns.index <= end_train_date)].copy()
+        test_dataset = self.weeklyReturns[(self.weeklyReturns.index > start_test_date)
+                                          & (self.weeklyReturns.index <= end_test_date)].copy()
 
         # SCENARIO GENERATION
         # ---------------------------------------------------------------------------------------------------
-        if scenarios == 'MonteCarlo':
-            scenarios = monte_carlo(data=self.trainDataset.loc[:, self.trainDataset.columns.isin(subset)],
+        if scenarios_type == 'MonteCarlo':
+            scenarios = monte_carlo(data=train_dataset.loc[:, train_dataset.columns.isin(subset_of_assets)],
                                     # subsetMST_df or subsetCLUST_df
                                     n_simulations=n_simulations,
-                                    n_test=self.lenTest)
+                                    n_test=len(test_dataset.index))
         else:
-            scenarios = bootstrapping(data=self.weeklyReturns[subset],  # subsetMST or subsetCLUST
+            scenarios = bootstrapping(data=self.weeklyReturns[subset_of_assets],  # subsetMST or subsetCLUST
                                       n_simulations=n_simulations,  # number of scenarios per period
-                                      n_test=self.lenTest)
+                                      n_test=len(test_dataset.index))  # number of periods
 
         # TARGETS GENERATION
         # ---------------------------------------------------------------------------------------------------
-        targets, benchmark_port_val = get_cvar_targets(start_date=self.start,
-                                                       end_date=self.end,
-                                                       test_date=self.startTestDate,
+        start_of_test_dataset = str(test_dataset.index.date[0])
+        targets, benchmark_port_val = get_cvar_targets(test_date=start_of_test_dataset,
                                                        benchmark=benchmark_isin,  # MSCI World benchmark
-                                                       test_index=self.testDataset.index.date,
                                                        budget=100,
                                                        cvar_alpha=0.05,
                                                        data=self.weeklyReturns)
 
         # MATHEMATICAL MODELING
         # ------------------------------------------------------------------
-        port_allocation, port_value, port_cvar = cvar_model(test_ret=self.testDataset[subset],
+        port_allocation, port_value, port_cvar = cvar_model(test_ret=test_dataset[subset_of_assets],
                                                             scenarios=scenarios,  # Scenarios
                                                             targets=targets,  # Target
                                                             budget=100,
@@ -367,16 +336,27 @@ if __name__ == "__main__":
     algo = TradeBot()
 
     # PLOT INTERACTIVE GRAPH
-    algo.plot_dots(start="2018-09-24", end="2019-09-01")
-
-    # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
-    algo.setup_data(start="2015-12-23", end="2018-08-22", train_test=True, train_ratio=0.6)
+    algo.plot_dots(start_date="2018-09-24", end_date="2019-09-01")
 
     # RUN THE MINIMUM SPANNING TREE METHOD
-    algo.mst(n_mst_runs=3, plot=True)
+    _, mst_subset_of_assets = algo.mst(start_date="2015-12-23",
+                                       end_date="2017-07-01",
+                                       n_mst_runs=3,
+                                       plot=True)
 
     # RUN THE CLUSTERING METHOD
-    algo.clustering(n_clusters=3, n_assets=10, plot=True)
+    _, clustering_subset_of_assets = algo.clustering(start_date="2015-12-23",
+                                                     end_date="2017-07-01",
+                                                     n_clusters=3,
+                                                     n_assets=10,
+                                                     plot=True)
 
     # RUN THE BACKTEST
-    results = algo.backtest(assets='MST', benchmark=['URTH'], scenarios='Bootstrapping', n_simulations=500)
+    results = algo.backtest(start_train_date="2015-12-23",
+                            end_train_date="2017-07-01",
+                            start_test_date="2018-09-24",
+                            end_test_date="2019-09-01",
+                            subset_of_assets=mst_subset_of_assets,
+                            benchmarks=['S&P 500 Growth ETF'],
+                            scenarios_type='Bootstrapping',
+                            n_simulations=500)
