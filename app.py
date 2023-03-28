@@ -2,7 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 from dashboard.app_layouts import page_1_layout
-from dashboard.app_callbacks import get_callbacks
+from dashboard.app_callbacks_new import get_callbacks
 
 
 def load_page():

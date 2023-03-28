@@ -65,21 +65,10 @@ def portfolio_risk_target(scenarios, cvar_alpha):
 # ----------------------------------------------------------------------
 # Mathematical Optimization: TARGETS GENERATION
 # ---------------------------------------------------------------------- 
-def get_cvar_targets(start_date, end_date, test_date, benchmark, test_index, budget, cvar_alpha, data=[]):
+def get_cvar_targets(test_date, benchmark, budget, cvar_alpha, data=[]):
 
     # Define Benchmark
     tickers = benchmark
-
-    # *** For YAHOO version ***
-    # # User pandas_reader.data.DataReader to load the desired data.
-    # panel_data = data.DataReader(tickers, 'yahoo', start_date, end_date)
-    # df_close = panel_data["Adj Close"]
-    # # Get weekly data
-    # target_weekly_ret = get_weekly_returns(data=df_close)
-
-    # df_test_index = pd.DataFrame(index=test_index)
-    # test_weekly_ret = pd.concat([df_test_index, test_weekly_ret], axis=1)
-    # test_weekly_ret = test_weekly_ret.fillna(0)
 
     # *** For Morningstar data ***
     target_weekly_ret = data[tickers].copy()
