@@ -119,12 +119,6 @@ GRAPH_RIGHT = {
 image_filename = 'assets/ALGO_logo.png'  # replace with your own image
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
-# Top bar with AlgoStrata logo
-# topBar = html.Div([
-#          html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),
-#                   style={'height': '16px', 'margin': '12px', 'margin-right': '16px'})
-#             ], style=TOPBAR_STYLE)
-
 # sidebar with navigation
 sideBar = html.Div([
     html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),

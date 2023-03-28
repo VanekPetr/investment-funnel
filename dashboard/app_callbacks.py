@@ -87,17 +87,20 @@ def get_callbacks(app):
             click = click_prev + 1
 
         if click > click_prev:
-            # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
-            algo.setup_data(start=start_data, end=end_data, train_test=True, end_train=end_train, start_test=start_test)
             # RUN ML algo
             if ml_method == 'MST':
-                algo.mst(n_mst_runs=num_runs, plot=False)
+                _, subset_of_assets = algo.mst(start_date=start_data, end_date=end_train, n_mst_runs=num_runs)
             else:
-                algo.clustering(n_clusters=num_runs, n_assets=num_clusters, plot=False)
+                _, subset_of_assets = algo.clustering(start_date=start_data, end_date=end_train, n_clusters=num_runs,
+                                                      n_assets=num_clusters)
             # RUN THE BACKTEST
-            OPTtable, BENCHtable, figPerf, figComp = algo.backtest(assets=ml_method,
-                                                                   benchmark=benchmark,
-                                                                   scenarios=scen_method,
+            OPTtable, BENCHtable, figPerf, figComp = algo.backtest(start_train_date=start_data,
+                                                                   end_train_date=end_train,
+                                                                   start_test_date=start_test,
+                                                                   end_test_date=end_data,
+                                                                   subset_of_assets=subset_of_assets,
+                                                                   benchmarks=benchmark,
+                                                                   scenarios_type=scen_method,
                                                                    n_simulations=scen_num)
             # Save page values
             save_Figure3 = dcc.Graph(figure=figPerf, style={'margin': '0%'})
@@ -112,13 +115,11 @@ def get_callbacks(app):
         return save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'), \
                save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
 
-
     @app.callback(
         Output('slider-output-container2', 'children'),
         [Input('my-slider2', 'value')])
     def update_output(value):
         return '# of scenarios: {}'.format(value)
-
 
     @app.callback(
         Output('slider-output-container-backtest', 'children'),
@@ -126,13 +127,11 @@ def get_callbacks(app):
     def update_output_cluster(value):
         return 'In case of CLUSTERING: # of the best performing assets selected from each cluster: {}'.format(value)
 
-
     @app.callback(
         Output('slider-output-container-backtest-ml', 'children'),
         [Input('slider-backtest-ml', 'value')])
     def update_output_MLtype(value):
         return '# of clusters or # of MST runs: {}'.format(value)
-
 
     @app.callback(
         [Output('picker-test', 'start_date'),
@@ -155,7 +154,6 @@ def get_callbacks(app):
             final_date = selected_date
 
         return final_date, maxDate, minDate, maxDate, minDate, maxDate, minDate, final_date
-
 
     # AI Feature Selection
     # ----------------------------------------------------------------------------------------------------------------------
@@ -204,22 +202,21 @@ def get_callbacks(app):
             endDate2 = end
             save_model = model
             save_MLnum = num_iter
-            # SETUP WORKING DATASET, DIVIDE DATASET INTO TRAINING AND TESTING PART?
-            algo.setup_data(start=startDate2, end=endDate2, train_test=False)
+
             # MST
             if model == "MST":
                 # RUN THE MINIMUM SPANNING TREE METHOD
-                fig = algo.mst(n_mst_runs=num_iter, plot=True)
-                AIsubset = algo.subsetMST
+                fig, ai_subset = algo.mst(start_date=startDate2, end_date=endDate2, n_mst_runs=num_iter, plot=True)
                 ML_click_prev = click_ML
                 save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
             # CLUSTERING
             else:
-                fig = algo.clustering(n_clusters=num_iter, n_assets=10, plot=True)
-                AIsubset = algo.subsetCLUST
+                fig, ai_subset = algo.clustering(start_date=startDate2, end_date=endDate2, n_clusters=num_iter,
+                                                 n_assets=10, plot=True)
                 save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
-            AItable = algo.AIdata.loc[list(AIsubset), ['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
-                                                       'Standard Deviation of Returns']]
+            ai_data = algo.get_stat(start_date=startDate2, end_date=endDate2)
+            AItable = ai_data.loc[list(ai_subset), ['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
+                                                    'Standard Deviation of Returns']]
             # ROUNDING
             AItable["Standard Deviation of Returns"] = round(AItable["Standard Deviation of Returns"], 2)
             AItable["Average Annual Returns"] = round(AItable["Average Annual Returns"], 2)
@@ -228,7 +225,6 @@ def get_callbacks(app):
 
         return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number,\
                save_model, save_MLnum
-
 
     # MARKET OVERVIEW
     # ----------------------------------------------------------------------------------------------------------------------
@@ -271,7 +267,7 @@ def get_callbacks(app):
                 endDate = end
                 save_Search = search
 
-                fig = algo.plot_dots(start=str(start), end=str(end), fund_set=save_Search)
+                fig = algo.plot_dots(start_date=str(start), end_date=str(end), fund_set=save_Search)
                 save_Figure = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%',
                                                            'top': '0%', 'left': '0%'})
                 return save_Figure, startDate, endDate, minDate, maxDate, save_Search
