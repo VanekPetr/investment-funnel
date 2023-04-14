@@ -1,64 +1,53 @@
-import pulp
 import numpy as np
 import pandas as pd
 from loguru import logger
+
+
+# Primal CVaR formula
+def CVaR(alpha, p, q):
+    """
+    Computes CVaR using primal formula. 
+    NOTE: Inputs p and q should be numpy arrays.
+    """
+    # We need to be careful that math index starts from 1 but numpy starts from 0 (matters in formulas like ceil(alpha * T))
+    T = q.shape[0]
+    sort_idx = np.argsort(q)
+    sorted_q = q[sort_idx]
+    sorted_p = p[sort_idx]
+    
+    # Starting index 
+    i_alpha = np.sort(np.nonzero(np.cumsum(sorted_p) >= alpha)[0])[0]
+
+    # Weight of VaR component in CVaR
+    lambda_alpha = (np.sum(sorted_p[:(i_alpha + 1)]) - alpha) / (1 - alpha)    
+    
+    # CVaR
+    var = sorted_q[i_alpha]
+    cvar = lambda_alpha * sorted_q[i_alpha] + np.dot(sorted_p[(i_alpha + 1):], sorted_q[(i_alpha + 1):]) / (1 - alpha)
+    
+    return var, cvar
+
 
 # FUNCTION RUNNING THE OPTIMIZATION
 # ----------------------------------------------------------------------
 def portfolio_risk_target(scenarios, cvar_alpha):
     
-    # Fixed x
-    x = pd.DataFrame(columns=scenarios.columns, index=["1/N position"])
-    x.loc["1/N position", :] = 1/len(scenarios.columns)   
-    
-    # define index
-    i_idx = scenarios.columns
-    j_idx = scenarios.index
-    
-    # number of scenarios
-    scenario_n = scenarios.shape[0]    
-    
-    # loss deviation
-    var_dev = pulp.LpVariable.dicts("VarDev", (t for t in j_idx), lowBound=0, cat='Continuous')
-        
-    # value at risk
-    var = pulp.LpVariable("VaR", lowBound=0, cat='Continuous')
-    cvar = pulp.LpVariable("CVaR", lowBound=0, cat='Continuous')
-      
-    # define model
-    model = pulp.LpProblem("Targets Optimization", pulp.LpMinimize)
-     
-    # Objective Function
-    model += cvar
-                      
-    # *** CONSTRAINS ***               
-    # Var deviation constrain
-    for t in j_idx:
-        model += -pulp.lpSum([scenarios.loc[t, i] * x[i] for i in i_idx]) - var <= var_dev[t]
-    
-    # CVaR constrain
-    model += var + 1/(scenario_n * cvar_alpha) * pulp.lpSum([var_dev[t] for t in j_idx]) == cvar
+    # Fixed equal weight x
+    x = pd.Series(index=scenarios.columns, data=1 / scenarios.shape[1])
 
-    # Budget constrain
-    model += pulp.lpSum([x[i] for i in i_idx]) == 1
+    # Number of scenarios
+    scenario_n = scenarios.shape[0] 
 
-    # solve model
-    model.solve()
-        
-    # Get positions    
-    if pulp.LpStatus[model.status] == 'Optimal':
-     
-        # print variables
-        var_model = dict()
-        for variable in model.variables():
-            var_model[variable.name] = variable.varValue
-         
-        # solution with variable names   
-        var_model = pd.Series(var_model, index=var_model.keys())
-        
-        return var_model["CVaR"]
-    else:
-        logger.exception(f"LP does not find optimal solution for CVaR targets with: {pulp.LpStatus[model.status]}")
+    # Portfolio loss scenarios
+    losses = (-scenarios @ x).to_numpy()
+
+    # Probabilities
+    probs = np.ones(scenario_n) / scenario_n
+
+    # CVaR
+    _, portfolio_cvar = CVaR(1 - cvar_alpha, probs, losses)
+
+    return portfolio_cvar
 
 
 # ----------------------------------------------------------------------
