@@ -8,7 +8,7 @@ from typing import Tuple, Union
 from models.dataAnalyser import mean_an_returns, final_stats
 from models.MST import minimum_spanning_tree
 from models.Clustering import cluster, pick_cluster
-from models.ScenarioGeneration import monte_carlo, bootstrapping
+from models.ScenarioGeneration import ScenarioGenerator
 from models.CVaRtargets import get_cvar_targets
 from models.CVaRmodel import cvar_model
 from financial_data.ETFlist import ETFlist
@@ -284,15 +284,18 @@ class TradeBot(object):
         test_dataset = self.weeklyReturns[(self.weeklyReturns.index > start_test_date)
                                           & (self.weeklyReturns.index <= end_test_date)].copy()
 
+        # Create scenario generator
+        sg = ScenarioGenerator(np.random.default_rng())
+
         # SCENARIO GENERATION
         # ---------------------------------------------------------------------------------------------------
         if scenarios_type == 'MonteCarlo':
-            scenarios = monte_carlo(data=train_dataset.loc[:, train_dataset.columns.isin(subset_of_assets)],
+            scenarios = sg.monte_carlo(data=train_dataset.loc[:, train_dataset.columns.isin(subset_of_assets)],
                                     # subsetMST_df or subsetCLUST_df
                                     n_simulations=n_simulations,
                                     n_test=len(test_dataset.index))
         else:
-            scenarios = bootstrapping(data=self.weeklyReturns[subset_of_assets],  # subsetMST or subsetCLUST
+            scenarios = sg.bootstrapping(data=self.weeklyReturns[subset_of_assets],  # subsetMST or subsetCLUST
                                       n_simulations=n_simulations,  # number of scenarios per period
                                       n_test=len(test_dataset.index))  # number of periods
 
