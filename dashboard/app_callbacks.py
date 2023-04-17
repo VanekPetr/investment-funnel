@@ -5,11 +5,9 @@ from models.main import TradeBot
 from dash import dcc
 from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
 
-global df_etim
-global AItable, OPTtable, BENCHtable
+global OPTtable, BENCHtable
 
-AItable = pd.DataFrame(np.array([['No result', 'No result', 'No result', 'No result', 'No result']]),
-                       columns=['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns', 'Standard Deviation of Returns'])
+
 OPTtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
                         columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
 BENCHtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
@@ -26,8 +24,6 @@ def get_callbacks(app):
         [Input('url', 'pathname')]
     )
     def display_page(pathname):
-        global df_etim
-        global df_data
         if pathname == '/':
             return page_1_layout
         elif pathname == '/page-1':
@@ -182,10 +178,13 @@ def get_callbacks(app):
          ]
     )
     def plot_ml(click_ML, model, num_iter, start, end, ml_click_prev):
-        global save_Figure2, AItable, AI_text_number, save_model, save_MLnum
+        global save_Figure2, AI_text_number, save_model, save_MLnum
 
         # TODO Save results
         if click_ML:
+            AItable = pd.DataFrame(np.array([['No result', 'No result', 'No result', 'No result', 'No result']]),
+                                   columns=['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
+                                            'Standard Deviation of Returns'])
             if click_ML is None:
                 click_ML = ml_click_prev
             elif click_ML < ml_click_prev:
