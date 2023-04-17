@@ -143,7 +143,14 @@ sideBar = html.Div([
         vertical=True,
         pills=True,
         style={"position": "fixed", 'bottom': '12%'}
-    )
+    ),
+
+    dcc.Store(id='first-run-page-1', data=0),
+    dcc.Store(id='first-run-page-2', data=0),
+    dcc.Store(id='first-run-page-3', data=0),
+    dcc.Store(id='first-run-page-3-2', data=0),
+    dcc.Store(id='ml-click-prev', data=0),
+    dcc.Store(id='click-prev', data=0),
 ], style=SIDEBAR_STYLE)
 
 
@@ -425,6 +432,5 @@ optionMyPortfolio = html.Div([
     html.Button('Recalculate',
                 id='recalculate',
                 style=OPTION_BTN),
-
 
 ], style=GRAPH_LEFT)

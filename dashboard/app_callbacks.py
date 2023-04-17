@@ -6,8 +6,6 @@ from dash import dcc
 from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
 
 global df_etim
-global first_run_page1, first_run_page2, first_run_page3, first_run_page3_2
-global ML_click_prev, click_prev
 global AItable, OPTtable, BENCHtable
 
 AItable = pd.DataFrame(np.array([['No result', 'No result', 'No result', 'No result', 'No result']]),
@@ -16,8 +14,6 @@ OPTtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
                         columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
 BENCHtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
                           columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
-first_run_page1, first_run_page2, first_run_page3, first_run_page3_2 = 0, 0, 0, 0
-ML_click_prev, click_prev = 0, 0
 
 
 def get_callbacks(app):
@@ -52,6 +48,8 @@ def get_callbacks(app):
          Output('select-scenarios', 'value'),
          Output('my-slider2', 'value'),
          Output('select-benchmark', 'value'),
+         Output('first-run-page-3-2', 'data'),
+         Output('click-prev', 'data')
          ],
         [Input('backtestRun', 'n_clicks')],
         [State('select-ml', 'value'),
@@ -63,23 +61,25 @@ def get_callbacks(app):
          State('picker-train', 'start_date'),
          State('picker-train', 'end_date'),
          State('picker-test', 'start_date'),
-         State('picker-test', 'end_date')]
+         State('picker-test', 'end_date'),
+         State('first-run-page-3-2', 'data'),
+         State('click-prev', 'data')]
     )
     def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_num, benchmark,
-                      start_data, end_train, start_test, end_data):
+                      start_data, end_train, start_test, end_data, first_run_page_3_2, click_prev):
         global algo
-        global first_run_page3_2, click_prev
         global OPTtable, BENCHtable
         global save_Figure3, save_Figure3_comp
         global save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
 
-        if first_run_page3_2 < 1:
-            first_run_page3_2 = 1
+        if first_run_page_3_2 < 1:
+            first_run_page_3_2 = 1
             save_Figure3, save_Figure3_comp = None, None
             save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench = None, 2, 5, None, 1000, None
 
-            return save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'), \
-                   save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
+            return (save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'),
+                    save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench, first_run_page_3_2,
+                    click_prev)
 
         if click is None:
             click = click_prev
@@ -112,8 +112,9 @@ def get_callbacks(app):
             save_scen_num = scen_num
             save_bench = benchmark
 
-        return save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'), \
-               save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
+        return (save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'),
+                save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench, first_run_page_3_2,
+                click_prev)
 
     @app.callback(
         Output('slider-output-container2', 'children'),
@@ -141,19 +142,21 @@ def get_callbacks(app):
          Output('picker-train', 'min_date_allowed'),
          Output('picker-train', 'max_date_allowed'),
          Output('picker-train', 'start_date'),
-         Output('picker-train', 'end_date')],
-        [Input('picker-train', 'end_date')])
-    def update_test_date(selected_date):
-        global first_run_page3
+         Output('picker-train', 'end_date'),
+         Output('first-run-page-3', 'data')],
+        [Input('picker-train', 'end_date')],
+        [State('first-run-page-3', 'data')]
+    )
+    def update_test_date(selected_date, first_run_page_3):
         global minDate, maxDate
         global final_date
-        if first_run_page3 < 1:
+        if first_run_page_3 < 1:
             final_date = '2017-07-01'
-            first_run_page3 = 1
+            first_run_page_3 = 1
         elif selected_date != None:
             final_date = selected_date
 
-        return final_date, maxDate, minDate, maxDate, minDate, maxDate, minDate, final_date
+        return final_date, maxDate, minDate, maxDate, minDate, maxDate, minDate, final_date, first_run_page_3
 
     # AI Feature Selection
     # ----------------------------------------------------------------------------------------------------------------------
@@ -167,37 +170,40 @@ def get_callbacks(app):
          Output('AIResult', 'data'),
          Output('AInumber', 'children'),
          Output('model-dropdown', 'value'),
-         Output('ML-num-dropdown', 'value')
+         Output('ML-num-dropdown', 'value'),
+         Output('first-run-page-2', 'data'),
+         Output('ml-click-prev', 'data')
          ],
         [Input('MLRun', 'n_clicks')],
         [State('model-dropdown', 'value'),
          State('ML-num-dropdown', 'value'),
          State('picker-AI', 'start_date'),
          State('picker-AI', 'end_date'),
+         State('first-run-page-2', 'data'),
+         State('ml-click-prev', 'data')
          ]
     )
-    def plot_ml(click_ML, model, num_iter, start, end):
+    def plot_ml(click_ML, model, num_iter, start, end, first_run_page_2, ml_click_prev):
         global algo
         global startDate, endDate, startDate2, endDate2
         global minDate, maxDate
-        global first_run_page2, ML_click_prev
         global save_Figure2, AItable, AI_text_number, save_model, save_MLnum
 
-        if first_run_page2 < 1:
-            first_run_page2 = 1
+        if first_run_page_2 < 1:
+            first_run_page_2 = 1
             startDate2 = startDate
             endDate2 = endDate
             save_Figure2, save_model, save_MLnum = None, None, None
             AI_text_number = "No selected asset."
             return save_Figure2, startDate, endDate, minDate, maxDate, AItable.to_dict('records'), AI_text_number,\
-                   save_model, save_MLnum
+                   save_model, save_MLnum, first_run_page_2, ml_click_prev
 
         if click_ML is None:
-            click_ML = ML_click_prev
-        elif click_ML < ML_click_prev:
-            click_ML = ML_click_prev + 1
+            click_ML = ml_click_prev
+        elif click_ML < ml_click_prev:
+            click_ML = ml_click_prev + 1
 
-        if click_ML > ML_click_prev:
+        if click_ML > ml_click_prev:
             startDate2 = start
             endDate2 = end
             save_model = model
@@ -207,7 +213,7 @@ def get_callbacks(app):
             if model == "MST":
                 # RUN THE MINIMUM SPANNING TREE METHOD
                 fig, ai_subset = algo.mst(start_date=startDate2, end_date=endDate2, n_mst_runs=num_iter, plot=True)
-                ML_click_prev = click_ML
+                ml_click_prev = click_ML
                 save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
             # CLUSTERING
             else:
@@ -224,7 +230,7 @@ def get_callbacks(app):
             AI_text_number = 'Number of selected assets: ' + str(len(AItable))
 
         return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number,\
-               save_model, save_MLnum
+               save_model, save_MLnum, first_run_page_2, ml_click_prev
 
     # MARKET OVERVIEW
     # ----------------------------------------------------------------------------------------------------------------------
@@ -235,20 +241,22 @@ def get_callbacks(app):
          Output('picker-show', 'end_date'),
          Output('picker-show', 'min_date_allowed'),
          Output('picker-show', 'max_date_allowed'),
-         Output('find-fund', 'value')
+         Output('find-fund', 'value'),
+         Output('first-run-page-1', 'data')
          ],
         [Input('show', 'n_clicks')],
         [State('picker-show', 'start_date'),
          State('picker-show', 'end_date'),
-         State('find-fund', 'value')],
+         State('find-fund', 'value'),
+         State('first-run-page-1', 'data')],
     )
-    def plot_dots(click, start, end, search):
+    def plot_dots(click, start, end, search, first_run_page_1):
         global algo
         global startDate, endDate
         global minDate, maxDate
-        global first_run_page1, save_Figure, save_Search
+        global save_Figure, save_Search
 
-        if first_run_page1 < 1:
+        if first_run_page_1 < 1:
             algo = TradeBot()
             startDate = algo.weeklyReturns.index[0]
             endDate = algo.weeklyReturns.index[-2]
@@ -257,9 +265,9 @@ def get_callbacks(app):
 
             save_Figure = None
             save_Search = []
-            first_run_page1 = 1
+            first_run_page_1 = 1
 
-            return save_Figure, startDate, endDate, minDate, maxDate, save_Search
+            return save_Figure, startDate, endDate, minDate, maxDate, save_Search, first_run_page_1
 
         try:
             if click > 0:
@@ -270,6 +278,6 @@ def get_callbacks(app):
                 fig = algo.plot_dots(start_date=str(start), end_date=str(end), fund_set=save_Search)
                 save_Figure = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%',
                                                            'top': '0%', 'left': '0%'})
-                return save_Figure, startDate, endDate, minDate, maxDate, save_Search
+                return save_Figure, startDate, endDate, minDate, maxDate, save_Search, first_run_page_1
         except:
-            return save_Figure, startDate, endDate, minDate, maxDate, save_Search
+            return save_Figure, startDate, endDate, minDate, maxDate, save_Search, first_run_page_1
