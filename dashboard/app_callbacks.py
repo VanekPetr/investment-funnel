@@ -167,13 +167,10 @@ def get_callbacks(app):
         [Output('mlFig', 'children'),
          Output('picker-AI', 'start_date'),
          Output('picker-AI', 'end_date'),
-         Output('picker-AI', 'min_date_allowed'),
-         Output('picker-AI', 'max_date_allowed'),
          Output('AIResult', 'data'),
          Output('AInumber', 'children'),
          Output('model-dropdown', 'value'),
          Output('ML-num-dropdown', 'value'),
-         Output('first-run-page-2', 'data'),
          Output('ml-click-prev', 'data')
          ],
         [Input('MLRun', 'n_clicks')],
@@ -181,57 +178,47 @@ def get_callbacks(app):
          State('ML-num-dropdown', 'value'),
          State('picker-AI', 'start_date'),
          State('picker-AI', 'end_date'),
-         State('first-run-page-2', 'data'),
          State('ml-click-prev', 'data')
          ]
     )
-    def plot_ml(click_ML, model, num_iter, start, end, first_run_page_2, ml_click_prev):
-        global startDate, endDate, startDate2, endDate2
-        global minDate, maxDate
+    def plot_ml(click_ML, model, num_iter, start, end, ml_click_prev):
         global save_Figure2, AItable, AI_text_number, save_model, save_MLnum
 
-        if first_run_page_2 < 1:
-            first_run_page_2 = 1
-            startDate2 = startDate
-            endDate2 = endDate
-            save_Figure2, save_model, save_MLnum = None, None, None
-            AI_text_number = "No selected asset."
-            return save_Figure2, startDate, endDate, minDate, maxDate, AItable.to_dict('records'), AI_text_number,\
-                   save_model, save_MLnum, first_run_page_2, ml_click_prev
+        # TODO Save results
+        if click_ML:
+            if click_ML is None:
+                click_ML = ml_click_prev
+            elif click_ML < ml_click_prev:
+                click_ML = ml_click_prev + 1
 
-        if click_ML is None:
-            click_ML = ml_click_prev
-        elif click_ML < ml_click_prev:
-            click_ML = ml_click_prev + 1
+            if click_ML > ml_click_prev:
+                startDate2 = start
+                endDate2 = end
+                save_model = model
+                save_MLnum = num_iter
 
-        if click_ML > ml_click_prev:
-            startDate2 = start
-            endDate2 = end
-            save_model = model
-            save_MLnum = num_iter
+                # MST
+                if model == "MST":
+                    # RUN THE MINIMUM SPANNING TREE METHOD
+                    fig, ai_subset = algo.mst(start_date=startDate2, end_date=endDate2, n_mst_runs=num_iter, plot=True)
+                    ml_click_prev = click_ML
+                    save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
+                # CLUSTERING
+                else:
+                    fig, ai_subset = algo.clustering(start_date=startDate2, end_date=endDate2, n_clusters=num_iter,
+                                                     n_assets=10, plot=True)
+                    save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
+                ai_data = algo.get_stat(start_date=startDate2, end_date=endDate2)
+                AItable = ai_data.loc[list(ai_subset), ['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
+                                                        'Standard Deviation of Returns']]
+                # ROUNDING
+                AItable["Standard Deviation of Returns"] = round(AItable["Standard Deviation of Returns"], 2)
+                AItable["Average Annual Returns"] = round(AItable["Average Annual Returns"], 2)
 
-            # MST
-            if model == "MST":
-                # RUN THE MINIMUM SPANNING TREE METHOD
-                fig, ai_subset = algo.mst(start_date=startDate2, end_date=endDate2, n_mst_runs=num_iter, plot=True)
-                ml_click_prev = click_ML
-                save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
-            # CLUSTERING
-            else:
-                fig, ai_subset = algo.clustering(start_date=startDate2, end_date=endDate2, n_clusters=num_iter,
-                                                 n_assets=10, plot=True)
-                save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
-            ai_data = algo.get_stat(start_date=startDate2, end_date=endDate2)
-            AItable = ai_data.loc[list(ai_subset), ['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
-                                                    'Standard Deviation of Returns']]
-            # ROUNDING
-            AItable["Standard Deviation of Returns"] = round(AItable["Standard Deviation of Returns"], 2)
-            AItable["Average Annual Returns"] = round(AItable["Average Annual Returns"], 2)
+                AI_text_number = 'Number of selected assets: ' + str(len(AItable))
 
-            AI_text_number = 'Number of selected assets: ' + str(len(AItable))
-
-        return save_Figure2, startDate2, endDate2, minDate, maxDate, AItable.to_dict('records'), AI_text_number,\
-               save_model, save_MLnum, first_run_page_2, ml_click_prev
+            return save_Figure2, startDate2, endDate2, AItable.to_dict('records'), AI_text_number,\
+                   save_model, save_MLnum, ml_click_prev
 
     # MARKET OVERVIEW
     # ----------------------------------------------------------------------------------------------------------------------

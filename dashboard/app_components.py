@@ -149,8 +149,6 @@ sideBar = html.Div([
         style={"position": "fixed", 'bottom': '12%'}
     ),
 
-    dcc.Store(id='first-run-page-1', data=0),
-    dcc.Store(id='first-run-page-2', data=0),
     dcc.Store(id='first-run-page-3', data=0),
     dcc.Store(id='first-run-page-3-2', data=0),
     dcc.Store(id='ml-click-prev', data=0),
@@ -324,7 +322,11 @@ optionML = html.Div([
     # Select time period
     dcc.DatePickerRange(
         id='picker-AI',
-        style=OPTION_ELEMENT
+        style=OPTION_ELEMENT,
+        min_date_allowed=algo.min_date,
+        max_date_allowed=algo.max_date,
+        start_date=algo.min_date,
+        end_date=algo.max_date,
     ),
 
     html.P("AI/ML model", style=SUB_TITLE),
@@ -361,7 +363,7 @@ optionML = html.Div([
 
 selectionBar = html.Div([
     html.H5("Selected assets", style={'text-align': 'left', 'margin-left': '2%'}),
-    html.Div(id="AInumber", style={'text-align': 'left', 'margin-left': '2%'}),
+    html.Div(id="AInumber", style={'text-align': 'left', 'margin-left': '2%'}, children="No selected asset."),
     dash_table.DataTable(id='AIResult',
                          columns=[{"name": 'Name', "id": 'Name'},
                                   {"name": 'ISIN', "id": 'ISIN'},
