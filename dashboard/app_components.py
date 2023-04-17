@@ -2,6 +2,10 @@ import dash_bootstrap_components as dbc
 import base64
 from dash import html, dcc, dash_table
 from models.main import names
+from models.main import TradeBot
+
+
+algo = TradeBot()
 
 
 '''
@@ -239,7 +243,7 @@ optionBacktest = html.Div([
     dcc.Dropdown(
         id='select-benchmark',
         options=[
-            {'label': value, 'value': value} for value in names
+            {'label': value, 'value': value} for value in algo.names
         ],
         placeholder="Select your ETF benchmark",
         multi=True,
@@ -393,7 +397,11 @@ optionGraph = html.Div([
     # Date picker for plotting
     dcc.DatePickerRange(
         id='picker-show',
-        style=OPTION_ELEMENT
+        style=OPTION_ELEMENT,
+        min_date_allowed=algo.min_date,
+        max_date_allowed=algo.max_date,
+        start_date=algo.min_date,
+        end_date=algo.max_date,
     ),
 
     # Option to search for a fund
@@ -402,7 +410,7 @@ optionGraph = html.Div([
     dcc.Dropdown(
         id='find-fund',
         options=[
-            {'label': value, 'value': value} for value in names
+            {'label': value, 'value': value} for value in algo.names
         ],
         placeholder="Select here",
         multi=True,

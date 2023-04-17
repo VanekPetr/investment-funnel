@@ -16,6 +16,9 @@ BENCHtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
                           columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
 
 
+algo = TradeBot()
+
+
 def get_callbacks(app):
     # WHICH WEBPAGE
     @app.callback(
@@ -67,7 +70,6 @@ def get_callbacks(app):
     )
     def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_num, benchmark,
                       start_data, end_train, start_test, end_data, first_run_page_3_2, click_prev):
-        global algo
         global OPTtable, BENCHtable
         global save_Figure3, save_Figure3_comp
         global save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
@@ -184,7 +186,6 @@ def get_callbacks(app):
          ]
     )
     def plot_ml(click_ML, model, num_iter, start, end, first_run_page_2, ml_click_prev):
-        global algo
         global startDate, endDate, startDate2, endDate2
         global minDate, maxDate
         global save_Figure2, AItable, AI_text_number, save_model, save_MLnum
@@ -239,45 +240,27 @@ def get_callbacks(app):
         [Output('dotsFig', 'children'),
          Output('picker-show', 'start_date'),
          Output('picker-show', 'end_date'),
-         Output('picker-show', 'min_date_allowed'),
-         Output('picker-show', 'max_date_allowed'),
-         Output('find-fund', 'value'),
-         Output('first-run-page-1', 'data')
-         ],
-        [Input('show', 'n_clicks')],
+         Output('find-fund', 'value')],
+        [Input('url', 'pathname'),
+         Input('show', 'n_clicks')],
         [State('picker-show', 'start_date'),
          State('picker-show', 'end_date'),
-         State('find-fund', 'value'),
-         State('first-run-page-1', 'data')],
+         State('find-fund', 'value')],
+        prevent_initial_call=True
     )
-    def plot_dots(click, start, end, search, first_run_page_1):
-        global algo
-        global startDate, endDate
-        global minDate, maxDate
-        global save_Figure, save_Search
+    def plot_dots(pathname, click, start, end, search):
+        global save_Figure
 
-        if first_run_page_1 < 1:
-            algo = TradeBot()
-            startDate = algo.weeklyReturns.index[0]
-            endDate = algo.weeklyReturns.index[-2]
-            minDate = algo.weeklyReturns.index[0]
-            maxDate = algo.weeklyReturns.index[-2]
+        # TODO: saving of page
+        if pathname == '/':
+            if click:
+                start_date = start
+                end_date = end
+                save_search = search if search else []
 
-            save_Figure = None
-            save_Search = []
-            first_run_page_1 = 1
-
-            return save_Figure, startDate, endDate, minDate, maxDate, save_Search, first_run_page_1
-
-        try:
-            if click > 0:
-                startDate = start
-                endDate = end
-                save_Search = search
-
-                fig = algo.plot_dots(start_date=str(start), end_date=str(end), fund_set=save_Search)
+                fig = algo.plot_dots(start_date=str(start), end_date=str(end), fund_set=save_search)
                 save_Figure = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%',
                                                            'top': '0%', 'left': '0%'})
-                return save_Figure, startDate, endDate, minDate, maxDate, save_Search, first_run_page_1
-        except:
-            return save_Figure, startDate, endDate, minDate, maxDate, save_Search, first_run_page_1
+                return save_Figure, start_date, end_date, save_search
+            else:
+                return save_Figure, start, end, search

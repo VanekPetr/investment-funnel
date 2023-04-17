@@ -32,6 +32,8 @@ class TradeBot(object):
         self.weeklyReturns = weekly_returns
         self.tickers = tickers
         self.names = names
+        self.min_date = str(weekly_returns.index[0])
+        self.max_date = str(weekly_returns.index[-2])
 
     @staticmethod
     def __plot_backtest(
