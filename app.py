@@ -33,8 +33,21 @@ def load_page():
                   ),
 
         dcc.Store(id='saved-split-date', data='2017-07-01'),
-        dcc.Store(id='first-run-page-3-2', data=0),
-        dcc.Store(id='click-prev', data=0),
+
+        dcc.Store(id='saved-ml-model-back', data=''),
+        dcc.Store(id='saved-ml-spec-back', data=2),
+        dcc.Store(id='saved-pick-num-back', data=5),
+        dcc.Store(id='saved-scen-model-back', data=''),
+        dcc.Store(id='saved-scen-spec-back', data=1000),
+        dcc.Store(id='saved-benchmark-back', data=[]),
+        dcc.Store(id='saved-opt-table',
+                  data=pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
+                                    columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R']).to_dict('records')
+                  ),
+        dcc.Store(id='saved-bench-table',
+                  data=pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
+                                    columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R']).to_dict('records')
+                  )
     ])
 
 

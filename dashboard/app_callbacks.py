@@ -1,20 +1,10 @@
-import numpy as np
-import pandas as pd
 from dash.dependencies import Input, Output, State
 from models.main import TradeBot
 from dash import dcc
 from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
 
-global OPTtable, BENCHtable
-global save_Figure, save_Figure2
-save_Figure, save_Figure2 = None, None
-
-
-OPTtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
-                        columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
-BENCHtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
-                          columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R'])
-
+global save_Figure, save_Figure2, save_Figure3, save_Figure3_comp
+save_Figure, save_Figure2, save_Figure3, save_Figure3_comp = None, None, None, None
 
 algo = TradeBot()
 
@@ -49,10 +39,16 @@ def get_callbacks(app):
          Output('select-scenarios', 'value'),
          Output('my-slider2', 'value'),
          Output('select-benchmark', 'value'),
-         Output('first-run-page-3-2', 'data'),
-         Output('click-prev', 'data')
+         Output('saved-ml-model-back', 'data'),
+         Output('saved-ml-spec-back', 'data'),
+         Output('saved-pick-num-back', 'data'),
+         Output('saved-scen-model-back', 'data'),
+         Output('saved-scen-spec-back', 'data'),
+         Output('saved-benchmark-back', 'data'),
+         Output('saved-opt-table', 'data'),
+         Output('saved-bench-table', 'data')
          ],
-        [Input('backtestRun', 'n_clicks')],
+        Input('backtestRun', 'n_clicks'),
         [State('select-ml', 'value'),
          State('slider-backtest-ml', 'value'),
          State('slider-backtest', 'value'),
@@ -63,58 +59,48 @@ def get_callbacks(app):
          State('picker-train', 'end_date'),
          State('picker-test', 'start_date'),
          State('picker-test', 'end_date'),
-         State('first-run-page-3-2', 'data'),
-         State('click-prev', 'data')]
+         State('saved-ml-model-back', 'data'),
+         State('saved-ml-spec-back', 'data'),
+         State('saved-pick-num-back', 'data'),
+         State('saved-scen-model-back', 'data'),
+         State('saved-scen-spec-back', 'data'),
+         State('saved-benchmark-back', 'data'),
+         State('saved-opt-table', 'data'),
+         State('saved-bench-table', 'data')]
     )
-    def plot_backtest(click, ml_method, num_runs, num_clusters, scen_method, scen_num, benchmark,
-                      start_data, end_train, start_test, end_data, first_run_page_3_2, click_prev):
-        global OPTtable, BENCHtable
+    def plot_backtest(click, model, model_spec, pick_top, scen_model, scen_spec, benchmark, start_data,
+                      end_train, start_test, end_data, saved_model, saved_model_spec, saved_pick_top, saved_scen_model,
+                      saved_scen_spec, saved_benchmark, saved_opt_table, saved_bench_table):
         global save_Figure3, save_Figure3_comp
-        global save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench
 
-        if first_run_page_3_2 < 1:
-            first_run_page_3_2 = 1
-            save_Figure3, save_Figure3_comp = None, None
-            save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench = None, 2, 5, None, 1000, None
-
-            return (save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'),
-                    save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench, first_run_page_3_2,
-                    click_prev)
-
-        if click is None:
-            click = click_prev
-        elif click < click_prev:
-            click = click_prev + 1
-
-        if click > click_prev:
+        if click:
             # RUN ML algo
-            if ml_method == 'MST':
-                _, subset_of_assets = algo.mst(start_date=start_data, end_date=end_train, n_mst_runs=num_runs)
+            if model == 'MST':
+                _, subset_of_assets = algo.mst(start_date=start_data, end_date=end_train, n_mst_runs=model_spec)
             else:
-                _, subset_of_assets = algo.clustering(start_date=start_data, end_date=end_train, n_clusters=num_runs,
-                                                      n_assets=num_clusters)
+                _, subset_of_assets = algo.clustering(start_date=start_data, end_date=end_train, n_clusters=model_spec,
+                                                      n_assets=pick_top)
             # RUN THE BACKTEST
-            OPTtable, BENCHtable, figPerf, figComp = algo.backtest(start_train_date=start_data,
-                                                                   end_train_date=end_train,
-                                                                   start_test_date=start_test,
-                                                                   end_test_date=end_data,
-                                                                   subset_of_assets=subset_of_assets,
-                                                                   benchmarks=benchmark,
-                                                                   scenarios_type=scen_method,
-                                                                   n_simulations=scen_num)
+            opt_table, bench_table, fig_performance, fig_composition = algo.backtest(start_train_date=start_data,
+                                                                                     end_train_date=end_train,
+                                                                                     start_test_date=start_test,
+                                                                                     end_test_date=end_data,
+                                                                                     subset_of_assets=subset_of_assets,
+                                                                                     benchmarks=benchmark,
+                                                                                     scenarios_type=scen_model,
+                                                                                     n_simulations=scen_spec)
             # Save page values
-            save_Figure3 = dcc.Graph(figure=figPerf, style={'margin': '0%'})
-            save_Figure3_comp = dcc.Graph(figure=figComp, style={'margin': '0%'})
-            save_ml = ml_method
-            save_ml_num = num_runs
-            save_clust_top = num_clusters
-            save_scen = scen_method
-            save_scen_num = scen_num
-            save_bench = benchmark
+            save_Figure3 = dcc.Graph(figure=fig_performance, style={'margin': '0%'})
+            save_Figure3_comp = dcc.Graph(figure=fig_composition, style={'margin': '0%'})
 
-        return (save_Figure3, save_Figure3_comp, OPTtable.to_dict('records'), BENCHtable.to_dict('records'),
-                save_ml, save_ml_num, save_clust_top, save_scen, save_scen_num, save_bench, first_run_page_3_2,
-                click_prev)
+            return (save_Figure3, save_Figure3_comp, opt_table.to_dict('records'), bench_table.to_dict('records'),
+                    model, model_spec, pick_top, scen_model, scen_spec, benchmark, model, model_spec, pick_top,
+                    scen_model, scen_spec, benchmark, opt_table.to_dict('records'), bench_table.to_dict('records'))
+        else:
+            return (save_Figure3, save_Figure3_comp, saved_opt_table, saved_bench_table,
+                    saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
+                    saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
+                    saved_opt_table, saved_bench_table,)
 
     @app.callback(
         Output('slider-output-container2', 'children'),
