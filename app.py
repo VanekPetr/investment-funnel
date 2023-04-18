@@ -32,7 +32,7 @@ def load_page():
                                              'Standard Deviation of Returns']).to_dict('records')
                   ),
 
-        dcc.Store(id='first-run-page-3', data=0),
+        dcc.Store(id='saved-split-date', data='2017-07-01'),
         dcc.Store(id='first-run-page-3-2', data=0),
         dcc.Store(id='click-prev', data=0),
     ])

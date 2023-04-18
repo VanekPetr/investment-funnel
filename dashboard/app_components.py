@@ -171,12 +171,18 @@ optionBacktest = html.Div([
            style=SUB_TITLE),
     dcc.DatePickerRange(
         id='picker-train',
+        min_date_allowed=algo.min_date,
+        max_date_allowed=algo.max_date,
+        start_date=algo.min_date,
         style=OPTION_ELEMENT
     ),
     html.P("Testing period for backtest",
            style=SUB_TITLE),
     dcc.DatePickerRange(
         id='picker-test',
+        min_date_allowed=algo.min_date,
+        max_date_allowed=algo.max_date,
+        end_date=algo.max_date,
         style=OPTION_ELEMENT
     ),
     html.P("Feature selection",

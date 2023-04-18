@@ -6,8 +6,8 @@ from dash import dcc
 from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
 
 global OPTtable, BENCHtable
-global save_Figure
-save_Figure = None
+global save_Figure, save_Figure2
+save_Figure, save_Figure2 = None, None
 
 
 OPTtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
@@ -131,32 +131,26 @@ def get_callbacks(app):
     @app.callback(
         Output('slider-output-container-backtest-ml', 'children'),
         [Input('slider-backtest-ml', 'value')])
-    def update_output_MLtype(value):
+    def update_output_ml_type(value):
         return '# of clusters or # of MST runs: {}'.format(value)
 
     @app.callback(
         [Output('picker-test', 'start_date'),
          Output('picker-test', 'end_date'),
-         Output('picker-test', 'min_date_allowed'),
-         Output('picker-test', 'max_date_allowed'),
-         Output('picker-train', 'min_date_allowed'),
-         Output('picker-train', 'max_date_allowed'),
          Output('picker-train', 'start_date'),
          Output('picker-train', 'end_date'),
-         Output('first-run-page-3', 'data')],
-        [Input('picker-train', 'end_date')],
-        [State('first-run-page-3', 'data')]
+         Output('saved-split-date', 'data')],
+        Input('picker-train', 'end_date'),
+        State('saved-split-date', 'data')
     )
-    def update_test_date(selected_date, first_run_page_3):
-        global minDate, maxDate
-        global final_date
-        if first_run_page_3 < 1:
-            final_date = '2017-07-01'
-            first_run_page_3 = 1
-        elif selected_date != None:
-            final_date = selected_date
+    def update_test_date(selected_date, saved_split_date):
+        if selected_date:
+            split_date = selected_date
+        else:
+            # TODO change this hardcoded date
+            split_date = saved_split_date
 
-        return final_date, maxDate, minDate, maxDate, minDate, maxDate, minDate, final_date, first_run_page_3
+        return split_date, algo.max_date, algo.min_date, split_date, split_date
 
     # AI Feature Selection
     # ----------------------------------------------------------------------------------------------------------------------
