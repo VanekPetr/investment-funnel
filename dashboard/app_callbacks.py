@@ -3,8 +3,6 @@ from models.main import TradeBot
 from dash import dcc
 from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
 
-global save_Figure, save_Figure2, save_Figure3, save_Figure3_comp
-save_Figure, save_Figure2, save_Figure3, save_Figure3_comp = None, None, None, None
 
 algo = TradeBot()
 
@@ -15,7 +13,7 @@ def get_callbacks(app):
         Output('page-content', 'children'),
         [Input('url', 'pathname')]
     )
-    def display_page(pathname):
+    def display_page(pathname: str):
         if pathname == '/':
             return page_1_layout
         elif pathname == '/page-1':
@@ -46,7 +44,9 @@ def get_callbacks(app):
          Output('saved-scen-spec-back', 'data'),
          Output('saved-benchmark-back', 'data'),
          Output('saved-opt-table', 'data'),
-         Output('saved-bench-table', 'data')
+         Output('saved-bench-table', 'data'),
+         Output('saved-perf-figure-page-2', 'data'),
+         Output('saved-comp-figure-page-2', 'data')
          ],
         Input('backtestRun', 'n_clicks'),
         [State('select-ml', 'value'),
@@ -66,12 +66,14 @@ def get_callbacks(app):
          State('saved-scen-spec-back', 'data'),
          State('saved-benchmark-back', 'data'),
          State('saved-opt-table', 'data'),
-         State('saved-bench-table', 'data')]
+         State('saved-bench-table', 'data'),
+         State('saved-perf-figure-page-2', 'data'),
+         State('saved-comp-figure-page-2', 'data')]
     )
     def plot_backtest(click, model, model_spec, pick_top, scen_model, scen_spec, benchmark, start_data,
                       end_train, start_test, end_data, saved_model, saved_model_spec, saved_pick_top, saved_scen_model,
-                      saved_scen_spec, saved_benchmark, saved_opt_table, saved_bench_table):
-        global save_Figure3, save_Figure3_comp
+                      saved_scen_spec, saved_benchmark, saved_opt_table, saved_bench_table, saved_perf_figure,
+                      saved_comp_figure):
 
         if click:
             # RUN ML algo
@@ -90,17 +92,18 @@ def get_callbacks(app):
                                                                                      scenarios_type=scen_model,
                                                                                      n_simulations=scen_spec)
             # Save page values
-            save_Figure3 = dcc.Graph(figure=fig_performance, style={'margin': '0%'})
-            save_Figure3_comp = dcc.Graph(figure=fig_composition, style={'margin': '0%'})
+            perf_figure = dcc.Graph(figure=fig_performance, style={'margin': '0%'})
+            comp_figure = dcc.Graph(figure=fig_composition, style={'margin': '0%'})
 
-            return (save_Figure3, save_Figure3_comp, opt_table.to_dict('records'), bench_table.to_dict('records'),
+            return (perf_figure, comp_figure, opt_table.to_dict('records'), bench_table.to_dict('records'),
                     model, model_spec, pick_top, scen_model, scen_spec, benchmark, model, model_spec, pick_top,
-                    scen_model, scen_spec, benchmark, opt_table.to_dict('records'), bench_table.to_dict('records'))
+                    scen_model, scen_spec, benchmark, opt_table.to_dict('records'), bench_table.to_dict('records'),
+                    perf_figure, comp_figure)
         else:
-            return (save_Figure3, save_Figure3_comp, saved_opt_table, saved_bench_table,
+            return (saved_perf_figure, saved_comp_figure, saved_opt_table, saved_bench_table,
                     saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
                     saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
-                    saved_opt_table, saved_bench_table,)
+                    saved_opt_table, saved_bench_table, saved_perf_figure, saved_comp_figure)
 
     @app.callback(
         Output('slider-output-container2', 'children'),
@@ -154,8 +157,8 @@ def get_callbacks(app):
          Output('saved-ai-table', 'data'),
          Output('saved-ml-model', 'data'),
          Output('saved-ml-spec', 'data'),
-         Output('saved-ml-text', 'data')
-         ],
+         Output('saved-ml-text', 'data'),
+         Output('saved-figure-page-1', 'data')],
         [Input('MLRun', 'n_clicks')],
         [State('model-dropdown', 'value'),
          State('ML-num-dropdown', 'value'),
@@ -166,12 +169,13 @@ def get_callbacks(app):
          State('saved-ai-table', 'data'),
          State('saved-ml-model', 'data'),
          State('saved-ml-spec', 'data'),
-         State('saved-ml-text', 'data')]
+         State('saved-ml-text', 'data'),
+         State('saved-figure-page-1', 'data')]
     )
     def plot_ml(
-        click_ml, model, spec, start, end, saved_start, saved_end, saved_ai_table, saved_model, saved_spec, saved_text
+        click_ml, model, spec, start, end, saved_start, saved_end, saved_ai_table, saved_model, saved_spec, saved_text,
+        saved_figure
     ):
-        global save_Figure2
 
         if click_ml:
             selected_start = str(start)
@@ -181,13 +185,13 @@ def get_callbacks(app):
             if model == "MST":
                 # RUN THE MINIMUM SPANNING TREE METHOD
                 fig, ai_subset = algo.mst(start_date=selected_start, end_date=selected_end, n_mst_runs=spec, plot=True)
-                save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
+                generated_figure = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
 
             # CLUSTERING
             else:
                 fig, ai_subset = algo.clustering(start_date=selected_start, end_date=selected_end, n_clusters=spec,
                                                  n_assets=10, plot=True)
-                save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
+                generated_figure = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
 
             ai_data = algo.get_stat(start_date=selected_start, end_date=selected_end)
             ai_table = ai_data.loc[list(ai_subset), ['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
@@ -198,11 +202,11 @@ def get_callbacks(app):
 
             ml_text = 'Number of selected assets: ' + str(len(ai_table))
 
-            return (save_Figure2, selected_start, selected_end, ai_table.to_dict('records'), ml_text, model, spec,
-                    selected_start, selected_end, ai_table.to_dict('records'), model, spec, ml_text)
+            return (generated_figure, selected_start, selected_end, ai_table.to_dict('records'), ml_text, model, spec,
+                    selected_start, selected_end, ai_table.to_dict('records'), model, spec, ml_text, generated_figure)
         else:
-            return (save_Figure2, saved_start, saved_end, saved_ai_table, saved_text, saved_model, saved_spec,
-                    saved_start, saved_end, saved_ai_table, saved_model, saved_spec, saved_text)
+            return (saved_figure, saved_start, saved_end, saved_ai_table, saved_text, saved_model, saved_spec,
+                    saved_start, saved_end, saved_ai_table, saved_model, saved_spec, saved_text, saved_figure)
 
     # MARKET OVERVIEW
     # ----------------------------------------------------------------------------------------------------------------------
@@ -214,7 +218,8 @@ def get_callbacks(app):
          Output('find-fund', 'value'),
          Output('saved-start-date-page-0', 'data'),
          Output('saved-end-date-page-0', 'data'),
-         Output('saved-find-fund', 'data')],
+         Output('saved-find-fund', 'data'),
+         Output('saved-figure-page-0', 'data')],
         [Input('page-content', 'children'),
          Input('show', 'n_clicks')],
         [State('picker-show', 'start_date'),
@@ -222,23 +227,25 @@ def get_callbacks(app):
          State('find-fund', 'value'),
          State('saved-start-date-page-0', 'data'),
          State('saved-end-date-page-0', 'data'),
-         State('saved-find-fund', 'data')]
+         State('saved-find-fund', 'data'),
+         State('saved-figure-page-0', 'data')]
     )
-    def plot_dots(trigger, click, start, end, search, saved_start, saved_end, saved_find_fund):
-        global save_Figure
+    def plot_dots(trigger, click, start, end, search, saved_start, saved_end, saved_find_fund, saved_figure):
 
         if click:
             selected_start = str(start)
             selected_end = str(end)
 
             fig = algo.plot_dots(start_date=selected_start, end_date=selected_end, fund_set=search)
-            save_Figure = dcc.Graph(figure=fig,
-                                    style={'position': 'absolute',
-                                           'right': '0%',
-                                           'bottom': '0%',
-                                           'top': '0%',
-                                           'left': '0%'}
-                                    )
-            return save_Figure, selected_start, selected_end, search, selected_start, selected_end, search
+            generated_figure = dcc.Graph(figure=fig,
+                                         style={'position': 'absolute',
+                                                'right': '0%',
+                                                'bottom': '0%',
+                                                'top': '0%',
+                                                'left': '0%'}
+                                         )
+            return (generated_figure, selected_start, selected_end, search, selected_start, selected_end, search,
+                    generated_figure)
         else:
-            return save_Figure, saved_start, saved_end, saved_find_fund, saved_start, saved_end, saved_find_fund
+            return (saved_figure, saved_start, saved_end, saved_find_fund, saved_start, saved_end, saved_find_fund,
+                    saved_figure)

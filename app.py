@@ -20,12 +20,14 @@ def load_page():
         dcc.Store(id='saved-start-date-page-0', data=algo.min_date),
         dcc.Store(id='saved-end-date-page-0', data=algo.max_date),
         dcc.Store(id='saved-find-fund', data=[]),
+        dcc.Store(id='saved-figure-page-0', data=None),
 
         dcc.Store(id='saved-start-date-page-1', data=algo.min_date),
         dcc.Store(id='saved-end-date-page-1', data=algo.max_date),
         dcc.Store(id='saved-ml-model', data=''),
         dcc.Store(id='saved-ml-spec', data=''),
         dcc.Store(id='saved-ml-text', data="No selected asset."),
+        dcc.Store(id='saved-figure-page-1', data=None),
         dcc.Store(id='saved-ai-table',
                   data=pd.DataFrame(np.array([['No result', 'No result', 'No result', 'No result', 'No result']]),
                                     columns=['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
@@ -40,6 +42,8 @@ def load_page():
         dcc.Store(id='saved-scen-model-back', data=''),
         dcc.Store(id='saved-scen-spec-back', data=1000),
         dcc.Store(id='saved-benchmark-back', data=[]),
+        dcc.Store(id='saved-perf-figure-page-2', data=None),
+        dcc.Store(id='saved-comp-figure-page-2', data=None),
         dcc.Store(id='saved-opt-table',
                   data=pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
                                     columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R']).to_dict('records')
