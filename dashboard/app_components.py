@@ -149,10 +149,6 @@ sideBar = html.Div([
         style={"position": "fixed", 'bottom': '12%'}
     ),
 
-    dcc.Store(id='first-run-page-3', data=0),
-    dcc.Store(id='first-run-page-3-2', data=0),
-    dcc.Store(id='ml-click-prev', data=0),
-    dcc.Store(id='click-prev', data=0),
 ], style=SIDEBAR_STYLE)
 
 
@@ -326,7 +322,7 @@ optionML = html.Div([
         min_date_allowed=algo.min_date,
         max_date_allowed=algo.max_date,
         start_date=algo.min_date,
-        end_date=algo.max_date,
+        end_date=algo.max_date
     ),
 
     html.P("AI/ML model", style=SUB_TITLE),
@@ -401,9 +397,7 @@ optionGraph = html.Div([
         id='picker-show',
         style=OPTION_ELEMENT,
         min_date_allowed=algo.min_date,
-        max_date_allowed=algo.max_date,
-        start_date=algo.min_date,
-        end_date=algo.max_date,
+        max_date_allowed=algo.max_date
     ),
 
     # Option to search for a fund

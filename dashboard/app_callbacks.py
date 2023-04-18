@@ -6,6 +6,8 @@ from dash import dcc
 from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
 
 global OPTtable, BENCHtable
+global save_Figure
+save_Figure = None
 
 
 OPTtable = pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
@@ -167,57 +169,60 @@ def get_callbacks(app):
          Output('AInumber', 'children'),
          Output('model-dropdown', 'value'),
          Output('ML-num-dropdown', 'value'),
-         Output('ml-click-prev', 'data')
+         Output('saved-start-date-page-1', 'data'),
+         Output('saved-end-date-page-1', 'data'),
+         Output('saved-ai-table', 'data'),
+         Output('saved-ml-model', 'data'),
+         Output('saved-ml-spec', 'data'),
+         Output('saved-ml-text', 'data')
          ],
         [Input('MLRun', 'n_clicks')],
         [State('model-dropdown', 'value'),
          State('ML-num-dropdown', 'value'),
          State('picker-AI', 'start_date'),
          State('picker-AI', 'end_date'),
-         State('ml-click-prev', 'data')
-         ]
+         State('saved-start-date-page-1', 'data'),
+         State('saved-end-date-page-1', 'data'),
+         State('saved-ai-table', 'data'),
+         State('saved-ml-model', 'data'),
+         State('saved-ml-spec', 'data'),
+         State('saved-ml-text', 'data')]
     )
-    def plot_ml(click_ML, model, num_iter, start, end, ml_click_prev):
-        global save_Figure2, AI_text_number, save_model, save_MLnum
+    def plot_ml(
+        click_ml, model, spec, start, end, saved_start, saved_end, saved_ai_table, saved_model, saved_spec, saved_text
+    ):
+        global save_Figure2
 
-        # TODO Save results
-        if click_ML:
-            AItable = pd.DataFrame(np.array([['No result', 'No result', 'No result', 'No result', 'No result']]),
-                                   columns=['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
-                                            'Standard Deviation of Returns'])
-            if click_ML is None:
-                click_ML = ml_click_prev
-            elif click_ML < ml_click_prev:
-                click_ML = ml_click_prev + 1
+        if click_ml:
+            selected_start = str(start)
+            selected_end = str(end)
 
-            if click_ML > ml_click_prev:
-                startDate2 = start
-                endDate2 = end
-                save_model = model
-                save_MLnum = num_iter
+            # MST
+            if model == "MST":
+                # RUN THE MINIMUM SPANNING TREE METHOD
+                fig, ai_subset = algo.mst(start_date=selected_start, end_date=selected_end, n_mst_runs=spec, plot=True)
+                save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
 
-                # MST
-                if model == "MST":
-                    # RUN THE MINIMUM SPANNING TREE METHOD
-                    fig, ai_subset = algo.mst(start_date=startDate2, end_date=endDate2, n_mst_runs=num_iter, plot=True)
-                    ml_click_prev = click_ML
-                    save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
-                # CLUSTERING
-                else:
-                    fig, ai_subset = algo.clustering(start_date=startDate2, end_date=endDate2, n_clusters=num_iter,
-                                                     n_assets=10, plot=True)
-                    save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
-                ai_data = algo.get_stat(start_date=startDate2, end_date=endDate2)
-                AItable = ai_data.loc[list(ai_subset), ['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
-                                                        'Standard Deviation of Returns']]
-                # ROUNDING
-                AItable["Standard Deviation of Returns"] = round(AItable["Standard Deviation of Returns"], 2)
-                AItable["Average Annual Returns"] = round(AItable["Average Annual Returns"], 2)
+            # CLUSTERING
+            else:
+                fig, ai_subset = algo.clustering(start_date=selected_start, end_date=selected_end, n_clusters=spec,
+                                                 n_assets=10, plot=True)
+                save_Figure2 = dcc.Graph(figure=fig, style={'height': '800px', 'margin': '0%'})
 
-                AI_text_number = 'Number of selected assets: ' + str(len(AItable))
+            ai_data = algo.get_stat(start_date=selected_start, end_date=selected_end)
+            ai_table = ai_data.loc[list(ai_subset), ['Name', 'ISIN', 'Sharpe Ratio', 'Average Annual Returns',
+                                                     'Standard Deviation of Returns']]
+            # ROUNDING
+            ai_table["Standard Deviation of Returns"] = round(ai_table["Standard Deviation of Returns"], 2)
+            ai_table["Average Annual Returns"] = round(ai_table["Average Annual Returns"], 2)
 
-            return save_Figure2, startDate2, endDate2, AItable.to_dict('records'), AI_text_number,\
-                   save_model, save_MLnum, ml_click_prev
+            ml_text = 'Number of selected assets: ' + str(len(ai_table))
+
+            return (save_Figure2, selected_start, selected_end, ai_table.to_dict('records'), ml_text, model, spec,
+                    selected_start, selected_end, ai_table.to_dict('records'), model, spec, ml_text)
+        else:
+            return (save_Figure2, saved_start, saved_end, saved_ai_table, saved_text, saved_model, saved_spec,
+                    saved_start, saved_end, saved_ai_table, saved_model, saved_spec, saved_text)
 
     # MARKET OVERVIEW
     # ----------------------------------------------------------------------------------------------------------------------
@@ -226,27 +231,34 @@ def get_callbacks(app):
         [Output('dotsFig', 'children'),
          Output('picker-show', 'start_date'),
          Output('picker-show', 'end_date'),
-         Output('find-fund', 'value')],
-        [Input('url', 'pathname'),
+         Output('find-fund', 'value'),
+         Output('saved-start-date-page-0', 'data'),
+         Output('saved-end-date-page-0', 'data'),
+         Output('saved-find-fund', 'data')],
+        [Input('page-content', 'children'),
          Input('show', 'n_clicks')],
         [State('picker-show', 'start_date'),
          State('picker-show', 'end_date'),
-         State('find-fund', 'value')],
-        prevent_initial_call=True
+         State('find-fund', 'value'),
+         State('saved-start-date-page-0', 'data'),
+         State('saved-end-date-page-0', 'data'),
+         State('saved-find-fund', 'data')]
     )
-    def plot_dots(pathname, click, start, end, search):
+    def plot_dots(trigger, click, start, end, search, saved_start, saved_end, saved_find_fund):
         global save_Figure
 
-        # TODO: saving of page
-        if pathname == '/':
-            if click:
-                start_date = start
-                end_date = end
-                save_search = search if search else []
+        if click:
+            selected_start = str(start)
+            selected_end = str(end)
 
-                fig = algo.plot_dots(start_date=str(start), end_date=str(end), fund_set=save_search)
-                save_Figure = dcc.Graph(figure=fig, style={'position': 'absolute', 'right': '0%', 'bottom': '0%',
-                                                           'top': '0%', 'left': '0%'})
-                return save_Figure, start_date, end_date, save_search
-            else:
-                return save_Figure, start, end, search
+            fig = algo.plot_dots(start_date=selected_start, end_date=selected_end, fund_set=search)
+            save_Figure = dcc.Graph(figure=fig,
+                                    style={'position': 'absolute',
+                                           'right': '0%',
+                                           'bottom': '0%',
+                                           'top': '0%',
+                                           'left': '0%'}
+                                    )
+            return save_Figure, selected_start, selected_end, search, selected_start, selected_end, search
+        else:
+            return save_Figure, saved_start, saved_end, saved_find_fund, saved_start, saved_end, saved_find_fund
