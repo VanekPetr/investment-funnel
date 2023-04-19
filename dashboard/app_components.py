@@ -2,6 +2,10 @@ import dash_bootstrap_components as dbc
 import base64
 from dash import html, dcc, dash_table
 from models.main import names
+from models.main import TradeBot
+
+
+algo = TradeBot()
 
 
 '''
@@ -143,7 +147,8 @@ sideBar = html.Div([
         vertical=True,
         pills=True,
         style={"position": "fixed", 'bottom': '12%'}
-    )
+    ),
+
 ], style=SIDEBAR_STYLE)
 
 
@@ -166,12 +171,18 @@ optionBacktest = html.Div([
            style=SUB_TITLE),
     dcc.DatePickerRange(
         id='picker-train',
+        min_date_allowed=algo.min_date,
+        max_date_allowed=algo.max_date,
+        start_date=algo.min_date,
         style=OPTION_ELEMENT
     ),
     html.P("Testing period for backtest",
            style=SUB_TITLE),
     dcc.DatePickerRange(
         id='picker-test',
+        min_date_allowed=algo.min_date,
+        max_date_allowed=algo.max_date,
+        end_date=algo.max_date,
         style=OPTION_ELEMENT
     ),
     html.P("Feature selection",
@@ -232,7 +243,7 @@ optionBacktest = html.Div([
     dcc.Dropdown(
         id='select-benchmark',
         options=[
-            {'label': value, 'value': value} for value in names
+            {'label': value, 'value': value} for value in algo.names
         ],
         placeholder="Select your ETF benchmark",
         multi=True,
@@ -313,7 +324,11 @@ optionML = html.Div([
     # Select time period
     dcc.DatePickerRange(
         id='picker-AI',
-        style=OPTION_ELEMENT
+        style=OPTION_ELEMENT,
+        min_date_allowed=algo.min_date,
+        max_date_allowed=algo.max_date,
+        start_date=algo.min_date,
+        end_date=algo.max_date
     ),
 
     html.P("AI/ML model", style=SUB_TITLE),
@@ -350,7 +365,7 @@ optionML = html.Div([
 
 selectionBar = html.Div([
     html.H5("Selected assets", style={'text-align': 'left', 'margin-left': '2%'}),
-    html.Div(id="AInumber", style={'text-align': 'left', 'margin-left': '2%'}),
+    html.Div(id="AInumber", style={'text-align': 'left', 'margin-left': '2%'}, children="No selected asset."),
     dash_table.DataTable(id='AIResult',
                          columns=[{"name": 'Name', "id": 'Name'},
                                   {"name": 'ISIN', "id": 'ISIN'},
@@ -386,7 +401,9 @@ optionGraph = html.Div([
     # Date picker for plotting
     dcc.DatePickerRange(
         id='picker-show',
-        style=OPTION_ELEMENT
+        style=OPTION_ELEMENT,
+        min_date_allowed=algo.min_date,
+        max_date_allowed=algo.max_date
     ),
 
     # Option to search for a fund
@@ -395,7 +412,7 @@ optionGraph = html.Div([
     dcc.Dropdown(
         id='find-fund',
         options=[
-            {'label': value, 'value': value} for value in names
+            {'label': value, 'value': value} for value in algo.names
         ],
         placeholder="Select here",
         multi=True,
@@ -425,6 +442,5 @@ optionMyPortfolio = html.Div([
     html.Button('Recalculate',
                 id='recalculate',
                 style=OPTION_BTN),
-
 
 ], style=GRAPH_LEFT)
