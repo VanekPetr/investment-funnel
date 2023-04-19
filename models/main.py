@@ -306,8 +306,9 @@ class TradeBot(object):
                                                        benchmark=benchmark_isin,  # MSCI World benchmark
                                                        budget=100,
                                                        cvar_alpha=0.05,
-                                                       data=self.weeklyReturns)
-
+                                                       data=self.weeklyReturns,
+                                                       scgen=sg)
+ 
         # MATHEMATICAL MODELING
         # ------------------------------------------------------------------
         port_allocation, port_value, port_cvar = cvar_model(test_ret=test_dataset[subset_of_assets],
@@ -317,6 +318,7 @@ class TradeBot(object):
                                                             cvar_alpha=0.05,
                                                             trans_cost=0.001,
                                                             max_weight=1)
+
         # PLOTTING
         # ------------------------------------------------------------------
         fig_performance, fig_composition = self.__plot_backtest(performance=port_value.copy(),
