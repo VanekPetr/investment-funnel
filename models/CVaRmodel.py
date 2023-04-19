@@ -258,12 +258,12 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
 
     assets = test_ret.columns                # names of all assets
 
-    # DATA FRAME TO STORE CVaR TARGETS
-    portfolio_cvar = pd.DataFrame(columns=["CVaR"], index=list(range(p_points)))
-    # DATA FRAME TO STORE VALUE OF THE PORTFOLIO
-    portfolio_value = pd.DataFrame(columns=["Portfolio_Value"], index=test_ret.index)
-    # DATA FRAME TO STORE PORTFOLIO ALLOCATION
-    portfolio_allocation = pd.DataFrame(columns=assets, index=list(range(p_points)))
+    # LIST TO STORE CVaR TARGETS
+    list_portfolio_cvar = []
+    # LIST TO STORE VALUE OF THE PORTFOLIO
+    list_portfolio_value = []
+    # LIST TO STORE PORTFOLIO ALLOCATION
+    list_portfolio_allocation = []
 
     # *** THE FIRST INVESTMENT PERIOD ***
     # ----------------------------------------------------------------------
@@ -285,16 +285,15 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
                                                      max_weight=max_weight)
 
     # save the result
-    portfolio_cvar.loc[0, "CVaR"] = cvar_val
+    list_portfolio_cvar.append(cvar_val)
     # save allocation
-    portfolio_allocation.loc[0, assets] = p_alloc
+    list_portfolio_allocation.append(p_alloc)
     portfolio_value_w = port_val
 
     # COMPUTE PORTFOLIO VALUE
     for w in test_ret.index[0:4]:
-        portfolio_value.loc[w, "Portfolio_Value"] = sum(portfolio_allocation.loc[0, assets] * portfolio_value_w
-                                                        * (1 + test_ret.loc[w, assets]))
-        portfolio_value_w = portfolio_value.loc[w, "Portfolio_Value"]
+        portfolio_value_w = sum(p_alloc * portfolio_value_w * (1 + test_ret.loc[w, assets]))
+        list_portfolio_value.append((w, portfolio_value_w))
 
     # *** THE SECOND AND ONGOING INVESTMENT PERIODS ***
     # ----------------------------------------------------------------------
@@ -312,19 +311,22 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
                                                         scenarios=scenarios_df,
                                                         cvar_targets=targets.loc[p, "CVaR_Target"] * portfolio_value_w,
                                                         cvar_alpha=cvar_alpha,
-                                                        x_old=portfolio_allocation.loc[p-1, assets] * portfolio_value_w,
+                                                        x_old=p_alloc * portfolio_value_w,
                                                         trans_cost=trans_cost,
                                                         max_weight=max_weight)
         # save the result
-        portfolio_cvar.loc[p, "CVaR"] = cvar_val
+        list_portfolio_cvar.append(cvar_val)
         # save allocation
-        portfolio_allocation.loc[p, assets] = p_alloc
+        list_portfolio_allocation.append(p_alloc)
 
         portfolio_value_w = port_val
         # COMPUTE PORTFOLIO VALUE
         for w in test_ret.index[(p * 4): (4 + p * 4)]:
-            portfolio_value.loc[w, "Portfolio_Value"] = sum(portfolio_allocation.loc[p, assets]
-                                                            * portfolio_value_w * (1 + test_ret.loc[w, assets]))
-            portfolio_value_w = portfolio_value.loc[w, "Portfolio_Value"]
-    
+            portfolio_value_w = sum(p_alloc * portfolio_value_w * (1 + test_ret.loc[w, assets]))
+            list_portfolio_value.append((w, portfolio_value_w))
+
+    portfolio_cvar = pd.DataFrame(columns=["CVaR"], data=list_portfolio_cvar)
+    portfolio_value = pd.DataFrame(columns=["Date", "Portfolio_Value"], data=list_portfolio_value).set_index("Date", drop=True)
+    portfolio_allocation = pd.DataFrame(columns=assets, data=list_portfolio_allocation)
+
     return portfolio_allocation, portfolio_value, portfolio_cvar

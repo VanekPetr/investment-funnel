@@ -1,71 +1,59 @@
-import pulp
+import numpy as np
 import pandas as pd
-from models.ScenarioGeneration import bootstrapping
 from loguru import logger
+
+
+# Primal CVaR formula
+def CVaR(alpha, p, q):
+    """
+    Computes CVaR using primal formula. 
+    NOTE: Inputs p and q should be numpy arrays.
+    """
+    # We need to be careful that math index starts from 1 but numpy starts from 0 (matters in formulas like ceil(alpha * T))
+    T = q.shape[0]
+    sort_idx = np.argsort(q)
+    sorted_q = q[sort_idx]
+    sorted_p = p[sort_idx]
+    
+    # Starting index 
+    i_alpha = np.sort(np.nonzero(np.cumsum(sorted_p) >= alpha)[0])[0]
+
+    # Weight of VaR component in CVaR
+    lambda_alpha = (np.sum(sorted_p[:(i_alpha + 1)]) - alpha) / (1 - alpha)    
+    
+    # CVaR
+    var = sorted_q[i_alpha]
+    cvar = lambda_alpha * sorted_q[i_alpha] + np.dot(sorted_p[(i_alpha + 1):], sorted_q[(i_alpha + 1):]) / (1 - alpha)
+    
+    return var, cvar
 
 
 # FUNCTION RUNNING THE OPTIMIZATION
 # ----------------------------------------------------------------------
 def portfolio_risk_target(scenarios, cvar_alpha):
     
-    # Fixed x
-    x = pd.DataFrame(columns=scenarios.columns, index=["1/N position"])
-    x.loc["1/N position", :] = 1/len(scenarios.columns)   
-    
-    # define index
-    i_idx = scenarios.columns
-    j_idx = scenarios.index
-    
-    # number of scenarios
-    scenario_n = scenarios.shape[0]    
-    
-    # loss deviation
-    var_dev = pulp.LpVariable.dicts("VarDev", (t for t in j_idx), lowBound=0, cat='Continuous')
-        
-    # value at risk
-    var = pulp.LpVariable("VaR", lowBound=0, cat='Continuous')
-    cvar = pulp.LpVariable("CVaR", lowBound=0, cat='Continuous')
-      
-    # define model
-    model = pulp.LpProblem("Targets Optimization", pulp.LpMinimize)
-     
-    # Objective Function
-    model += cvar
-                      
-    # *** CONSTRAINS ***               
-    # Var deviation constrain
-    for t in j_idx:
-        model += -pulp.lpSum([scenarios.loc[t, i] * x[i] for i in i_idx]) - var <= var_dev[t]
-    
-    # CVaR constrain
-    model += var + 1/(scenario_n * cvar_alpha) * pulp.lpSum([var_dev[t] for t in j_idx]) == cvar
+    # Fixed equal weight x
+    x = pd.Series(index=scenarios.columns, data=1 / scenarios.shape[1])
 
-    # Budget constrain
-    model += pulp.lpSum([x[i] for i in i_idx]) == 1
+    # Number of scenarios
+    scenario_n = scenarios.shape[0] 
 
-    # solve model
-    model.solve()
-        
-    # Get positions    
-    if pulp.LpStatus[model.status] == 'Optimal':
-     
-        # print variables
-        var_model = dict()
-        for variable in model.variables():
-            var_model[variable.name] = variable.varValue
-         
-        # solution with variable names   
-        var_model = pd.Series(var_model, index=var_model.keys())
-        
-        return var_model["CVaR"]
-    else:
-        logger.exception(f"LP does not find optimal solution for CVaR targets with: {pulp.LpStatus[model.status]}")
+    # Portfolio loss scenarios
+    losses = (-scenarios @ x).to_numpy()
+
+    # Probabilities
+    probs = np.ones(scenario_n) / scenario_n
+
+    # CVaR
+    _, portfolio_cvar = CVaR(1 - cvar_alpha, probs, losses)
+
+    return portfolio_cvar
 
 
 # ----------------------------------------------------------------------
 # Mathematical Optimization: TARGETS GENERATION
 # ---------------------------------------------------------------------- 
-def get_cvar_targets(test_date, benchmark, budget, cvar_alpha, data=[]):
+def get_cvar_targets(test_date, benchmark, budget, cvar_alpha, data, scgen):
 
     # Define Benchmark
     tickers = benchmark
@@ -81,21 +69,19 @@ def get_cvar_targets(test_date, benchmark, budget, cvar_alpha, data=[]):
 
     # Get scenarios
     # The Monte Carlo Method
-    target_scenarios = bootstrapping(data=target_weekly_ret,       # subsetMST or subsetCLUST
-                                     n_simulations=250,
-                                     n_test=weeks_n)
+    target_scenarios = scgen.bootstrapping(
+        data=target_weekly_ret,       # subsetMST or subsetCLUST
+        n_simulations=250,
+        n_test=weeks_n
+    )
 
     # Compute the optimal portfolio outperforming zero percentage return
     # ----------------------------------------------------------------------
     p_points = len(target_scenarios[:, 0, 0])       # number of periods
     s_points = len(target_scenarios[0, :, 0])       # number of scenarios
 
-    # DATA FRAME TO STORE CVaR TARGETS
-    targets = pd.DataFrame(columns=["CVaR_Target"], index=list(range(p_points)))
-    # DATA FRAME TO STORE VALUE OF THE PORTFOLIO
-    portfolio_value = pd.DataFrame(columns=["Benchmark_Value"], index=test_weekly_ret.index)
-
     # COMPUTE CVaR TARGETS
+    list_targets = []
     for p in range(p_points):
         # create data frame with scenarios for a given period p
         scenario_df = pd.DataFrame(target_scenarios[p, :, :],
@@ -106,11 +92,19 @@ def get_cvar_targets(test_date, benchmark, budget, cvar_alpha, data=[]):
         cvar_target = portfolio_risk_target(scenarios=scenario_df,
                                             cvar_alpha=cvar_alpha)
         # save the result
-        targets.loc[p, "CVaR_Target"] = cvar_target
+        list_targets.append(cvar_target)
+    
+    # Generate new column so that dtype is set right.
+    targets = pd.DataFrame(columns=["CVaR_Target"], data=list_targets)
 
     # COMPUTE PORTFOLIO VALUE
+    list_portfolio_values = []
     for w in test_weekly_ret.index:
-        portfolio_value.loc[w, "Benchmark_Value"] = sum((budget/len(tickers)) * (1 + test_weekly_ret.loc[w, :]))
-        budget = sum(budget/len(tickers) * (1+test_weekly_ret.loc[w, :]))
+        budget_next = sum((budget/len(tickers)) * (1 + test_weekly_ret.loc[w, :])) 
+        list_portfolio_values.append(budget_next)
+        budget = budget_next
+
+    # Generate dataframe so that dtype is set right.
+    portfolio_value = pd.DataFrame(columns=["Benchmark_Value"], index=test_weekly_ret.index, data=list_portfolio_values)
 
     return targets, portfolio_value

@@ -135,3 +135,5 @@ app/models/__pycache__
 app/data/__pycache__
 .idea
 lib
+notes
+.vscode/
