@@ -50,8 +50,12 @@ class TradeBot(object):
         performance.index = pd.to_datetime(performance.index.values, utc=True)
 
         # ** PERFORMANCE GRAPH **
-        # performance.index = [date.date() for date in performance.index]   # needed for old data
-        df_to_plot = pd.concat([performance, performance_benchmark], axis=1)
+        try:
+            df_to_plot = pd.concat([performance, performance_benchmark], axis=1)
+        except:
+            performance.index = [date.date() for date in performance.index]   # needed for old data
+            df_to_plot = pd.concat([performance, performance_benchmark], axis=1)
+
         color_discrete_map = {'Portfolio_Value': '#21304f', 'Benchmark_Value': '#f58f02'}
         fig = px.line(df_to_plot, x=df_to_plot.index, y=df_to_plot.columns,
                       title='Comparison of different strategies', color_discrete_map=color_discrete_map)
