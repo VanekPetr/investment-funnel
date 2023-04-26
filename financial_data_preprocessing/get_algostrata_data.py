@@ -1,0 +1,79 @@
+import pandas as pd
+import numpy as np
+import dateutil.parser
+import requests
+from settings import settings
+
+
+# BATCH FUNCTION
+# ----------------------------------------------------------------------
+def batch(iterable, n=1):
+    l = len(iterable)
+    for ndx in range(0, l, n):
+        yield iterable[ndx:min(ndx + n, l)]
+
+
+# Get IDs and ISIN codes
+# ----------------------------------------------------------------------
+
+idList = []  # empty list of IDs
+isinList = []  # empty list of isin codes
+nameList = []  # empty list of names
+# GET ASSET NAME DATA
+response = requests.get(settings.ALGOSTRATA_NAMES_URL,
+                        headers={"X-Api-Key": settings.ALGOSTRATA_KEY,
+                                 "content-type": "application/json"})
+data = response.json()  # downloaded data
+# SAVE IDs and ISIN CODES INTO LISTS
+for asset in data:
+    idList.append(asset["id"])
+    isinList.append(asset["isin"])
+    nameList.append(asset["name"])
+
+# Get the price data with index
+# ----------------------------------------------------------------------
+batchSize = 3  # size of a batch
+roundRep = int(np.ceil(len(idList) / batchSize))  # number of iterations
+rep = 0  # current iteration
+firstRun = True
+# LOAD DATASET BY STEP, EACH STEP XY ASSETS
+for subIdList in batch(idList, batchSize):
+    # GET ASSET PRICE DATA
+    print("---- Starting round", rep + 1, "out of", roundRep, "----")
+    response = requests.post(settings.ALGOSTRATA_PRICES_URL,
+                             json={'idList': subIdList},
+                             headers={"X-Api-Key": settings.ALGOSTRATA_KEY,
+                                      "content-type": "application/json"})
+
+    if response.status_code != 200:
+        print(f'Code {response.reason}, content {response.text}')
+        print("---- Error round", rep + 1, "out of", roundRep, "----")
+        continue
+
+    data = response.json()  # downloaded data
+
+    # CREATE PANDAS TABLE WITH ALL PRICE DATA
+    for num, asset in enumerate(data['result']):
+        # IF WE HAVE A PRICE DATA THEN
+        if asset['priceData'] != None:
+            priceData = asset['priceData']
+            reInvestedPrices = priceData['reInvestedPrices']
+            dates = list(map(lambda x: dateutil.parser.parse(x['date']),
+                             reInvestedPrices))
+            prices = list(map(lambda x: x['unit_DKK'], reInvestedPrices))
+
+            # IF THE FIRST RUN, THEN CREATE A TABLE
+            if firstRun:
+                dailyPrices = pd.DataFrame(prices, index=dates, columns=[isinList[0:1], nameList[0:1]])
+                firstRun = False
+            # IF NOT THE FIRST RUN, JUST CONCAT THE COLUMN INTO EXISTING TABLE
+            else:
+                df = pd.DataFrame(prices, index=dates, columns=[isinList[rep*batchSize+num: rep*batchSize+num+1],
+                                                                nameList[rep*batchSize+num: rep*batchSize+num+1]])
+                # IF THE PRICE DATA ARE NOT ALL NaN, THEN
+                if not df.isnull().values.all():
+                    dailyPrices = pd.concat([dailyPrices, df], axis=1)
+    rep += 1
+
+# Save dailyPrices into parquet file
+dailyPrices.to_parquet('financial_data/daily_price.parquet')
