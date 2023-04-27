@@ -11,15 +11,15 @@ from models.Clustering import cluster, pick_cluster
 from models.ScenarioGeneration import ScenarioGenerator
 from models.CVaRtargets import get_cvar_targets
 from models.CVaRmodel import cvar_model
-from financial_data.ETFlist import ETFlist
+from financial_data.etf_isins import ETFlist
 from pathlib import Path
 
 pio.renderers.default = "browser"
 ROOT_DIR = Path(__file__).parent.parent
 # Load our data
 weekly_returns = pd.read_parquet(os.path.join(ROOT_DIR, 'financial_data/all_etfs_rets.parquet.gzip'))
-tickers = weekly_returns.columns.values
-names = pd.read_parquet(os.path.join(ROOT_DIR, 'financial_data/all_etfs_rets_name.parquet.gzip')).columns.values
+tickers = [pair[0] for pair in weekly_returns.columns.values]
+names = [pair[1] for pair in weekly_returns.columns.values]
 
 
 class TradeBot(object):
@@ -29,9 +29,13 @@ class TradeBot(object):
     """
 
     def __init__(self):
-        self.weeklyReturns = weekly_returns
         self.tickers = tickers
         self.names = names
+        self.weeklyReturns = weekly_returns
+        self.min_date = str(weekly_returns.index[0])
+        self.max_date = str(weekly_returns.index[-2])
+
+        weekly_returns.columns = tickers
 
     @staticmethod
     def __plot_backtest(
@@ -46,8 +50,12 @@ class TradeBot(object):
         performance.index = pd.to_datetime(performance.index.values, utc=True)
 
         # ** PERFORMANCE GRAPH **
-        performance.index = [date.date() for date in performance.index]
-        df_to_plot = pd.concat([performance, performance_benchmark], axis=1)
+        try:
+            df_to_plot = pd.concat([performance, performance_benchmark], axis=1)
+        except:
+            performance.index = [date.date() for date in performance.index]   # needed for old data
+            df_to_plot = pd.concat([performance, performance_benchmark], axis=1)
+
         color_discrete_map = {'Portfolio_Value': '#21304f', 'Benchmark_Value': '#f58f02'}
         fig = px.line(df_to_plot, x=df_to_plot.index, y=df_to_plot.columns,
                       title='Comparison of different strategies', color_discrete_map=color_discrete_map)
@@ -362,6 +370,6 @@ if __name__ == "__main__":
                             start_test_date="2018-09-24",
                             end_test_date="2019-09-01",
                             subset_of_assets=mst_subset_of_assets,
-                            benchmarks=['S&P 500 Growth ETF'],
+                            benchmarks=['Sparinvest Danske Aktier KL A'],
                             scenarios_type='Bootstrapping',
                             n_simulations=500)
