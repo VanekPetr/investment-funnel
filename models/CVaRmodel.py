@@ -6,7 +6,7 @@ from loguru import logger
 # ----------------------------------------------------------------------
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
 # ----------------------------------------------------------------------
-def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, budget, x_old, trans_cost, max_weight, first=False):
+def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight):
     
     """ This function finds the optimal enhanced index portfolio according to some benchmark.
     The portfolio corresponds to the tangency portfolio where risk is evaluated according to 
@@ -20,7 +20,7 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, budget, x_old, tr
         Asset scenarios
     cvar_targets:
         cvar targets for our optimal portfolio
-    budget:
+    cash:
         additional budget for our portfolio
     x_old:
         old portfolio allocation
@@ -48,10 +48,8 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, budget, x_old, tr
     # define variables
     x = pulp.LpVariable.dicts("x", (i for i in i_idx), lowBound=0, cat='Continuous')
     
-    # define variables for buying
-    buy = pulp.LpVariable.dicts("buy", (i for i in i_idx), lowBound=0, cat='Continuous')
-    # define variables for selling
-    sell = pulp.LpVariable.dicts("sell", (i for i in i_idx), lowBound=0, cat='Continuous')
+    # define |x - x_old|
+    absdiff = pulp.LpVariable.dicts("absdiff", (i for i in i_idx), cat='Continuous')
     
     # define cost variable
     cost = pulp.LpVariable("cost", lowBound=0, cat='Continuous') 
@@ -80,30 +78,22 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, budget, x_old, tr
     # CVaR target
     model += cvar <= cvar_targets     
     
-    if first: 
-        # budget constrain
-        model += pulp.lpSum([x[i] for i in i_idx]) == (1-c) * budget
-    else:
-        # re-balancing
-        for i in i_idx:
-            model += x_old[i] - sell[i] + buy[i] == x[i]
-        # cost of re-balancing
-        model += c * (pulp.lpSum([buy[i] for i in i_idx]) + pulp.lpSum([sell[i] for i in i_idx])) == cost
-        
-        # new budget constrain
-        model += pulp.lpSum([buy[i] for i in i_idx]) == pulp.lpSum([sell[i] for i in i_idx]) - cost
+    # cost of re-balancing
+    model += c * (pulp.lpSum([absdiff[i] for i in i_idx])) == cost
+    for i in i_idx:
+        model += x[i] - x_old[i] <= absdiff[i]
+        model += x[i] - x_old[i] >= -absdiff[i]
 
+    # budget constrain
+    model += x_old.sum() + cash - pulp.lpSum([x[i] for i in i_idx]) == cost
+        
     # *** Concentration limits ***
     # set max limits, so it cannot not be larger than a fixed value
-    if first:
-        for i in i_idx:
-            model += x[i] <= max_weight * (1-c)*budget
-    else:
-        for i in i_idx:
-            model += x[i] <= max_weight * (x_old.sum() - cost)
+    for i in i_idx:
+        model += x[i] <= max_weight * pulp.lpSum([x[i] for i in i_idx])
 
     # *** solve model ***
-    model.solve()
+    model.solve(pulp.PULP_CBC_CMD(msg=0))
     
     # print an error if the model is not optimal
     if pulp.LpStatus[model.status] != 'Optimal':
@@ -132,9 +122,12 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, budget, x_old, tr
         cvar_result_p = var_model["CVaR"]/sum(opt_port)
         port_val = sum(opt_port)
         opt_port = opt_port/sum(opt_port)
+
+        # Remaining cash
+        cash = cash - (port_val + var_model["cost"] - x_old.sum())
         
         # return portfolio, CVaR, and alpha
-        return opt_port, cvar_result_p, port_val
+        return opt_port, cvar_result_p, port_val, cash
     
     else:
         logger.exception(f"Linear solver does not find optimal solution with status code {pulp.LpStatus[model.status]}")
@@ -147,8 +140,7 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
     """
     Method to run the CVaR model over given periods
     """
-    p_points = len(scenarios[:, 0, 0])           # number of periods
-    s_points = len(scenarios[0, :, 0])           # number of scenarios
+    p_points, s_points, _ = scenarios.shape   # number of periods, number of scenarios 
     prob = 1/s_points                       # probability of each scenario
 
     assets = test_ret.columns                # names of all assets
@@ -160,6 +152,9 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
     # LIST TO STORE PORTFOLIO ALLOCATION
     list_portfolio_allocation = []
 
+    x_old = pd.Series(0, index=assets)
+    cash = budget
+    portfolio_value_w = budget
     for p in range(p_points):
         # Create dataframe with scenarios for a period p
         scenarios_df = pd.DataFrame(scenarios[p, :, :], columns=test_ret.columns)
@@ -167,29 +162,20 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
         # compute expected returns of all assets (EP)
         expected_returns = sum(prob * scenarios_df.loc[i, :] for i in scenarios_df.index)
 
-        if p == 0:
-            # run CVaR model
-            p_alloc, cvar_val, port_val = rebalancing_model(mu=expected_returns,
-                                                            scenarios=scenarios_df,
-                                                            cvar_targets=targets.loc[0, "CVaR_Target"] * budget,
-                                                            cvar_alpha=cvar_alpha,
-                                                            budget=budget,
-                                                            x_old=None,
-                                                            trans_cost=trans_cost,
-                                                            max_weight=max_weight, 
-                                                            first=True)
+        # run CVaR model
+        p_alloc, cvar_val, port_val, cash = rebalancing_model(
+            mu=expected_returns,
+            scenarios=scenarios_df,
+            cvar_targets=targets.loc[p, "CVaR_Target"] * portfolio_value_w,
+            cvar_alpha=cvar_alpha,
+            cash=cash,
+            x_old=x_old,
+            trans_cost=trans_cost,
+            max_weight=max_weight
+        )
 
-        if p > 0:
-            # run CVaR model
-            p_alloc, cvar_val, port_val = rebalancing_model(mu=expected_returns,
-                                                            scenarios=scenarios_df,
-                                                            cvar_targets=targets.loc[p, "CVaR_Target"] * portfolio_value_w,
-                                                            cvar_alpha=cvar_alpha,
-                                                            budget=None,
-                                                            x_old=p_alloc * portfolio_value_w,
-                                                            trans_cost=trans_cost,
-                                                            max_weight=max_weight)
-            
+        print(p)
+
         # save the result
         list_portfolio_cvar.append(cvar_val)
         # save allocation
@@ -200,6 +186,8 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
         for w in test_ret.index[(p * 4): (4 + p * 4)]:
             portfolio_value_w = sum(p_alloc * portfolio_value_w * (1 + test_ret.loc[w, assets]))
             list_portfolio_value.append((w, portfolio_value_w))
+
+        x_old = p_alloc * portfolio_value_w
 
     portfolio_cvar = pd.DataFrame(columns=["CVaR"], data=list_portfolio_cvar)
     portfolio_value = pd.DataFrame(columns=["Date", "Portfolio_Value"], data=list_portfolio_value).set_index("Date", drop=True)
