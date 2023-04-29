@@ -34,12 +34,15 @@ OPTION_ELEMENT = {
 }
 
 OPTION_BTN = {
-    'margin': '2%',
-    'height': '32px',
-    'background-color': "#111723", 
+    'margin': '3%',
+    'height': '60px',
+    'background-color': "#111723",
     'color': 'white',
-    'font-size': '12px'
+    'font-size': '12px',
+    'verticalAlign': 'middle',
+    'border-radius': '15px',
 }
+
 
 MAIN_TITLE = {
     "text-align": "left",
@@ -111,6 +114,19 @@ GRAPH_RIGHT = {
     'overflow': 'auto',
 }
 
+# loading sign on the top of the button
+LOADING_STYLE = {
+    'background': 'white',
+    'display': 'flex',
+    'justifyContent': 'center',
+    'alignItems': 'center',
+    'position': "fixed",
+    'left': '32%',
+    'right': '0%',
+    'top': 0,
+    'bottom': '0%'
+}
+
 
 '''
 # ----------------------------------------------------------------------------------------------------------------------
@@ -122,6 +138,38 @@ GRAPH_RIGHT = {
 # ----------------------------------------------------------------------------------------------------------------------
 image_filename = 'assets/ALGO_logo.png'  # replace with your own image
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
+
+spinner_dots = html.Div([
+    dcc.Loading(
+        id="loading-dots",
+        children=[html.Div([html.Div(id="loading-output-dots")])],
+        type="circle",
+        style=LOADING_STYLE,
+        color='black'
+    ),
+])
+
+
+spinner_ml = html.Div([
+    dcc.Loading(
+        id="loading-ml",
+        children=[html.Div([html.Div(id="loading-output-ml")])],
+        type="circle",
+        style=LOADING_STYLE,
+        color='black'
+    ),
+])
+
+
+spinner_backtest = html.Div([
+    dcc.Loading(
+        id="loading-backtest",
+        children=[html.Div([html.Div(id="loading-output-backtest")])],
+        type="circle",
+        style=LOADING_STYLE,
+        color='black'
+    ),
+])
 
 # sidebar with navigation
 sideBar = html.Div([
@@ -154,13 +202,6 @@ sideBar = html.Div([
 
 # BACK-TESTING
 # ----------------------------------------------------------------------------------------------------------------------
-# Loading 
-loading = dcc.Loading(
-    id="loading-1",
-    type="default",
-    children=html.Div(id="backtestPerfFig")
-)
-
 optionBacktest = html.Div([
     # part1
     html.H5("Backtesting", style=MAIN_TITLE),
@@ -249,7 +290,8 @@ optionBacktest = html.Div([
         multi=True,
         style=OPTION_ELEMENT,
     ),
-    html.Button('Run Backtest', id='backtestRun', loading_state={'is_loading': 'true'},  style=OPTION_BTN),
+
+    dbc.Button('Run Backtest', id='backtestRun', loading_state={'is_loading': 'true'},  style=OPTION_BTN),
 
  ], style=GRAPH_LEFT)
 
@@ -302,15 +344,10 @@ tableBar = html.Div([
 
 # Performance
 graphResults = html.Div([
-    html.Div([html.Div(loading)], id='backtestPerfFig', style=OPTION_ELEMENT),
+    html.Div(id='backtestPerfFig', style=OPTION_ELEMENT),
     html.Div(id='backtestCompFig', style=OPTION_ELEMENT),
     tableBar
 ], style=GRAPH_RIGHT)
-
-# graphPerformance = html.Div([html.Div(loading)], id='backtestPerfFig', style=GRAPH_RIGHT_TOP)
-
-# Composition
-# graphComposition = html.Div(id='backtestCompFig', style=GRAPH_RIGHT_DOWN)
 
 
 # AI Feature Selection
@@ -358,9 +395,8 @@ optionML = html.Div([
     ),
     # RUN Clustering
 
-    html.Button('Compute',
-                id='MLRun',
-                style=OPTION_BTN),
+    dbc.Button('Compute', id='MLRun', style=OPTION_BTN),
+
 ], style=GRAPH_LEFT)
 
 selectionBar = html.Div([
@@ -420,10 +456,7 @@ optionGraph = html.Div([
     ),
 
     # Button to plot results
-    html.Button('Show Plot',
-                id='show',
-                style=OPTION_BTN),
-
+    dbc.Button('Show Plot', id='show', style=OPTION_BTN),
 
 ], style=GRAPH_LEFT)
 
@@ -439,8 +472,6 @@ optionMyPortfolio = html.Div([
            style=SUB_TITLE),
 
     # Button to plot results
-    html.Button('Recalculate',
-                id='recalculate',
-                style=OPTION_BTN),
+    dbc.Button('Recalculate', id='recalculate', style=OPTION_BTN),
 
 ], style=GRAPH_LEFT)

@@ -46,8 +46,8 @@ def get_callbacks(app):
          Output('saved-opt-table', 'data'),
          Output('saved-bench-table', 'data'),
          Output('saved-perf-figure-page-2', 'data'),
-         Output('saved-comp-figure-page-2', 'data')
-         ],
+         Output('saved-comp-figure-page-2', 'data'),
+         Output('loading-output-backtest', 'children')],
         Input('backtestRun', 'n_clicks'),
         [State('select-ml', 'value'),
          State('slider-backtest-ml', 'value'),
@@ -98,12 +98,12 @@ def get_callbacks(app):
             return (perf_figure, comp_figure, opt_table.to_dict('records'), bench_table.to_dict('records'),
                     model, model_spec, pick_top, scen_model, scen_spec, benchmark, model, model_spec, pick_top,
                     scen_model, scen_spec, benchmark, opt_table.to_dict('records'), bench_table.to_dict('records'),
-                    perf_figure, comp_figure)
+                    perf_figure, comp_figure, True)
         else:
             return (saved_perf_figure, saved_comp_figure, saved_opt_table, saved_bench_table,
                     saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
                     saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
-                    saved_opt_table, saved_bench_table, saved_perf_figure, saved_comp_figure)
+                    saved_opt_table, saved_bench_table, saved_perf_figure, saved_comp_figure, True)
 
     @app.callback(
         Output('slider-output-container2', 'children'),
@@ -158,7 +158,8 @@ def get_callbacks(app):
          Output('saved-ml-model', 'data'),
          Output('saved-ml-spec', 'data'),
          Output('saved-ml-text', 'data'),
-         Output('saved-figure-page-1', 'data')],
+         Output('saved-figure-page-1', 'data'),
+         Output('loading-output-ml', 'children')],
         [Input('MLRun', 'n_clicks')],
         [State('model-dropdown', 'value'),
          State('ML-num-dropdown', 'value'),
@@ -203,10 +204,11 @@ def get_callbacks(app):
             ml_text = 'Number of selected assets: ' + str(len(ai_table))
 
             return (generated_figure, selected_start, selected_end, ai_table.to_dict('records'), ml_text, model, spec,
-                    selected_start, selected_end, ai_table.to_dict('records'), model, spec, ml_text, generated_figure)
+                    selected_start, selected_end, ai_table.to_dict('records'), model, spec, ml_text, generated_figure,
+                    True)
         else:
             return (saved_figure, saved_start, saved_end, saved_ai_table, saved_text, saved_model, saved_spec,
-                    saved_start, saved_end, saved_ai_table, saved_model, saved_spec, saved_text, saved_figure)
+                    saved_start, saved_end, saved_ai_table, saved_model, saved_spec, saved_text, saved_figure, True)
 
     # MARKET OVERVIEW
     # ----------------------------------------------------------------------------------------------------------------------
@@ -219,7 +221,8 @@ def get_callbacks(app):
          Output('saved-start-date-page-0', 'data'),
          Output('saved-end-date-page-0', 'data'),
          Output('saved-find-fund', 'data'),
-         Output('saved-figure-page-0', 'data')],
+         Output('saved-figure-page-0', 'data'),
+         Output('loading-output-dots', 'children')],
         [Input('page-content', 'children'),
          Input('show', 'n_clicks')],
         [State('picker-show', 'start_date'),
@@ -245,7 +248,7 @@ def get_callbacks(app):
                                                 'left': '0%'}
                                          )
             return (generated_figure, selected_start, selected_end, search, selected_start, selected_end, search,
-                    generated_figure)
+                    generated_figure, True)
         else:
             return (saved_figure, saved_start, saved_end, saved_find_fund, saved_start, saved_end, saved_find_fund,
-                    saved_figure)
+                    saved_figure, True)
