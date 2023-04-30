@@ -84,7 +84,6 @@ def get_callbacks(app):
                                                       n_assets=pick_top)
             # RUN THE BACKTEST
             opt_table, bench_table, fig_performance, fig_composition = algo.backtest(start_train_date=start_data,
-                                                                                     end_train_date=end_train,
                                                                                      start_test_date=start_test,
                                                                                      end_test_date=end_data,
                                                                                      subset_of_assets=subset_of_assets,
