@@ -299,13 +299,13 @@ class TradeBot(object):
         # ---------------------------------------------------------------------------------------------------
         if scenarios_type == 'MonteCarlo':
             scenarios = sg.monte_carlo(data=train_dataset.loc[:, train_dataset.columns.isin(subset_of_assets)],
-                                    # subsetMST_df or subsetCLUST_df
-                                    n_simulations=n_simulations,
-                                    n_test=len(test_dataset.index))
+                                       # subsetMST_df or subsetCLUST_df
+                                       n_simulations=n_simulations,
+                                       n_test=len(test_dataset.index))
         else:
             scenarios = sg.bootstrapping(data=self.weeklyReturns[subset_of_assets],  # subsetMST or subsetCLUST
-                                      n_simulations=n_simulations,  # number of scenarios per period
-                                      n_test=len(test_dataset.index))  # number of periods
+                                         n_simulations=n_simulations,  # number of scenarios per period
+                                         n_test=len(test_dataset.index))  # number of periods
 
         # TARGETS GENERATION
         # ---------------------------------------------------------------------------------------------------

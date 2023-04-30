@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import pandas as pd
 
 
 class ScenarioGenerator(object):
@@ -7,13 +8,13 @@ class ScenarioGenerator(object):
     Provides methods for scenario generation.
     """
 
-    def __init__(self, rng):
+    def __init__(self, rng: np.random.Generator):
         self.rng = rng
 
     # ----------------------------------------------------------------------
     # Scenario Generation: THE MONTE CARLO METHOD
     # ----------------------------------------------------------------------
-    def monte_carlo(self, data, n_simulations, n_test):
+    def monte_carlo(self, data: pd.DataFrame, n_simulations: int, n_test: int) -> np.ndarray:
         """
         Monte Carlo simulations
         """
@@ -49,7 +50,7 @@ class ScenarioGenerator(object):
     # ----------------------------------------------------------------------
     # Scenario Generation: THE BOOTSTRAPPING METHOD
     # ----------------------------------------------------------------------
-    def bootstrapping(self, data, n_simulations, n_test):
+    def bootstrapping(self, data: pd.DataFrame, n_simulations: int, n_test: int) -> np.ndarray:
         n_iter = 4  # 4 weeks compounded in our scenario                                                         
         n_train_weeks = len(data.index) - n_test
         n_indices = data.shape[1]
