@@ -273,7 +273,6 @@ class TradeBot(object):
     def backtest(
         self,
         start_train_date: str,
-        end_train_date: str,
         start_test_date: str,
         end_test_date: str,
         subset_of_assets: list,
@@ -287,8 +286,8 @@ class TradeBot(object):
         benchmark_isin = [self.tickers[list(self.names).index(name)] for name in benchmarks]
 
         # Get train and testing datasets
-        train_dataset = self.weeklyReturns[(self.weeklyReturns.index >= start_train_date)
-                                           & (self.weeklyReturns.index <= end_train_date)].copy()
+        whole_dataset = self.weeklyReturns[(self.weeklyReturns.index >= start_train_date)
+                                           & (self.weeklyReturns.index <= end_test_date)].copy()
         test_dataset = self.weeklyReturns[(self.weeklyReturns.index > start_test_date)
                                           & (self.weeklyReturns.index <= end_test_date)].copy()
 
@@ -298,14 +297,13 @@ class TradeBot(object):
         # SCENARIO GENERATION
         # ---------------------------------------------------------------------------------------------------
         if scenarios_type == 'MonteCarlo':
-            scenarios = sg.monte_carlo(data=train_dataset.loc[:, train_dataset.columns.isin(subset_of_assets)],
-                                    # subsetMST_df or subsetCLUST_df
-                                    n_simulations=n_simulations,
-                                    n_test=len(test_dataset.index))
+            scenarios = sg.monte_carlo(data=whole_dataset[subset_of_assets],    # subsetMST_df or subsetCLUST_df
+                                       n_simulations=n_simulations,
+                                       n_test=len(test_dataset.index))
         else:
-            scenarios = sg.bootstrapping(data=self.weeklyReturns[subset_of_assets],  # subsetMST or subsetCLUST
-                                      n_simulations=n_simulations,  # number of scenarios per period
-                                      n_test=len(test_dataset.index))  # number of periods
+            scenarios = sg.bootstrapping(data=whole_dataset[subset_of_assets],  # subsetMST or subsetCLUST
+                                         n_simulations=n_simulations,  # number of scenarios per period
+                                         n_test=len(test_dataset.index))  # number of periods
 
         # TARGETS GENERATION
         # ---------------------------------------------------------------------------------------------------
@@ -314,7 +312,7 @@ class TradeBot(object):
                                                        benchmark=benchmark_isin,  # MSCI World benchmark
                                                        budget=100,
                                                        cvar_alpha=0.05,
-                                                       data=self.weeklyReturns,
+                                                       data=whole_dataset,
                                                        scgen=sg)
  
         # MATHEMATICAL MODELING
@@ -345,7 +343,6 @@ class TradeBot(object):
 
 if __name__ == "__main__":
     # INITIALIZATION OF THE CLASS
-    # algo = TradeBot(start="2011-07-01", end="2021-07-01", assets=tickers)
     algo = TradeBot()
 
     # PLOT INTERACTIVE GRAPH
@@ -366,10 +363,9 @@ if __name__ == "__main__":
 
     # RUN THE BACKTEST
     results = algo.backtest(start_train_date="2015-12-23",
-                            end_train_date="2017-07-01",
                             start_test_date="2018-09-24",
                             end_test_date="2019-09-01",
                             subset_of_assets=mst_subset_of_assets,
-                            benchmarks=['Sparinvest Danske Aktier KL A'],
+                            benchmarks=['BankInvest Danske Aktier W'],
                             scenarios_type='Bootstrapping',
                             n_simulations=500)

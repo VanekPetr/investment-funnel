@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
-from loguru import logger
+from models.ScenarioGeneration import ScenarioGenerator
+from typing import Tuple
 
 
 # Primal CVaR formula
-def CVaR(alpha, p, q):
+def CVaR(alpha: float, p: np.array, q: np.array) -> Tuple[float, float]:
     """
     Computes CVaR using primal formula. 
     NOTE: Inputs p and q should be numpy arrays.
@@ -30,7 +31,7 @@ def CVaR(alpha, p, q):
 
 # FUNCTION RUNNING THE OPTIMIZATION
 # ----------------------------------------------------------------------
-def portfolio_risk_target(scenarios, cvar_alpha):
+def portfolio_risk_target(scenarios: pd.DataFrame, cvar_alpha: float) -> float:
     
     # Fixed equal weight x
     x = pd.Series(index=scenarios.columns, data=1 / scenarios.shape[1])
@@ -53,24 +54,25 @@ def portfolio_risk_target(scenarios, cvar_alpha):
 # ----------------------------------------------------------------------
 # Mathematical Optimization: TARGETS GENERATION
 # ---------------------------------------------------------------------- 
-def get_cvar_targets(test_date, benchmark, budget, cvar_alpha, data, scgen):
+def get_cvar_targets(
+    test_date: str, benchmark: list, budget: int, cvar_alpha: float, data: pd.DataFrame, scgen: ScenarioGenerator
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
     # Define Benchmark
     tickers = benchmark
+    # Get weekly return of our benchmark
+    whole_dataset_benchmark = data[tickers].copy()
 
-    # *** For Morningstar data ***
-    target_weekly_ret = data[tickers].copy()
-
-    # Get weekly data for testing
-    test_weekly_ret = target_weekly_ret[target_weekly_ret.index >= test_date]
+    # Get weekly data just for testing period
+    test_dataset_benchmark = whole_dataset_benchmark[whole_dataset_benchmark.index >= test_date]
 
     # Number of weeks for testing
-    weeks_n = len(test_weekly_ret.index)
+    weeks_n = len(test_dataset_benchmark.index)
 
     # Get scenarios
     # The Monte Carlo Method
     target_scenarios = scgen.bootstrapping(
-        data=target_weekly_ret,       # subsetMST or subsetCLUST
+        data=whole_dataset_benchmark,       # subsetMST or subsetCLUST
         n_simulations=250,
         n_test=weeks_n
     )
@@ -99,12 +101,14 @@ def get_cvar_targets(test_date, benchmark, budget, cvar_alpha, data, scgen):
 
     # COMPUTE PORTFOLIO VALUE
     list_portfolio_values = []
-    for w in test_weekly_ret.index:
-        budget_next = sum((budget/len(tickers)) * (1 + test_weekly_ret.loc[w, :])) 
+    for w in test_dataset_benchmark.index:
+        budget_next = sum((budget/len(tickers)) * (1 + test_dataset_benchmark.loc[w, :]))
         list_portfolio_values.append(budget_next)
         budget = budget_next
 
     # Generate dataframe so that dtype is set right.
-    portfolio_value = pd.DataFrame(columns=["Benchmark_Value"], index=test_weekly_ret.index, data=list_portfolio_values)
+    portfolio_value = pd.DataFrame(columns=["Benchmark_Value"],
+                                   index=test_dataset_benchmark.index,
+                                   data=list_portfolio_values)
 
     return targets, portfolio_value
