@@ -1,4 +1,6 @@
 import pulp
+import cvxpy as cp
+import numpy as np
 import pandas as pd
 from loguru import logger
 
@@ -7,7 +9,6 @@ from loguru import logger
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
 # ----------------------------------------------------------------------
 def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight):
-    
     """ This function finds the optimal enhanced index portfolio according to some benchmark.
     The portfolio corresponds to the tangency portfolio where risk is evaluated according to 
     the CVaR of the tracking error. The model is formulated using fractional programming.
@@ -36,102 +37,78 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
     float
         Asset weights in an optimal portfolio 
     """ 
-    # define index
+    # Define index
     i_idx = scenarios.columns
-    j_idx = scenarios.index
+    N = i_idx.size
     
-    # number of scenarios
-    scenario_n = scenarios.shape[0]    
-    # variable transaction costs
+    # Number of scenarios
+    T = scenarios.shape[0]    
+    # Variable transaction costs
     c = trans_cost
-    
-    # define variables
-    x = pulp.LpVariable.dicts("x", (i for i in i_idx), lowBound=0, cat='Continuous')
-    
-    # define |x - x_old|
-    absdiff = pulp.LpVariable.dicts("absdiff", (i for i in i_idx), cat='Continuous')
-    
-    # define cost variable
-    cost = pulp.LpVariable("cost", lowBound=0, cat='Continuous') 
 
-    # loss deviation
-    var_dev = pulp.LpVariable.dicts("VarDev", (t for t in j_idx), lowBound=0, cat='Continuous')
-        
-    # value at risk
-    var = pulp.LpVariable("VaR", lowBound=0, cat='Continuous')
-    cvar = pulp.LpVariable("CVaR", lowBound=0, cat='Continuous')
+    # Define variables
+    # - portfolio
+    x = cp.Variable(N, name="x", nonneg=True)
+    # - |x - x_old|
+    absdiff = cp.Variable(N, name="absdiff", nonneg=True)    
+    # - cost
+    cost = cp.Variable(name="cost", nonneg=True) 
+    # - loss deviation
+    vardev = cp.Variable(T, name="vardev", nonneg=True)        
+    # - VaR and CVaR
+    var = cp.Variable(name="var", nonneg=True)
+    cvar = cp.Variable(name="cvar", nonneg=True)
 
-    # *** define model ***
-    model = pulp.LpProblem("Mean-CVaR Optimization", pulp.LpMaximize)
-                      
-    # *** Objective Function, maximize expected return of the portfolio ***         
-    model += pulp.lpSum([mu[i] * x[i] for i in i_idx])
+    # Define objective (max expected portfolio return)
+    objective = cp.Maximize(mu.to_numpy() @ x)
 
-    # *** constraints ***
-    # calculate VaR deviation
-    for t in j_idx:
-        model += -pulp.lpSum([scenarios.loc[t, i] * x[i] for i in i_idx]) - var <= var_dev[t]
+    # Define constraints
+    constraints = [
+        # - VaR deviation
+        -scenarios.to_numpy() @ x - var <= vardev,
 
-    # calculate CVaR
-    model += var + 1/(scenario_n * cvar_alpha) * pulp.lpSum([var_dev[t] for t in j_idx]) == cvar
+        # - CVaR limit
+        var + 1/(T * cvar_alpha) * cp.sum(vardev) == cvar,
+        cvar <= cvar_targets,
+
+        # - Cost of rebalancing
+        c * cp.sum(absdiff) == cost,
+        x - x_old <= absdiff,
+        x - x_old >= -absdiff,
+
+        # - Budget
+        x_old.sum() + cash - cp.sum(x) - cost == 0,
+
+        # - Concentration limits
+        x <= max_weight * cp.sum(x)
+    ]
+
+    # Define model
+    model = cp.Problem(objective=objective, constraints=constraints)
+
+    # Solve
+    model.solve(solver=cp.MOSEK, verbose=False)
+
+    # Get positions
+    if model.status == "optimal":     
+        opt_port = pd.Series(x.value, index=mu.index)
     
-    # CVaR target
-    model += cvar <= cvar_targets     
-    
-    # cost of re-balancing
-    model += c * (pulp.lpSum([absdiff[i] for i in i_idx])) == cost
-    for i in i_idx:
-        model += x[i] - x_old[i] <= absdiff[i]
-        model += x[i] - x_old[i] >= -absdiff[i]
-
-    # budget constrain
-    model += x_old.sum() + cash - pulp.lpSum([x[i] for i in i_idx]) == cost
-        
-    # *** Concentration limits ***
-    # set max limits, so it cannot not be larger than a fixed value
-    for i in i_idx:
-        model += x[i] <= max_weight * pulp.lpSum([x[i] for i in i_idx])
-
-    # *** solve model ***
-    model.solve(pulp.PULP_CBC_CMD(msg=0))
-    
-    # print an error if the model is not optimal
-    if pulp.LpStatus[model.status] != 'Optimal':
-        print("Whoops! There is an error! The model has error status:" + pulp.LpStatus[model.status])
-
-    # *** Get positions ***
-    if pulp.LpStatus[model.status] == 'Optimal':
-     
-        # print variables
-        var_model = dict()
-        for variable in model.variables():
-            var_model[variable.name] = variable.varValue
-         
-        # solution with variable names   
-        var_model = pd.Series(var_model, index=var_model.keys())
-
-        long_pos = [i for i in var_model.keys() if i.startswith("x")]
-             
-        # total portfolio with negative values as short positions
-        port_total = pd.Series(var_model[long_pos].values, index=[t[2:] for t in var_model[long_pos].index])
-    
-        opt_port = port_total
-    
-        # set floating data points to zero and normalize
-        opt_port[opt_port < 0.000001] = 0
-        cvar_result_p = var_model["CVaR"]/sum(opt_port)
-        port_val = sum(opt_port)
-        opt_port = opt_port/sum(opt_port)
+        # Set floating data points to zero and normalize
+        opt_port[np.abs(opt_port) < 0.000001] = 0
+        port_val = np.sum(opt_port)
+        cvar_result_p = cvar.value / port_val
+        opt_port = opt_port / port_val
 
         # Remaining cash
-        cash = cash - (port_val + var_model["cost"] - x_old.sum())
-        
+        cash = cash - (port_val + cost.value - x_old.sum())
+      
         # return portfolio, CVaR, and alpha
         return opt_port, cvar_result_p, port_val, cash
-    
+             
     else:
-        logger.exception(f"Linear solver does not find optimal solution with status code {pulp.LpStatus[model.status]}")
-
+        # Print an error if the model is not optimal
+        logger.exception(f"Linear solver does not find optimal solution. Status code is {model.status}")
+ 
 
 # ----------------------------------------------------------------------
 # Mathematical Optimization: RUN THE CVAR MODEL
@@ -156,6 +133,8 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
     cash = budget
     portfolio_value_w = budget
     for p in range(p_points):
+        logger.info(f"Optimizing period {p}.")
+
         # Create dataframe with scenarios for a period p
         scenarios_df = pd.DataFrame(scenarios[p, :, :], columns=test_ret.columns)
 
@@ -173,8 +152,6 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
             trans_cost=trans_cost,
             max_weight=max_weight
         )
-
-        print(p)
 
         # save the result
         list_portfolio_cvar.append(cvar_val)
