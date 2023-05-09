@@ -153,7 +153,8 @@ def test_cvar_model(test_dataset, subset_of_assets, scenarios, cvar_target_data)
         budget=100,
         cvar_alpha=0.05,
         trans_cost=0.001,
-        max_weight=1
+        max_weight=1,
+        free_solver=True
     )
 
     #port_allocation.to_csv("tests/port_allocation_ACTUAL.csv")
@@ -161,6 +162,6 @@ def test_cvar_model(test_dataset, subset_of_assets, scenarios, cvar_target_data)
     #port_cvar.to_csv("tests/port_cvar_ACTUAL.csv")
 
     active_constraints = (targets.to_numpy() - port_cvar.to_numpy()) < 1e-5
-    pd.testing.assert_frame_equal(port_allocation, expected_port_allocation)
+    pd.testing.assert_frame_equal(port_allocation, expected_port_allocation, atol=1e-5)
     pd.testing.assert_frame_equal(port_value, expected_port_value)
     pd.testing.assert_frame_equal(port_cvar[active_constraints], expected_port_cvar[active_constraints])
