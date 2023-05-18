@@ -1,4 +1,3 @@
-import pulp
 import cvxpy as cp
 import numpy as np
 import pandas as pd
@@ -8,7 +7,7 @@ from loguru import logger
 # ----------------------------------------------------------------------
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
 # ----------------------------------------------------------------------
-def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight):
+def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight, free_solver):
     """ This function finds the optimal enhanced index portfolio according to some benchmark.
     The portfolio corresponds to the tangency portfolio where risk is evaluated according to 
     the CVaR of the tracking error. The model is formulated using fractional programming.
@@ -87,7 +86,8 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
     model = cp.Problem(objective=objective, constraints=constraints)
 
     # Solve
-    model.solve(solver=cp.MOSEK, verbose=False)
+    solver = cp.MOSEK if not free_solver else cp.GLPK
+    model.solve(solver=solver, verbose=False)
 
     # Get positions
     if model.status == "optimal":     
@@ -113,7 +113,7 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
 # ----------------------------------------------------------------------
 # Mathematical Optimization: RUN THE CVAR MODEL
 # ----------------------------------------------------------------------
-def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight):
+def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, free_solver):
     """
     Method to run the CVaR model over given periods
     """
@@ -150,7 +150,8 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
             cash=cash,
             x_old=x_old,
             trans_cost=trans_cost,
-            max_weight=max_weight
+            max_weight=max_weight,
+            free_solver=free_solver
         )
 
         # save the result
