@@ -10,7 +10,17 @@ Open source investment tool used by students at Copenhagen University & Danish T
 amateur quants to get a better overview of the ETF market, to experiment with a different investment techniques & algorithms
 and finally to backtest their investment strategies.<br/>
 
-# Technologies
+
+<!-- toc -->
+- [Technologies and Models](#technologies-and-models)
+- [How to start in 3 steps](#how-to-start-in-3-steps)
+- [Authors of the project](#authors-of-the-project)
+- [Research related to Investment Funnel](#research-related-to-investment-funnel)
+- [Versioning](#versioning)
+- [License](#license)
+<!-- tocstop -->
+
+# Technologies and Models
 Our tool is based on various optimization models and ML methods:<br/>
 Minimum Spanning Tree, Hierarchical Clustering of Assets, Monte Carlo, Bootstrapping, Stochastic CVaR Model, Benchmark generation
 
@@ -39,7 +49,7 @@ The app is running on http://127.0.0.1:8050
 * **Auður Anna Jónsdóttir** - *Initial work for MST and Hierarchical Clustering*
 * **Chanyu Yang** - *First contributor to our dash application* - [cicadaa](https://github.com/cicadaa)
 
-## Research related to or with a use of Investment Funnel
+## Research related to Investment Funnel
 * **Arnar Tjörvi Charlesson & Thorvaldur Ingi Ingimundarson** - *Self-Organizing Maps and Strategic Fund Selection* (Master Thesis, DTU, 2023)
 * **Dimosthenis Karafylias** - *Deep Reinforcement Learning For Portfolio Optimisation* (Master Thesis, DTU, 2022)
 * **Carlos Daniel Pinho Ventura** - *Designing Hybrid Investment Packages of Cryptocurrencies with Rewards and Index Funds* (Master Thesis, DTU, 2022)
