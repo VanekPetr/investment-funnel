@@ -14,15 +14,22 @@ and finally to backtest their investment strategies.<br/>
 Our tool is based on various optimization models and ML methods:<br/>
 Minimum Spanning Tree, Hierarchical Clustering of Assets, Monte Carlo, Bootstrapping, Stochastic CVaR Model, Benchmark generation
 
-# How to start in 2 steps
-STEP 1: install requirements
+# How to start in 3 steps
+STEP 1: create and activate python virtual environment
+``` bash
+python -m venv venv
+source venv/bin/activate
+```
+
+STEP 2: install requirements
 ``` bash
 pip install -r requirements.txt
 ```
-STEP 2: run Dash application
+STEP 3: run Dash application
 ``` bash
 python app.py 
 ```
+The app is running on http://127.0.0.1:8050
 
 
 ## Versioning
