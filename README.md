@@ -14,13 +14,18 @@ and finally to backtest their investment strategies.<br/>
 <!-- toc -->
 - [Technologies and Models](#technologies-and-models)
 - [How to start in 3 steps](#how-to-start-in-3-steps)
+- [Usage](#usage)
+- [Configuration](#configuration)
 - [Authors of the project](#authors-of-the-project)
 - [Research related to Investment Funnel](#research-related-to-investment-funnel)
+- [Contributing](#contributing)
 - [Versioning](#versioning)
 - [License](#license)
 <!-- tocstop -->
 
 # Technologies and Models
+### TODO cookbook
+### TODO intro picture
 Our tool is based on various optimization models and ML methods:<br/>
 Minimum Spanning Tree, Hierarchical Clustering of Assets, Monte Carlo, Bootstrapping, Stochastic CVaR Model, Benchmark generation
 
@@ -41,6 +46,12 @@ python app.py
 ```
 The app is running on http://127.0.0.1:8050
 
+# Usage
+
+# Configuration
+write about MOSEK licence and data
+
+
 ## Authors of the project
 
 * **Petr Vanek** - *Co-founder & Initial work* - [VanekPetr](https://github.com/VanekPetr)
@@ -60,6 +71,9 @@ The app is running on http://127.0.0.1:8050
 * **Andrias Poulsen** - *Performance Analysis of Sustainable Investment Portfolios* (Bachelor Thesis, DTU, 2021)
 * **Auður Anna Jónsdóttir** - *Feature Selection in Asset Allocation* (Master Thesis, DTU, 2020)
 * **Petr Vanek** - *Performance Analysis of the most traded Mutual Funds versus Optimal Portfolios of Exchange Traded Funds* (Master Thesis, KU, 2020)
+
+## Contributing
+Thank you for considering contributing to this project! We welcome contributions from everyone. Before getting started, please take a moment to review our [Contribution Guidelines](CONTRIBUTING.md).
 
 ## Versioning
 
