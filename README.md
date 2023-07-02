@@ -31,21 +31,21 @@ python app.py
 ```
 The app is running on http://127.0.0.1:8050
 
+## Authors
+
+* **Petr Vanek** - *Co-founder & Initial work* - [VanekPetr](https://github.com/VanekPetr)
+* **Kourosh Rasmussen** - *Co-founder* - [AlgoStrata](https://algostrata.com) & [Penly](https://penly.dk)
+* **Gábor Balló** - *Implementation of CVaR model with CVXPY and MOSEK* - [szelidvihar](https://github.com/szelidvihar) & [MOSEK](https://github.com/MOSEK)
+* **Chanyu Yang** - *First contributor to our dash application* - [cicadaa](https://github.com/cicadaa)
+
 
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/VanekPetr/investment-funnel/tags). 
 
-## Authors
-
-* **Petr Vanek** - *Co-founder & Initial work* - [VanekPetr](https://github.com/VanekPetr)
-* **Kourosh Marjani Rasmussen** - *Co-founder* - [AlgoStrata](https://algostrata.com)
-* **Arnar Tjörvi Charlesson** - *Contributor* - [Arnar](https://github.com/arnarc)
-* **Thorvaldur Ingi Ingimundarson** - [ingimundarson](https://github.com/ingimundarson)
-
 ## License
 
-This repository is licensed under [CC-BY-4.0](LICENSE) (c) 2019 GitHub, Inc.
+This repository is licensed under [MIT](LICENSE) (c) 2019 GitHub, Inc.
 
 <div align='center'>
 <a href='https://github.com/vanekpetr/investment-funnel/releases'>
