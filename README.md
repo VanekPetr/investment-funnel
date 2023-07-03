@@ -6,11 +6,12 @@
 <img src="https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor "align="center">
 </p>
 
-### TODO intro picture
-Open source project for developing and backtesting investment strategies. Used by more than 500 students during 
-asset allocation classes at Copenhagen University & Danish Technical University as well as by amateur quants. 
-The main aim of this project is to get a better overview of the ETF/Mutual fund market, to experiment with a different investment techniques & algorithms
-and finally to backtest investment strategies.<br/>
+### TODO new intro picture
+Open source project for developing and backtesting investment strategies.<br/>
+
+Used by more than 500 students during asset allocation classes at Copenhagen University & Danish Technical University 
+as well as by amateur quants. The main aim of this project is to get a better overview of the ETF/Mutual fund market, 
+to experiment with a different investment techniques & algorithms and finally to backtest investment strategies.<br/>
 
 
 <!-- toc -->
@@ -30,8 +31,9 @@ and finally to backtest investment strategies.<br/>
 <!-- tocstop -->
 
 # Technologies and Models
-### TODO cookbook
-Our tool is based on various optimization models and ML methods:<br/>
+Investment funnel is based on various optimization models, machine learning methods and algorithms.<br/>
+
+cookbook
 Minimum Spanning Tree, Hierarchical Clustering of Assets, Monte Carlo, Bootstrapping, Stochastic CVaR Model, Benchmark generation
 
 # How to start in 3 steps
@@ -63,7 +65,11 @@ The app is running on http://127.0.0.1:8050
 </p>
 
 ### Backtesting
-### Develop your own model
+<p>
+  <img width="100%" src="assets/backtesting.png"></a>
+</p>
+
+### Develop and test your own model
 
 # Configuration
 write about MOSEK licence and data
