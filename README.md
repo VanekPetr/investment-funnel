@@ -7,15 +7,19 @@
 </p>
 
 ### TODO new intro picture
-Open source project for developing and backtesting investment strategies.<br/>
+Welcome to our open-source project for developing and backtesting investment strategies.
 
-Used by more than 500 students during asset allocation classes at Copenhagen University & Danish Technical University 
-as well as by amateur quants. The main aim of this project is to get a better overview of the ETF/Mutual fund market, 
-to experiment with a different investment techniques & algorithms and finally to backtest investment strategies.<br/>
+Having been utilized by over 500 students from Asset Allocation classes at Copenhagen University and Danish Technical 
+University, this project is also a pivotal tool for amateur/beginner quants. 
 
+The primary goal of this project is to provide a better overview of the ETF/Mutual fund market and to allow users to
+experiment with various investment techniques and algorithms. Ultimately, it offers a platform to backtest and refine investment strategies.
 
 <!-- toc -->
 - [Technologies and Models](#technologies-and-models)
+  * [Portfolio optimization models](#portfolio-optimization-models)
+  * [ML models](#ml-models)
+  * [Scenario generation algorithms](#scenario-generation-algorithms)
 - [How to start in 3 steps](#how-to-start-in-3-steps)
 - [Usage](#usage)
   * [Market Overview](#market-overview)
@@ -31,11 +35,24 @@ to experiment with a different investment techniques & algorithms and finally to
 <!-- tocstop -->
 
 # Technologies and Models
-Investment funnel is based on various optimization models, machine learning methods and algorithms.<br/>
+The Investment Funnel brings together various optimization models for asset allocation, machine learning (ML) 
+methodologies for feature selection, and algorithms for scenario generation. Coupled with the backtesting 
+framework and Dash application, it presents a comprehensive environment for the development and backtesting of 
+investment strategies
 
-cookbook
-Minimum Spanning Tree, Hierarchical Clustering of Assets, Monte Carlo, Bootstrapping, Stochastic CVaR Model, Benchmark generation
+#### Portfolio optimization models
+1. Conditional Value at Risk (CVaR) model - [read more](https://docs.mosek.com/portfolio-cookbook/riskmeasures.html#conditional-value-at-risk)
+2. Mean-Variance (Markowitz) model - [read more](https://docs.mosek.com/portfolio-cookbook/markowitz.html)
 
+#### ML models
+1. Minimum Spanning Tree (MST) model - [read more](https://en.wikipedia.org/wiki/Minimum_spanning_tree)
+2. Hierarchical Clustering (HCA) model - [read more](https://en.wikipedia.org/wiki/Hierarchical_clustering)
+
+#### Scenario generation algorithms
+1. Monte Carlo scenario simulation - [read more](https://en.wikipedia.org/wiki/Monte_Carlo_method)
+2. Bootstrap scenario simulation - [read more](https://en.wikipedia.org/wiki/Bootstrapping_(statistics))
+
+To further enhance your knowledge on mathematical optimization in finance, we highly recommend the [MOSEK Portfolio Optimization Cookbook](https://github.com/MOSEK/PortfolioOptimization).
 # How to start in 3 steps
 STEP 1: create and activate python virtual environment
 ``` bash
