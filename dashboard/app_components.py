@@ -1,7 +1,6 @@
 import dash_bootstrap_components as dbc
 import base64
 from dash import html, dcc, dash_table
-from models.main import names
 from models.main import TradeBot
 
 
@@ -185,17 +184,7 @@ sideBar = html.Div([
         vertical=True,
         pills=True,
         style={"position": "fixed", 'top': '9%'}
-    ),
-    html.H5("Investment Fund", style={'color': '#ffd0b3', "position": "fixed", 'bottom': '21%'}),
-    dbc.Nav(
-        [
-            dbc.NavLink("Portfolio TBD", id='page3', href="/page-3", active="exact"),
-            dbc.NavLink("Rebalancing TBD", id='page4', href="/page-4", active="exact"),
-        ],
-        vertical=True,
-        pills=True,
-        style={"position": "fixed", 'bottom': '12%'}
-    ),
+    )
 
 ], style=SIDEBAR_STYLE)
 
@@ -462,16 +451,3 @@ optionGraph = html.Div([
 
 # Table
 graphOverview = html.Div(id='dotsFig', style=GRAPH_RIGHT)
-
-
-optionMyPortfolio = html.Div([
-    html.H5("My Portfolio", style=MAIN_TITLE),
-
-    # Option to search for a fund
-    html.P("Calculate current portfolio performance",
-           style=SUB_TITLE),
-
-    # Button to plot results
-    dbc.Button('Recalculate', id='recalculate', style=OPTION_BTN),
-
-], style=GRAPH_LEFT)

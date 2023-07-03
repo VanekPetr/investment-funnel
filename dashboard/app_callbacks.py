@@ -1,7 +1,7 @@
 from dash.dependencies import Input, Output, State
 from models.main import TradeBot
 from dash import dcc
-from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_4_layout
+from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout
 
 
 algo = TradeBot()

@@ -6,9 +6,10 @@
 <img src="https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor "align="center">
 </p>
 
-Open source investment tool used by students at Copenhagen University & Danish Technical University and 
-amateur quants to get a better overview of the ETF market, to experiment with a different investment techniques & algorithms
-and finally to backtest their investment strategies.<br/>
+Open source project for developing and backtesting investment strategies. Used by more than 500 students during 
+asset allocation classes at Copenhagen University & Danish Technical University as well as by amateur quants. 
+The main aim of this project is to get a better overview of the ETF/Mutual fund market, to experiment with a different investment techniques & algorithms
+and finally to backtest investment strategies.<br/>
 
 
 <!-- toc -->
