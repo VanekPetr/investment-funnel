@@ -157,6 +157,8 @@ To make the best of this project, you'll likely need access to up-to-date financ
 * **Auður Anna Jónsdóttir** - *Feature Selection in Asset Allocation* (Master Thesis, DTU, 2020)
 * **Petr Vanek** - *Performance Analysis of the most traded Mutual Funds versus Optimal Portfolios of Exchange Traded Funds* (Master Thesis, KU, 2020)
 
+Do you want to write your thesis on Investment Funnel? Please reach out and let us know.
+
 ## Contributing
 Thank you for considering contributing to this project! We welcome contributions from everyone. Before getting started, please take a moment to review our [Contribution Guidelines](CONTRIBUTING.md).
 
