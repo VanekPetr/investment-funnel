@@ -86,7 +86,7 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
     model = cp.Problem(objective=objective, constraints=constraints)
 
     # Solve
-    solver = cp.MOSEK if not free_solver else cp.GLPK
+    solver = cp.MOSEK if not free_solver else cp.ECOS
     model.solve(solver=solver, verbose=False)
 
     # Get positions
@@ -113,7 +113,7 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
 # ----------------------------------------------------------------------
 # Mathematical Optimization: RUN THE CVAR MODEL
 # ----------------------------------------------------------------------
-def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, free_solver):
+def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, free_solver: bool = True):
     """
     Method to run the CVaR model over given periods
     """

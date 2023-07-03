@@ -16,6 +16,9 @@ and finally to backtest investment strategies.<br/>
 - [Technologies and Models](#technologies-and-models)
 - [How to start in 3 steps](#how-to-start-in-3-steps)
 - [Usage](#usage)
+  * [Market Overview](#market-overview)
+  * [AI Feature Selection](#ai-feature-selection)
+  * [Backtesting](#backtesting)
 - [Configuration](#configuration)
 - [Authors of the project](#authors-of-the-project)
 - [Research related to Investment Funnel](#research-related-to-investment-funnel)
@@ -48,6 +51,16 @@ python app.py
 The app is running on http://127.0.0.1:8050
 
 # Usage
+### Market Overview
+<p>
+  <img width="100%" src="assets/market_overview.png"></a>
+</p>
+
+### AI Feature Selection
+<p>
+  <img width="100%" src="assets/feature_selection.png"></a>
+</p>
+### Backtesting
 
 # Configuration
 write about MOSEK licence and data
