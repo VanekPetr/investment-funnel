@@ -22,7 +22,7 @@ to experiment with a different investment techniques & algorithms and finally to
   * [AI Feature Selection](#ai-feature-selection)
   * [Backtesting](#backtesting)
   * [Develop your own model](#develop-your-own-model)
-- [Configuration](#configuration)
+- [Further configuration for professionals or students](#further-configuration-for-professionals-or-students)
 - [Authors of the project](#authors-of-the-project)
 - [Research related to Investment Funnel](#research-related-to-investment-funnel)
 - [Contributing](#contributing)
@@ -54,26 +54,71 @@ python app.py
 The app is running on http://127.0.0.1:8050
 
 # Usage
+Investment Funnel contains multiple portfolio optimization models, machine learning methods and algorithms located in 
+[models folder](models). <br/>
+
+Furthermore, this project contains dash application for visualizing the data, output of ML methods as well as results from backtesting. 
+You can explore the dash application by running [app.py](app.py) file. <br/>
+
 ### Market Overview
+On the first page of our Dash application, you'll find an overview of the performance of the ETF/Mutual fund market 
+in terms of risk and returns. This can provide a clearer understanding of the data included in the project.
+
+Moreover, you have the option to search and select one or more assets for a comparison against the entire 
+universe of assets. For even deeper insight, you can repeat this experiment for various time periods.
+
 <p>
   <img width="100%" src="assets/market_overview.png"></a>
 </p>
 
 ### AI Feature Selection
+An integral part of optimal portfolio allocation involves feature selection. In this regard, we've implemented 
+two machine learning methods, Minimum Spanning Tree and Hierarchical Clustering, to streamline the number of assets 
+needed for the optimization model. 
+
+To gain a deeper understanding of these two ML models, you're afforded the opportunity to experiment with their 
+configurations and visualize the outcomes in interactive graphs. This empowers you to delve into which assets were
+selected, and scrutinize the performance, specifically the risk and returns, of the selected assets over a given time period.
+
 <p>
   <img width="100%" src="assets/feature_selection.png"></a>
 </p>
 
 ### Backtesting
+Backtesting is arguably the most crucial aspect of this project. It allows you to test your investment strategies 
+on historical data and compare their performance with other models.
+
+You have the flexibility to select your own train (out-of-sample) and test (in-sample) periods. You can choose 
+an optimization portfolio allocation model as well as a machine learning model for feature selection - this helps
+optimize the number of assets for your model. 
+
+Further customization can be achieved by specifying your machine learning model's configurations and the algorithm 
+for scenario generation. And lastly, you have the option to select the benchmark for comparison.
+
+Once your backtest run completes, you will be presented with a comparative view of your optimal portfolio's performance
+against this benchmark for the test period. 
+
+This performance review will offer insights into portfolio value development, allocation to individual assets for
+each investment period, as well as comparisons in terms of average annual return, standard deviation, and Sharpe ratio.
+
 <p>
   <img width="100%" src="assets/backtesting.png"></a>
 </p>
 
 ### Develop and test your own model
+Lastly, you have the option to develop your own optimization and machine learning models for portfolio allocation or
+feature selection, and seamlessly integrate those into the investment funnel. By utilizing our Dash application,
+you can leverage the backtesting framework to visualize your model's results and conveniently compare its performance 
+against those of existing models in this repository.
 
-# Configuration
-write about MOSEK licence and data
+# Further configuration for professionals or students
+Are you intrigued by the Investment Funnel project? Do you wish to utilize it for your own research, teaching, 
+or the development of investment strategies?
 
+To make the best of this project, you'll likely need access to up-to-date financial data and a professional solver.
+
+* For the data, please reach out to Kourosh Rasmussen from [AlgoStrata](https://algostrata.com/about-us) or [Petr Vanek](https://www.linkedin.com/in/vanekpetr42/). They can guide you through the next steps.
+* As for the solver, we recommend using [MOSEK](https://www.mosek.com/). It's free for the first 30 days and fosters many academic collaborations.
 
 ## Authors of the project
 
@@ -88,7 +133,7 @@ write about MOSEK licence and data
 * **Dimosthenis Karafylias** - *Deep Reinforcement Learning For Portfolio Optimisation* (Master Thesis, DTU, 2022)
 * **Carlos Daniel Pinho Ventura** - *Designing Hybrid Investment Packages of Cryptocurrencies with Rewards and Index Funds* (Master Thesis, DTU, 2022)
 * **Peter Emil Dinic Holmsø** - *Optimal Life Cycle Planning using Stochastic Simulation* (Master Thesis, DTU, 2021)
-* **Alexandros Giannakakis & Rasmus Blirup Jensen** *AI-Based Portfolio Analysis and Risk Management of Index Funds and Cryptocurrencies* (Master Thesis, DTU, 2021)
+* **Alexandros Giannakakis & Rasmus Jensen** *AI-Based Portfolio Analysis and Risk Management of Index Funds and Cryptocurrencies* (Master Thesis, DTU, 2021)
 * **Idriss El Quassimi** *Graph Theoretical Methods in Strategic Asset Allocation* (Master Thesis, DTU, 2021)
 * **Jorge Bertomeu Genís** *Portfolio Optimization using Index Funds and a Basket of Cryptocurrencies* (Master Thesis, DTU, 2021)
 * **Andrias Poulsen** - *Performance Analysis of Sustainable Investment Portfolios* (Bachelor Thesis, DTU, 2021)
@@ -104,7 +149,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## License
 
-This repository is licensed under [MIT](LICENSE) (c) 2019 GitHub, Inc.
+This repository is licensed under [MIT](LICENSE) (c) 2023 GitHub, Inc.
 
 <div align='center'>
 <a href='https://github.com/vanekpetr/investment-funnel/releases'>
@@ -114,4 +159,3 @@ This repository is licensed under [MIT](LICENSE) (c) 2019 GitHub, Inc.
 <img src='https://img.shields.io/github/license/vanekpetr/investment-funnel?style=for-the-badge'>
 </a>
 </div>
-
