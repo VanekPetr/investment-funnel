@@ -1,13 +1,14 @@
 import cvxpy as cp
 import numpy as np
 import pandas as pd
+import pickle
 from loguru import logger
 
 
 # ----------------------------------------------------------------------
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
 # ----------------------------------------------------------------------
-def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight, free_solver):
+def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight, solver, inaccurate):
     """ This function finds the optimal enhanced index portfolio according to some benchmark.
     The portfolio corresponds to the tangency portfolio where risk is evaluated according to 
     the CVaR of the tracking error. The model is formulated using fractional programming.
@@ -29,8 +30,12 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
     max_weight : float
         Maximum allowed weight    
     cvar_alpha : float
-        Alpha value used to evaluate Value-at-Risk one    
-    
+        Alpha value used to evaluate Value-at-Risk one  
+    solver: str
+        The name of the solver to use, as returned by cvxpy.installed_solvers()  
+    inaccurate: bool
+        Whether to also use solution with status "optimal_inaccurate". 
+
     Returns
     -------
     float
@@ -86,11 +91,13 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
     model = cp.Problem(objective=objective, constraints=constraints)
 
     # Solve
-    solver = cp.MOSEK if not free_solver else cp.GLPK
     model.solve(solver=solver, verbose=False)
 
     # Get positions
-    if model.status == "optimal":     
+    accepted_statuses = ["optimal"]
+    if inaccurate:
+        accepted_statuses.append("optimal_inaccurate")
+    if model.status in accepted_statuses:
         opt_port = pd.Series(x.value, index=mu.index)
     
         # Set floating data points to zero and normalize
@@ -106,6 +113,21 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
         return opt_port, cvar_result_p, port_val, cash
              
     else:
+        # Save inputs, so that failing problem can be investigated separately e. g. in a notebook
+        inputs = {
+             "mu": mu, 
+             "scenarios": scenarios, 
+             "cvar_targets": cvar_targets, 
+             "cvar_alpha": cvar_alpha, 
+             "cash": cash, 
+             "x_old": x_old, 
+             "trans_cost": trans_cost, 
+             "max_weight": max_weight
+        }
+        file = open('rebalance_inputs.pkl', 'wb')
+        pickle.dump(inputs, file)
+        file.close()
+        
         # Print an error if the model is not optimal
         logger.exception(f"Linear solver does not find optimal solution. Status code is {model.status}")
  
@@ -113,7 +135,7 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
 # ----------------------------------------------------------------------
 # Mathematical Optimization: RUN THE CVAR MODEL
 # ----------------------------------------------------------------------
-def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, free_solver):
+def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, solver, inaccurate=False):
     """
     Method to run the CVaR model over given periods
     """
@@ -151,7 +173,8 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
             x_old=x_old,
             trans_cost=trans_cost,
             max_weight=max_weight,
-            free_solver=free_solver
+            solver=solver,
+            inaccurate=inaccurate
         )
 
         # save the result
