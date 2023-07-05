@@ -324,6 +324,8 @@ class TradeBot(object):
                                                             cvar_alpha=0.05,
                                                             trans_cost=0.001,
                                                             max_weight=1)
+        #                                                   solver=solver,
+        #                                                   inaccurate=inaccurate_solution)
 
         # PLOTTING
         # ------------------------------------------------------------------
