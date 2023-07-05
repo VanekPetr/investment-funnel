@@ -135,7 +135,7 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
 # ----------------------------------------------------------------------
 # Mathematical Optimization: RUN THE CVAR MODEL
 # ----------------------------------------------------------------------
-def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, solver, inaccurate=False):
+def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, solver="ECOS", inaccurate=False):
     """
     Method to run the CVaR model over given periods
     """
