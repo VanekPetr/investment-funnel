@@ -1,4 +1,7 @@
-![investment-funnel](https://socialify.git.ci/VanekPetr/investment-funnel/image?font=Inter&issues=1&language=1&owner=1&stargazers=1&theme=Dark) 
+<p>
+  <img width="100%" src="assets/InvestmentFunnel 3.png"></a>
+</p>
+
 <p align="center">
 <img src="https://img.shields.io/badge/python%20-%2314354C.svg?&style=for-the-badge&logo=python&logoColor=white" align="center">
 <img src="https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white" align="center">
@@ -6,7 +9,6 @@
 <img src="https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor "align="center">
 </p>
 
-### TODO new intro picture
 Welcome to our open-source project for developing and backtesting investment strategies.
 
 Having been utilized by over 500 students from Asset Allocation classes at Copenhagen University and Danish Technical 
@@ -144,6 +146,7 @@ To make the best of this project, you'll likely need access to up-to-date financ
 * **Gábor Balló** - *Implementation of CVaR model with CVXPY and MOSEK* - [szelidvihar](https://github.com/szelidvihar) & [MOSEK](https://github.com/MOSEK)
 * **Auður Anna Jónsdóttir** - *Initial work for MST and Hierarchical Clustering*
 * **Chanyu Yang** - *First contributor to our dash application* - [cicadaa](https://github.com/cicadaa)
+* **Alexandra Mourier** - *Design of our GitHub README banner* 
 
 ## Research related to Investment Funnel
 * **Arnar Tjörvi Charlesson & Thorvaldur Ingi Ingimundarson** - *Self-Organizing Maps and Strategic Fund Selection* (Master Thesis, DTU, 2023)
