@@ -15,8 +15,8 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 0. Create a new branch: `git checkout -b my-branch-name`
 0. Make your change and remember to add tests
 0. Build the project locally and run local tests
-0. Push to your fork and [submit a pull request][pr]
-0. Pat your self on the back and wait for your pull request to be reviewed and merged.
+0. Push to your fork and [submit a pull request](https://github.com/VanekPetr/investment-funnel/pulls)
+0. Pat yourself on the back and wait for your pull request to be reviewed and merged.
 
 Here are a few things you can do that will increase the likelihood of your pull request being accepted:
 
