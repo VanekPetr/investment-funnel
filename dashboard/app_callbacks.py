@@ -75,7 +75,7 @@ def get_callbacks(app):
                       end_train, start_test, end_data, saved_model, saved_model_spec, saved_pick_top, saved_scen_model,
                       saved_scen_spec, saved_benchmark, saved_opt_table, saved_bench_table, saved_perf_figure,
                       saved_comp_figure, saved_universe_figure):
-
+        opt_init = ['Optimal', 'Optimal Portfolio', 'Optimal Portfolio', 3]
         if click:
             # RUN ML algo
             if model == 'MST':
@@ -95,7 +95,8 @@ def get_callbacks(app):
             perf_figure = dcc.Graph(figure=fig_performance, style={'margin': '0%'})
             comp_figure = dcc.Graph(figure=fig_composition, style={'margin': '0%'})
 
-            fig_universe = algo.plot_dots(start_date=start_data, end_date=end_train)
+            fig_universe = algo.plot_dots(start_date=start_test, end_date=end_data, fund_set=benchmark,
+                                          optimal_portfolio=opt_table.iloc[0].to_list() + opt_init)
             generated_figure = dcc.Graph(figure=fig_universe, style={'margin': '0%'})
 
             return (perf_figure, comp_figure, opt_table.to_dict('records'), bench_table.to_dict('records'),
