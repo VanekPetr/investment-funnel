@@ -116,13 +116,17 @@ for scenario generation. And lastly, you have the option to select the benchmark
 
 Once your backtest run completes, you will be presented with a comparative view of your optimal portfolio's performance
 against this benchmark for the test period. 
+<p>
+  <img width="100%" src="assets/backtesting1.png"></a>
+</p>
 
 This performance review will offer insights into portfolio value development, allocation to individual assets for
 each investment period, as well as comparisons in terms of average annual return, standard deviation, and Sharpe ratio.
 
 <p>
-  <img width="100%" src="assets/backtesting.png"></a>
+  <img width="100%" src="assets/backtesting2.png"></a>
 </p>
+
 
 ### Develop and test your own model
 Lastly, you have the option to develop your own optimization and machine learning models for portfolio allocation or

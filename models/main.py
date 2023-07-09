@@ -137,15 +137,19 @@ class TradeBot(object):
         ml: str = '',
         ml_subset: Union[list, pd.DataFrame] = None,
         fund_set: list = [],
-        optimal_portfolio: list = []
+        optimal_portfolio: list = [],
+        benchmark: list = []
     ) -> px.scatter:
         """ METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS """
 
         # Get statistics for a given time period
         data = self.get_stat(start_date, end_date)
 
+        # Add data about the optimal portfolio and benchmark for plotting
         if len(optimal_portfolio) > 0:
             data.loc[optimal_portfolio[4]] = optimal_portfolio
+        if len(benchmark) > 0:
+            data.loc[benchmark[4]] = benchmark
 
         # IF WE WANT TO HIGHLIGHT THE SUBSET OF ASSETS BASED ON ML
         if ml == "MST":
