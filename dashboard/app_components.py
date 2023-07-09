@@ -258,16 +258,23 @@ optionBacktest = html.Div([
             style=OPTION_ELEMENT,
         ),
     
-    # part3
-    dcc.Slider(
-        id='my-slider2',
-        min=250,
-        max=2000,
-        step=250,
-        value=1000
-    ),
     html.Div(id='slider-output-container2',
              style=OPTION_ELEMENT),
+    # part3
+    dcc.Slider(250, 2000,
+        id='my-slider2',
+        step=None,
+        marks={
+            250: '0.25k',
+            500: '0.5k',
+            750: '0.75k',
+            1000: '1k',
+            1250: '1.25k',
+            1500: '1.5k',
+            1750: '1.75k',
+            2000: '2k'}
+    ),
+
     html.P("Benchmark",
            style=SUB_TITLE),
     dcc.Dropdown(
