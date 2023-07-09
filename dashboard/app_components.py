@@ -335,6 +335,7 @@ tableBar = html.Div([
 graphResults = html.Div([
     html.Div(id='backtestPerfFig', style=OPTION_ELEMENT),
     html.Div(id='backtestCompFig', style=OPTION_ELEMENT),
+    html.Div(id='backtestUniverseFig', style=OPTION_ELEMENT),
     tableBar
 ], style=GRAPH_RIGHT)
 

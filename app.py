@@ -44,6 +44,7 @@ def load_page():
         dcc.Store(id='saved-benchmark-back', data=[]),
         dcc.Store(id='saved-perf-figure-page-2', data=None),
         dcc.Store(id='saved-comp-figure-page-2', data=None),
+        dcc.Store(id='saved-universe-figure-page-2', data=None),
         dcc.Store(id='saved-opt-table',
                   data=pd.DataFrame(np.array([['No result', 'No result', 'No result']]),
                                     columns=['Avg An Ret', 'Std Dev of Ret', 'Sharpe R']).to_dict('records')

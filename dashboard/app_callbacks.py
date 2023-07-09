@@ -18,10 +18,8 @@ def get_callbacks(app):
             return page_1_layout
         elif pathname == '/page-1':
             return page_2_layout
-        elif pathname == '/page-2':
-            return page_3_layout
         else:
-            return page_4_layout
+            return page_3_layout
 
     # BACK-TESTING
     # ----------------------------------------------------------------------------------------------------------------------
@@ -47,7 +45,9 @@ def get_callbacks(app):
          Output('saved-bench-table', 'data'),
          Output('saved-perf-figure-page-2', 'data'),
          Output('saved-comp-figure-page-2', 'data'),
-         Output('loading-output-backtest', 'children')],
+         Output('loading-output-backtest', 'children'),
+         Output('backtestUniverseFig', 'children'),
+         Output('saved-universe-figure-page-2', 'data')],
         Input('backtestRun', 'n_clicks'),
         [State('select-ml', 'value'),
          State('slider-backtest-ml', 'value'),
@@ -68,12 +68,13 @@ def get_callbacks(app):
          State('saved-opt-table', 'data'),
          State('saved-bench-table', 'data'),
          State('saved-perf-figure-page-2', 'data'),
-         State('saved-comp-figure-page-2', 'data')]
+         State('saved-comp-figure-page-2', 'data'),
+         State('saved-universe-figure-page-2', 'data')]
     )
     def plot_backtest(click, model, model_spec, pick_top, scen_model, scen_spec, benchmark, start_data,
                       end_train, start_test, end_data, saved_model, saved_model_spec, saved_pick_top, saved_scen_model,
                       saved_scen_spec, saved_benchmark, saved_opt_table, saved_bench_table, saved_perf_figure,
-                      saved_comp_figure):
+                      saved_comp_figure, saved_universe_figure):
 
         if click:
             # RUN ML algo
@@ -94,15 +95,20 @@ def get_callbacks(app):
             perf_figure = dcc.Graph(figure=fig_performance, style={'margin': '0%'})
             comp_figure = dcc.Graph(figure=fig_composition, style={'margin': '0%'})
 
+            fig_universe = algo.plot_dots(start_date=start_data, end_date=end_train)
+            generated_figure = dcc.Graph(figure=fig_universe, style={'margin': '0%'})
+
             return (perf_figure, comp_figure, opt_table.to_dict('records'), bench_table.to_dict('records'),
                     model, model_spec, pick_top, scen_model, scen_spec, benchmark, model, model_spec, pick_top,
                     scen_model, scen_spec, benchmark, opt_table.to_dict('records'), bench_table.to_dict('records'),
-                    perf_figure, comp_figure, True)
+                    perf_figure, comp_figure, True, generated_figure, generated_figure)
         else:
+
             return (saved_perf_figure, saved_comp_figure, saved_opt_table, saved_bench_table,
                     saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
                     saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
-                    saved_opt_table, saved_bench_table, saved_perf_figure, saved_comp_figure, True)
+                    saved_opt_table, saved_bench_table, saved_perf_figure, saved_comp_figure, True,
+                    saved_universe_figure, saved_universe_figure)
 
     @app.callback(
         Output('slider-output-container2', 'children'),
