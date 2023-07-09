@@ -27,8 +27,6 @@ def get_callbacks(app):
     @app.callback(
         [Output('backtestPerfFig', 'children'),
          Output('backtestCompFig', 'children'),
-         Output('tableResult', 'data'),
-         Output('tableResult-benchmark', 'data'),
          Output('select-ml', 'value'),
          Output('slider-backtest-ml', 'value'),
          Output('slider-backtest', 'value'),
@@ -41,8 +39,6 @@ def get_callbacks(app):
          Output('saved-scen-model-back', 'data'),
          Output('saved-scen-spec-back', 'data'),
          Output('saved-benchmark-back', 'data'),
-         Output('saved-opt-table', 'data'),
-         Output('saved-bench-table', 'data'),
          Output('saved-perf-figure-page-2', 'data'),
          Output('saved-comp-figure-page-2', 'data'),
          Output('loading-output-backtest', 'children'),
@@ -65,16 +61,13 @@ def get_callbacks(app):
          State('saved-scen-model-back', 'data'),
          State('saved-scen-spec-back', 'data'),
          State('saved-benchmark-back', 'data'),
-         State('saved-opt-table', 'data'),
-         State('saved-bench-table', 'data'),
          State('saved-perf-figure-page-2', 'data'),
          State('saved-comp-figure-page-2', 'data'),
          State('saved-universe-figure-page-2', 'data')]
     )
     def plot_backtest(click, model, model_spec, pick_top, scen_model, scen_spec, benchmark, start_data,
                       end_train, start_test, end_data, saved_model, saved_model_spec, saved_pick_top, saved_scen_model,
-                      saved_scen_spec, saved_benchmark, saved_opt_table, saved_bench_table, saved_perf_figure,
-                      saved_comp_figure, saved_universe_figure):
+                      saved_scen_spec, saved_benchmark, saved_perf_figure, saved_comp_figure, saved_universe_figure):
         opt_init = ['Optimal', 'Optimal Portfolio', 'Optimal Portfolio', 3]
         if click:
             # RUN ML algo
@@ -99,16 +92,14 @@ def get_callbacks(app):
                                           optimal_portfolio=opt_table.iloc[0].to_list() + opt_init)
             generated_figure = dcc.Graph(figure=fig_universe, style={'margin': '0%'})
 
-            return (perf_figure, comp_figure, opt_table.to_dict('records'), bench_table.to_dict('records'),
-                    model, model_spec, pick_top, scen_model, scen_spec, benchmark, model, model_spec, pick_top,
-                    scen_model, scen_spec, benchmark, opt_table.to_dict('records'), bench_table.to_dict('records'),
-                    perf_figure, comp_figure, True, generated_figure, generated_figure)
+            return (perf_figure, comp_figure, model, model_spec, pick_top, scen_model, scen_spec, benchmark, model,
+                    model_spec, pick_top, scen_model, scen_spec, benchmark, perf_figure, comp_figure, True,
+                    generated_figure, generated_figure)
         else:
 
-            return (saved_perf_figure, saved_comp_figure, saved_opt_table, saved_bench_table,
-                    saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
-                    saved_model, saved_model_spec, saved_pick_top, saved_scen_model, saved_scen_spec, saved_benchmark,
-                    saved_opt_table, saved_bench_table, saved_perf_figure, saved_comp_figure, True,
+            return (saved_perf_figure, saved_comp_figure, saved_model, saved_model_spec, saved_pick_top,
+                    saved_scen_model, saved_scen_spec, saved_benchmark, saved_model, saved_model_spec, saved_pick_top,
+                    saved_scen_model, saved_scen_spec, saved_benchmark, saved_perf_figure, saved_comp_figure, True,
                     saved_universe_figure, saved_universe_figure)
 
     @app.callback(
