@@ -43,7 +43,9 @@ def get_callbacks(app):
          Output('saved-comp-figure-page-2', 'data'),
          Output('loading-output-backtest', 'children'),
          Output('backtestUniverseFig', 'children'),
-         Output('saved-universe-figure-page-2', 'data')],
+         Output('saved-universe-figure-page-2', 'data'),
+         Output('select-solver', 'value'),
+         Output('saved-solver', 'data')],
         Input('backtestRun', 'n_clicks'),
         [State('select-ml', 'value'),
          State('slider-backtest-ml', 'value'),
@@ -63,11 +65,14 @@ def get_callbacks(app):
          State('saved-benchmark-back', 'data'),
          State('saved-perf-figure-page-2', 'data'),
          State('saved-comp-figure-page-2', 'data'),
-         State('saved-universe-figure-page-2', 'data')]
+         State('saved-universe-figure-page-2', 'data'),
+         State('select-solver', 'value'),
+         State('saved-solver', 'data')]
     )
     def plot_backtest(click, model, model_spec, pick_top, scen_model, scen_spec, benchmark, start_data,
                       end_train, start_test, end_data, saved_model, saved_model_spec, saved_pick_top, saved_scen_model,
-                      saved_scen_spec, saved_benchmark, saved_perf_figure, saved_comp_figure, saved_universe_figure):
+                      saved_scen_spec, saved_benchmark, saved_perf_figure, saved_comp_figure, saved_universe_figure,
+                      solver, saved_solver):
         # Initialize
         opt_init = ['Optimal', 'Optimal Portfolio', 'Optimal Portfolio', 3]
         bench_init = ['Benchmark', 'Benchmark Portfolio', 'Benchmark Portfolio', 3]
@@ -86,7 +91,8 @@ def get_callbacks(app):
                                                                                      subset_of_assets=subset_of_assets,
                                                                                      benchmarks=benchmark,
                                                                                      scenarios_type=scen_model,
-                                                                                     n_simulations=scen_spec)
+                                                                                     n_simulations=scen_spec,
+                                                                                     solver=solver)
             # Save page values
             perf_figure = dcc.Graph(figure=fig_performance, style={'margin': '0%', 'height': '800px'})
             comp_figure = dcc.Graph(figure=fig_composition, style={'margin': '0%'})
@@ -99,13 +105,13 @@ def get_callbacks(app):
 
             return (perf_figure, comp_figure, model, model_spec, pick_top, scen_model, scen_spec, benchmark, model,
                     model_spec, pick_top, scen_model, scen_spec, benchmark, perf_figure, comp_figure, True,
-                    generated_figure, generated_figure)
+                    generated_figure, generated_figure, solver, solver)
         else:
 
             return (saved_perf_figure, saved_comp_figure, saved_model, saved_model_spec, saved_pick_top,
                     saved_scen_model, saved_scen_spec, saved_benchmark, saved_model, saved_model_spec, saved_pick_top,
                     saved_scen_model, saved_scen_spec, saved_benchmark, saved_perf_figure, saved_comp_figure, True,
-                    saved_universe_figure, saved_universe_figure)
+                    saved_universe_figure, saved_universe_figure, saved_solver, saved_solver)
 
     @app.callback(
         Output('slider-output-container2', 'children'),

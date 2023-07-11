@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import squareform
 from scipy.cluster.hierarchy import dendrogram, fcluster, complete
+from loguru import logger
 
 
 def fancy_dendrogram(*args, **kwargs):
@@ -32,10 +33,12 @@ def fancy_dendrogram(*args, **kwargs):
     return d_data
 
 
-def cluster(data, n_clusters, dendrogram):
+def cluster(data: pd.DataFrame, n_clusters: int, dendrogram: bool = False) -> pd.DataFrame:
     """
     FUNCTION TO CLUSTER DATA
     """
+    logger.debug(f'Running hierarchical clustering method')
+
     corr = data.corr(method="spearman")     # calculate the correlation
     distance_corr = 1-corr                  # distance based on correlation
 
@@ -75,7 +78,7 @@ def cluster(data, n_clusters, dendrogram):
     return cluster_df
  
 
-def pick_cluster(data, stat, ml, n_assets):
+def pick_cluster(data: pd.DataFrame, stat: pd.DataFrame, ml: pd.DataFrame, n_assets: int) -> (list, pd.DataFrame):
     """
     METHOD TO PICK ASSETS FROM A CLUSTER BASED ON PERFORMANCE CRITERIA
     """
@@ -90,7 +93,7 @@ def pick_cluster(data, stat, ml, n_assets):
             ids.extend(test[test["Cluster"] == str(clus)].nlargest(n_assets, ["Sharpe Ratio"]).index)
         else:
             ids.extend(test[test["Cluster"] == str(clus)].nlargest(max_size, ["Sharpe Ratio"]).index)
-            print("In " + str(clus) + " was picked only", max_size, "Assets")
+            logger.warning(f"In {clus} was picked only {max_size} assets")
 
     # Get returns
     result = data[ids]

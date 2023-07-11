@@ -135,7 +135,17 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
 # ----------------------------------------------------------------------
 # Mathematical Optimization: RUN THE CVAR MODEL
 # ----------------------------------------------------------------------
-def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, solver="ECOS", inaccurate=True):
+def cvar_model(
+        test_ret: pd.DataFrame,
+        scenarios: np.ndarray,
+        targets: pd.DataFrame,
+        budget: float,
+        cvar_alpha: float,
+        trans_cost: float,
+        max_weight: float,
+        solver: str,
+        inaccurate: bool = True
+) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """
     Method to run the CVaR model over given periods
     """
@@ -154,6 +164,8 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
     x_old = pd.Series(0, index=assets)
     cash = budget
     portfolio_value_w = budget
+
+    logger.debug(f"Selected solver is {solver}")
     for p in range(p_points):
         logger.info(f"Optimizing period {p}.")
 

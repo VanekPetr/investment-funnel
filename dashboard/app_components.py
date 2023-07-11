@@ -1,5 +1,6 @@
 import dash_bootstrap_components as dbc
 import base64
+import cvxpy
 from dash import html, dcc, dash_table
 from models.main import TradeBot
 
@@ -215,7 +216,31 @@ optionBacktest = html.Div([
         end_date=algo.max_date,
         style=OPTION_ELEMENT
     ),
-    html.P("Feature selection",
+
+    html.P("Portfolio Optimization Model", style=SUB_TITLE),
+    dcc.Dropdown(
+        id='select-optimization-model',
+        options=[
+            {'label': value, 'value': value} for value in ['CVaR model', 'Markowitz model']
+        ],
+        placeholder="Select portfolio optimization model",
+        style=OPTION_ELEMENT,
+        value='CVaR model'
+    ),
+
+    html.P("Solver", style=SUB_TITLE),
+    html.P("MOSEK or ECOS are recommended for CVaR model, for Markowitz model we recommend MOSEK",
+           style=DESCRIP_INFO),
+    dcc.Dropdown(
+        id='select-solver',
+        options=[
+            {'label': value, 'value': value} for value in cvxpy.installed_solvers()
+        ],
+        placeholder="Select your installed solver",
+        style=OPTION_ELEMENT,
+    ),
+
+    html.P("Feature Selection",
            style=SUB_TITLE),
     dcc.Dropdown(
         id='select-ml',
@@ -227,7 +252,7 @@ optionBacktest = html.Div([
         style=OPTION_ELEMENT,
     ),
     html.Div(id='slider-output-container-backtest-ml',
-             style=OPTION_ELEMENT),
+             style=DESCRIP_INFO),
 
     # part2
     dcc.Slider(
@@ -245,7 +270,7 @@ optionBacktest = html.Div([
         value=2,
     ),
     html.Div(id='slider-output-container-backtest',
-             style=OPTION_ELEMENT),
+             style=DESCRIP_INFO),
     html.P("Scenarios",
            style=SUB_TITLE),
     dcc.Dropdown(
@@ -259,7 +284,7 @@ optionBacktest = html.Div([
         ),
     
     html.Div(id='slider-output-container2',
-             style=OPTION_ELEMENT),
+             style=DESCRIP_INFO),
     # part3
     dcc.Slider(250, 2000,
         id='my-slider2',
@@ -276,8 +301,7 @@ optionBacktest = html.Div([
         value=1000,
     ),
 
-    html.P("Benchmark",
-           style=SUB_TITLE),
+    html.P("Benchmark", style=SUB_TITLE),
     dcc.Dropdown(
         id='select-benchmark',
         options=[

@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import pandas as pd
+from loguru import logger
 
 
 class ScenarioGenerator(object):
@@ -18,6 +19,8 @@ class ScenarioGenerator(object):
         """
         Monte Carlo simulations
         """
+        logger.debug(f"Generating {n_simulations} scenarios for each investment period with Monte Carlo method")
+
         n_train_weeks = len(data.index) - n_test
         train_dataset = data.iloc[0:n_train_weeks, :]
 
@@ -34,13 +37,11 @@ class ScenarioGenerator(object):
 
         sim = np.zeros((n_test_tmp, n_simulations, n_indices), dtype=float)  # Match GAMS format
 
-        print('-------Simulating Weekly Returns-------')
         for week in range(n_test_tmp):
             sim[week, :, :] = self.rng.multivariate_normal(mean=mu, cov=sigma, size=n_simulations)
             
         monthly_sim = np.zeros((n_rolls, n_simulations, n_indices))
 
-        print('-------Computing Monthly Returns-------')
         for roll in range(n_rolls):
             roll_mult = roll * n_iter
             for s in range(n_simulations):
@@ -54,6 +55,8 @@ class ScenarioGenerator(object):
     # Scenario Generation: THE BOOTSTRAPPING METHOD
     # ----------------------------------------------------------------------
     def bootstrapping(self, data: pd.DataFrame, n_simulations: int, n_test: int) -> np.ndarray:
+        logger.debug(f"Generating {n_simulations} scenarios for each investment period with Bootstrapping method")
+
         n_iter = 4  # 4 weeks compounded in our scenario                                                         
         n_train_weeks = len(data.index) - n_test
         n_indices = data.shape[1]

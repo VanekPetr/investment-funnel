@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from models.ScenarioGeneration import ScenarioGenerator
 from typing import Tuple
+from loguru import logger
 
 
 # Primal CVaR formula
@@ -55,8 +56,15 @@ def portfolio_risk_target(scenarios: pd.DataFrame, cvar_alpha: float) -> float:
 # Mathematical Optimization: TARGETS GENERATION
 # ---------------------------------------------------------------------- 
 def get_cvar_targets(
-    test_date: str, benchmark: list, budget: int, cvar_alpha: float, data: pd.DataFrame, scgen: ScenarioGenerator
+        test_date: str,
+        benchmark: list,
+        budget: int,
+        cvar_alpha: float,
+        data: pd.DataFrame,
+        scgen: ScenarioGenerator,
+        n_simulations: int
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    logger.debug(f"Generating CVaR targets for {benchmark}")
 
     # Define Benchmark
     tickers = benchmark
@@ -73,7 +81,7 @@ def get_cvar_targets(
     # The Monte Carlo Method
     target_scenarios = scgen.bootstrapping(
         data=whole_dataset_benchmark,       # subsetMST or subsetCLUST
-        n_simulations=250,
+        n_simulations=n_simulations,
         n_test=weeks_n
     )
 
