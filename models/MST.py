@@ -2,9 +2,12 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 from sklearn.decomposition import PCA
+from loguru import logger
 
 
-def minimum_spanning_tree(dataset):
+def minimum_spanning_tree(dataset: pd.DataFrame) -> (list, pd.DataFrame, float, float):
+    logger.debug(f'Running MST method')
+
     corr = dataset.corr(method="spearman")              # calculate the correlation
     distance_corr = (2 * (1 - corr)) ** 0.5             # calculate the distance
     mask = np.triu(np.ones_like(corr, dtype=np.bool))   # get only the upper half of the matrix
