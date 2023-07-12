@@ -21,27 +21,26 @@ class ScenarioGenerator(object):
         """
         logger.debug(f"Generating {n_simulations} scenarios for each investment period with Monte Carlo method")
 
-        n_train_weeks = len(data.index) - n_test
-        train_dataset = data.iloc[0:n_train_weeks, :]
-
-        n_test_tmp = n_test + 4  # +4 when no testing data but
         n_iter = 4
-        n_simulations = n_simulations  # 250 scenarios for each period
-        n_indices = train_dataset.shape[1]
+        n_train_weeks = len(data.index) - n_test
+        n_indices = data.shape[1]
+        n_rolls = math.floor(n_test / n_iter) + 1
+        sim = np.zeros((n_rolls*4, n_simulations, n_indices), dtype=float)  # Match GAMS format
 
-        sigma = np.cov(train_dataset, rowvar=False)  # The covariance matrix
-        # RHO = np.corrcoef(ret_train, rowvar=False)    # The correlation matrix 
-        mu = np.mean(train_dataset, axis=0)  # The mean array
-        # sd = np.sqrt(np.diagonal(SIGMA))              # The standard deviation
-        n_rolls = math.floor(n_test_tmp/n_iter)
+        # First generate the weekly simulations for each rolling period
+        for p in range(int(n_rolls)):
+            rolling_train_dataset = data.iloc[(4 * p): (n_train_weeks + 4 * p), :]
 
-        sim = np.zeros((n_test_tmp, n_simulations, n_indices), dtype=float)  # Match GAMS format
+            sigma = np.cov(rolling_train_dataset, rowvar=False)     # The covariance matrix
+            # RHO = np.corrcoef(ret_train, rowvar=False)            # The correlation matrix
+            mu = np.mean(rolling_train_dataset, axis=0)             # The mean array
+            # sd = np.sqrt(np.diagonal(SIGMA))                      # The standard deviation
 
-        for week in range(n_test_tmp):
-            sim[week, :, :] = self.rng.multivariate_normal(mean=mu, cov=sigma, size=n_simulations)
-            
+            for week in range(4*p, 4*p+4):
+                sim[week, :, :] = self.rng.multivariate_normal(mean=mu, cov=sigma, size=n_simulations)
+
+        # Now create the monthly (4-weeks) simulations for each rolling period
         monthly_sim = np.zeros((n_rolls, n_simulations, n_indices))
-
         for roll in range(n_rolls):
             roll_mult = roll * n_iter
             for s in range(n_simulations):
