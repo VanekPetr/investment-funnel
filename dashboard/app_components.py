@@ -1,5 +1,6 @@
 import dash_bootstrap_components as dbc
 import base64
+import cvxpy
 from dash import html, dcc, dash_table
 from models.main import TradeBot
 
@@ -215,7 +216,31 @@ optionBacktest = html.Div([
         end_date=algo.max_date,
         style=OPTION_ELEMENT
     ),
-    html.P("Feature selection",
+
+    html.P("Portfolio Optimization Model", style=SUB_TITLE),
+    dcc.Dropdown(
+        id='select-optimization-model',
+        options=[
+            {'label': value, 'value': value} for value in ['CVaR model', 'Markowitz model']
+        ],
+        placeholder="Select portfolio optimization model",
+        style=OPTION_ELEMENT,
+        value='CVaR model'
+    ),
+
+    html.P("Solver", style=SUB_TITLE),
+    html.P("MOSEK or ECOS are recommended for CVaR model, for Markowitz model we recommend MOSEK",
+           style=DESCRIP_INFO),
+    dcc.Dropdown(
+        id='select-solver',
+        options=[
+            {'label': value, 'value': value} for value in cvxpy.installed_solvers()
+        ],
+        placeholder="Select your installed solver",
+        style=OPTION_ELEMENT,
+    ),
+
+    html.P("Feature Selection",
            style=SUB_TITLE),
     dcc.Dropdown(
         id='select-ml',
@@ -227,7 +252,7 @@ optionBacktest = html.Div([
         style=OPTION_ELEMENT,
     ),
     html.Div(id='slider-output-container-backtest-ml',
-             style=OPTION_ELEMENT),
+             style=DESCRIP_INFO),
 
     # part2
     dcc.Slider(
@@ -245,7 +270,7 @@ optionBacktest = html.Div([
         value=2,
     ),
     html.Div(id='slider-output-container-backtest',
-             style=OPTION_ELEMENT),
+             style=DESCRIP_INFO),
     html.P("Scenarios",
            style=SUB_TITLE),
     dcc.Dropdown(
@@ -258,18 +283,25 @@ optionBacktest = html.Div([
             style=OPTION_ELEMENT,
         ),
     
-    # part3
-    dcc.Slider(
-        id='my-slider2',
-        min=250,
-        max=2000,
-        step=250,
-        value=1000
-    ),
     html.Div(id='slider-output-container2',
-             style=OPTION_ELEMENT),
-    html.P("Benchmark",
-           style=SUB_TITLE),
+             style=DESCRIP_INFO),
+    # part3
+    dcc.Slider(250, 2000,
+        id='my-slider2',
+        step=None,
+        marks={
+            250: '0.25k',
+            500: '0.5k',
+            750: '0.75k',
+            1000: '1k',
+            1250: '1.25k',
+            1500: '1.5k',
+            1750: '1.75k',
+            2000: '2k'},
+        value=1000,
+    ),
+
+    html.P("Benchmark", style=SUB_TITLE),
     dcc.Dropdown(
         id='select-benchmark',
         options=[
@@ -284,58 +316,11 @@ optionBacktest = html.Div([
 
  ], style=GRAPH_LEFT)
 
-# Table
-tableBar = html.Div([
-    html.H5("Results", style={'text-aling': 'left', 'margin-left': '2%'}),
-
-    html.P("Table for our optimal portfolio",
-           style={'width': '80%',  'margin-left': '2%', }),
-    dash_table.DataTable(id='tableResult',
-                         columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
-                                  {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
-                                  {"name": 'Sharpe R', "id": 'Sharpe R'}],
-                         # fixed_rows={'headers': True},
-                         style_table={'width': '48%', 'margin': '2%'},
-                         style_cell={'textAlign': 'center'},
-                         style_as_list_view=True,
-                         style_header={'fontWeight': 'bold'},
-                         style_cell_conditional=[
-                             {
-                                 'if': {'column_id': c},
-                                 'textAlign': 'left'
-                             } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
-
-                         ]),
-
-    html.P("Table for Benchmark",
-           style={'width': '80%', 'margin-left': '2%'}),
-    dash_table.DataTable(id='tableResult-benchmark',
-                         columns=[{"name": 'Avg An Ret', "id": 'Avg An Ret'},
-                                  {"name": 'Std Dev of Ret', "id": 'Std Dev of Ret'},
-                                  {"name": 'Sharpe R', "id": 'Sharpe R'}],
-                         # fixed_rows={'headers': True},
-                         style_table={
-                                    'width': '48%',
-                                    'margin': '2%',
-                                    #  'overflowY': 'scroll',
-                                    #  'maxHeight': '85%'
-                                     },
-                         style_cell={'textAlign': 'center'},
-                         style_as_list_view=True,
-                         style_header={'fontWeight': 'bold'},
-                         style_cell_conditional=[
-                            {
-                                'if': {'column_id': c},
-                                'textAlign': 'left'
-                            } for c in ['variable', 'Group name', 'subgroup name', 'Attribute text']
-                         ])
-], style=OPTION_ELEMENT)
-
 # Performance
 graphResults = html.Div([
     html.Div(id='backtestPerfFig', style=OPTION_ELEMENT),
     html.Div(id='backtestCompFig', style=OPTION_ELEMENT),
-    tableBar
+    html.Div(id='backtestUniverseFig', style=OPTION_ELEMENT)
 ], style=GRAPH_RIGHT)
 
 

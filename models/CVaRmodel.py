@@ -165,6 +165,8 @@ def cvar_model(
     x_old = pd.Series(0, index=assets)
     cash = budget
     portfolio_value_w = budget
+
+    logger.debug(f"Selected solver is {solver}")
     for p in range(p_points):
         logger.info(f"Optimizing period {p}.")
 

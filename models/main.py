@@ -136,12 +136,20 @@ class TradeBot(object):
         end_date: str,
         ml: str = '',
         ml_subset: Union[list, pd.DataFrame] = None,
-        fund_set: list = []
+        fund_set: list = [],
+        optimal_portfolio: list = [],
+        benchmark: list = []
     ) -> px.scatter:
         """ METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS """
 
         # Get statistics for a given time period
         data = self.get_stat(start_date, end_date)
+
+        # Add data about the optimal portfolio and benchmark for plotting
+        if len(optimal_portfolio) > 0:
+            data.loc[optimal_portfolio[4]] = optimal_portfolio
+        if len(benchmark) > 0:
+            data.loc[benchmark[4]] = benchmark
 
         # IF WE WANT TO HIGHLIGHT THE SUBSET OF ASSETS BASED ON ML
         if ml == "MST":
@@ -160,7 +168,8 @@ class TradeBot(object):
         # PLOTTING Data
         color_discrete_map = {'ETF': '#21304f', 'Mutual Fund': '#f58f02',
                               'Funds': '#21304f', "MST subset": '#f58f02',
-                              'Cluster 1': '#21304f', 'Cluster 2': '#f58f02'}
+                              'Cluster 1': '#21304f', 'Cluster 2': '#f58f02',
+                              'Benchmark Portfolio': '#f58f02', 'Optimal Portfolio': 'olive'}
         fig = px.scatter(data,
                          x="Standard Deviation of Returns",
                          y="Average Annual Returns",
@@ -254,7 +263,7 @@ class TradeBot(object):
         dataset = self.weeklyReturns[(self.weeklyReturns.index >= start_date)
                                      & (self.weeklyReturns.index <= end_date)].copy()
         # CLUSTER DATA
-        clusters = cluster(dataset, n_clusters, dendrogram=False)
+        clusters = cluster(dataset, n_clusters)
 
         # SELECT ASSETS
         end_dataset_date = str(dataset.index.date[-1])
@@ -278,7 +287,8 @@ class TradeBot(object):
         subset_of_assets: list,
         benchmarks: list,
         scenarios_type: str,
-        n_simulations: int
+        n_simulations: int,
+        solver: str = "ECOS",
     ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure]:
         """ METHOD TO COMPUTE THE BACKTEST """
 
@@ -313,7 +323,8 @@ class TradeBot(object):
                                                        budget=100,
                                                        cvar_alpha=0.05,
                                                        data=whole_dataset,
-                                                       scgen=sg)
+                                                       scgen=sg,
+                                                       n_simulations=n_simulations)
  
         # MATHEMATICAL MODELING
         # ------------------------------------------------------------------
@@ -323,8 +334,8 @@ class TradeBot(object):
                                                             budget=100,
                                                             cvar_alpha=0.05,
                                                             trans_cost=0.001,
-                                                            max_weight=1)
-        #                                                   solver=solver,
+                                                            max_weight=1,
+                                                            solver=solver)
         #                                                   inaccurate=inaccurate_solution)
 
         # PLOTTING
