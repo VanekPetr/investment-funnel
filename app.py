@@ -45,7 +45,8 @@ def load_page():
         dcc.Store(id='saved-perf-figure-page-2', data=None),
         dcc.Store(id='saved-comp-figure-page-2', data=None),
         dcc.Store(id='saved-universe-figure-page-2', data=None),
-        dcc.Store(id='saved-solver', data='')
+        dcc.Store(id='saved-solver', data=''),
+        dcc.Store(id='saved-optimization-model', data='')
     ])
 
 

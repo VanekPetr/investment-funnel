@@ -288,6 +288,7 @@ class TradeBot(object):
         benchmarks: list,
         scenarios_type: str,
         n_simulations: int,
+        model: str,
         solver: str = "ECOS",
     ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure]:
         """ METHOD TO COMPUTE THE BACKTEST """
@@ -301,15 +302,21 @@ class TradeBot(object):
         test_dataset = self.weeklyReturns[(self.weeklyReturns.index > start_test_date)
                                           & (self.weeklyReturns.index <= end_test_date)].copy()
 
+        # SCENARIO GENERATION
+        # ---------------------------------------------------------------------------------------------------
         # Create scenario generator
         sg = ScenarioGenerator(np.random.default_rng())
 
-        # SCENARIO GENERATION
-        # ---------------------------------------------------------------------------------------------------
+        if model == 'Markowitz model' or scenarios_type == 'MonteCarlo':
+            sigma_lst, mu_lst = sg.generate_sigma_mu_for_test_periods(data=whole_dataset[subset_of_assets],
+                                                                      n_test=len(test_dataset.index))
+
         if scenarios_type == 'MonteCarlo':
             scenarios = sg.monte_carlo(data=whole_dataset[subset_of_assets],    # subsetMST_df or subsetCLUST_df
                                        n_simulations=n_simulations,
-                                       n_test=len(test_dataset.index))
+                                       n_test=len(test_dataset.index),
+                                       sigma_lst=sigma_lst,
+                                       mu_lst=mu_lst)
         else:
             scenarios = sg.bootstrapping(data=whole_dataset[subset_of_assets],  # subsetMST or subsetCLUST
                                          n_simulations=n_simulations,  # number of scenarios per period
