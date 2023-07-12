@@ -2,6 +2,7 @@ import cvxpy as cp
 import numpy as np
 import pandas as pd
 import pickle
+from typing import Tuple
 from loguru import logger
 
 
@@ -135,7 +136,17 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
 # ----------------------------------------------------------------------
 # Mathematical Optimization: RUN THE CVAR MODEL
 # ----------------------------------------------------------------------
-def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, solver="ECOS", inaccurate=True):
+def cvar_model(
+        test_ret: pd.DataFrame,
+        scenarios: np.ndarray,
+        targets: pd.DataFrame,
+        budget: float,
+        cvar_alpha: float,
+        trans_cost: float,
+        max_weight: float,
+        solver: str,
+        inaccurate: bool = True
+) -> Tuple[pd.DataFrame]:
     """
     Method to run the CVaR model over given periods
     """

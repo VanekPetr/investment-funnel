@@ -153,8 +153,7 @@ def test_cvar_model(test_dataset, subset_of_assets, scenarios, cvar_target_data)
         budget=100,
         cvar_alpha=0.05,
         trans_cost=0.001,
-        max_weight=1,
-        free_solver=True
+        max_weight=1
     )
 
     #port_allocation.to_csv("tests/port_allocation_ACTUAL.csv")
