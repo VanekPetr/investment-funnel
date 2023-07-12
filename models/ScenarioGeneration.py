@@ -27,9 +27,9 @@ class ScenarioGenerator(object):
         for p in range(int(n_rolls)):
             rolling_train_dataset = data.iloc[(n_iter * p): (n_train_weeks + n_iter * p), :]
 
-            sigma = np.cov(rolling_train_dataset, rowvar=False)  # The covariance matrix
+            sigma = np.cov(rolling_train_dataset, rowvar=False)     # The covariance matrix
             # RHO = np.corrcoef(ret_train, rowvar=False)            # The correlation matrix
-            mu = np.mean(rolling_train_dataset, axis=0)  # The mean array
+            mu = np.mean(rolling_train_dataset, axis=0)             # The mean array
             # sd = np.sqrt(np.diagonal(SIGMA))                      # The standard deviation
 
             sigma_lst.append(sigma)
