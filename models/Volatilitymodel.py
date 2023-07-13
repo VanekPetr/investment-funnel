@@ -2,14 +2,12 @@ import cvxpy as cp
 import numpy as np
 import pandas as pd
 import pickle
-from typing import Tuple
 from loguru import logger
-
 
 # ----------------------------------------------------------------------
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
 # ----------------------------------------------------------------------
-def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight, solver, inaccurate):
+def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_weight, solver, inaccurate):
     """ This function finds the optimal enhanced index portfolio according to some benchmark.
     The portfolio corresponds to the tangency portfolio where risk is evaluated according to 
     the CVaR of the tracking error. The model is formulated using fractional programming.
@@ -42,14 +40,14 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
     float
         Asset weights in an optimal portfolio 
     """ 
-    # Define index
-    i_idx = scenarios.columns
-    N = i_idx.size
+    # Number of assets
+    N = mu.size
     
-    # Number of scenarios
-    T = scenarios.shape[0]    
     # Variable transaction costs
     c = trans_cost
+
+    # Factorize the covariance
+    G = np.linalg.cholesky(covariance)
 
     # Define variables
     # - portfolio
@@ -69,12 +67,8 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
 
     # Define constraints
     constraints = [
-        # - VaR deviation
-        -scenarios.to_numpy() @ x - var <= vardev,
-
-        # - CVaR limit
-        var + 1/(T * cvar_alpha) * cp.sum(vardev) == cvar,
-        cvar <= cvar_targets,
+        # - Volatility limit
+        cp.norm(G @ x) <= vty_target
 
         # - Cost of rebalancing
         c * cp.sum(absdiff) == cost,
@@ -136,17 +130,7 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
 # ----------------------------------------------------------------------
 # Mathematical Optimization: RUN THE CVAR MODEL
 # ----------------------------------------------------------------------
-def cvar_model(
-        test_ret: pd.DataFrame,
-        scenarios: np.ndarray,
-        targets: pd.DataFrame,
-        budget: float,
-        cvar_alpha: float,
-        trans_cost: float,
-        max_weight: float,
-        solver: str,
-        inaccurate: bool = True
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, solver="ECOS", inaccurate=True):
     """
     Method to run the CVaR model over given periods
     """
@@ -165,8 +149,6 @@ def cvar_model(
     x_old = pd.Series(0, index=assets)
     cash = budget
     portfolio_value_w = budget
-
-    logger.debug(f"Selected solver is {solver}")
     for p in range(p_points):
         logger.info(f"Optimizing period {p}.")
 

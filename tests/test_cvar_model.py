@@ -108,7 +108,7 @@ def scenarios(train_dataset, test_dataset, subset_of_assets, n_simulations, scge
 
 
 @pytest.fixture()
-def cvar_target_data(test_dataset, weeklyReturns, benchmark_isin, scgen):
+def cvar_target_data(test_dataset, weeklyReturns, benchmark_isin, scgen, n_simulations):
     start_of_test_dataset = str(test_dataset.index.date[0])
     targets, benchmark_port_val = get_cvar_targets(
         test_date=start_of_test_dataset,
@@ -116,12 +116,13 @@ def cvar_target_data(test_dataset, weeklyReturns, benchmark_isin, scgen):
         budget=100,
         cvar_alpha=0.05,
         data=weeklyReturns,
-        scgen=scgen
+        scgen=scgen,
+        n_simulations=n_simulations
     )
     return targets, benchmark_port_val
 
 
-def test_get_cvar_targets(test_dataset, benchmark_isin, weeklyReturns, scgen):
+def test_get_cvar_targets(test_dataset, benchmark_isin, weeklyReturns, scgen, n_simulations):
     expected_targets = pd.read_csv("tests/targets_BASE.csv", index_col=0)
     expected_benchmark_port_val = pd.read_csv("tests/benchmark_port_val_BASE.csv", index_col=0, parse_dates=True)
 
@@ -132,7 +133,8 @@ def test_get_cvar_targets(test_dataset, benchmark_isin, weeklyReturns, scgen):
         budget=100,
         cvar_alpha=0.05,
         data=weeklyReturns,
-        scgen=scgen
+        scgen=scgen,
+        n_simulations=n_simulations
     )
 
     pd.testing.assert_frame_equal(targets, expected_targets)
