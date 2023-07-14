@@ -68,7 +68,7 @@ def get_risk_targets(test_date, benchmark, budget, data, scgen):
     weeks_n = len(test_weekly_ret.index)
 
     # Get scenarios
-    # The Monte Carlo Method
+    # The bootstrapping method
     target_scenarios = scgen.bootstrapping(
         data=target_weekly_ret,       # subsetMST or subsetCLUST
         n_simulations=250,

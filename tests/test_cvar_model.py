@@ -94,7 +94,7 @@ def subset_of_assets(train_dataset):
 
 @pytest.fixture(scope="module")
 def n_simulations():
-    return 1000
+    return 250
 
 
 @pytest.fixture()
@@ -122,20 +122,11 @@ def cvar_target_data(test_dataset, weeklyReturns, benchmark_isin, scgen, n_simul
     return targets, benchmark_port_val
 
 
-def test_get_cvar_targets(test_dataset, benchmark_isin, weeklyReturns, scgen, n_simulations):
+def test_get_cvar_targets(cvar_target_data):
     expected_targets = pd.read_csv("tests/targets_BASE.csv", index_col=0)
     expected_benchmark_port_val = pd.read_csv("tests/benchmark_port_val_BASE.csv", index_col=0, parse_dates=True)
 
-    start_of_test_dataset = str(test_dataset.index.date[0])
-    targets, benchmark_port_val = get_cvar_targets(
-        test_date=start_of_test_dataset,
-        benchmark=benchmark_isin, 
-        budget=100,
-        cvar_alpha=0.05,
-        data=weeklyReturns,
-        scgen=scgen,
-        n_simulations=n_simulations
-    )
+    targets, benchmark_port_val = cvar_target_data
 
     pd.testing.assert_frame_equal(targets, expected_targets)
     pd.testing.assert_frame_equal(benchmark_port_val, expected_benchmark_port_val)
@@ -155,7 +146,8 @@ def test_cvar_model(test_dataset, subset_of_assets, scenarios, cvar_target_data)
         budget=100,
         cvar_alpha=0.05,
         trans_cost=0.001,
-        max_weight=1
+        max_weight=1,
+        solver="MOSEK"
     )
 
     #port_allocation.to_csv("tests/port_allocation_ACTUAL.csv")
