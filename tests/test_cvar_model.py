@@ -72,6 +72,12 @@ def benchmark_isin(tickers, names):
 
 
 @pytest.fixture(scope="module")
+def whole_dataset(weeklyReturns, start_train_date, end_test_date):
+    whole_dataset = weeklyReturns[(weeklyReturns.index >= start_train_date) & (weeklyReturns.index <= end_test_date)].copy()
+    return whole_dataset
+
+
+@pytest.fixture(scope="module")
 def train_dataset(weeklyReturns, start_train_date, end_train_date):
     train_dataset = weeklyReturns[(weeklyReturns.index >= start_train_date) & (weeklyReturns.index <= end_train_date)].copy()
     return train_dataset
@@ -94,13 +100,18 @@ def subset_of_assets(train_dataset):
 
 @pytest.fixture(scope="module")
 def n_simulations():
+    return 1000
+
+
+@pytest.fixture(scope="module")
+def n_simulations_target():
     return 250
 
 
 @pytest.fixture()
-def scenarios(train_dataset, test_dataset, subset_of_assets, n_simulations, scgen):
+def scenarios(whole_dataset, test_dataset, subset_of_assets, n_simulations, scgen):
     scenarios = scgen.monte_carlo(
-        data=train_dataset.loc[:, train_dataset.columns.isin(subset_of_assets)],
+        data=whole_dataset[subset_of_assets],
         n_simulations=n_simulations,
         n_test=len(test_dataset.index)
     )
@@ -108,7 +119,7 @@ def scenarios(train_dataset, test_dataset, subset_of_assets, n_simulations, scge
 
 
 @pytest.fixture()
-def cvar_target_data(test_dataset, weeklyReturns, benchmark_isin, scgen, n_simulations):
+def cvar_target_data(test_dataset, weeklyReturns, benchmark_isin, scgen, n_simulations_target):
     start_of_test_dataset = str(test_dataset.index.date[0])
     targets, benchmark_port_val = get_cvar_targets(
         test_date=start_of_test_dataset,
@@ -117,7 +128,7 @@ def cvar_target_data(test_dataset, weeklyReturns, benchmark_isin, scgen, n_simul
         cvar_alpha=0.05,
         data=weeklyReturns,
         scgen=scgen,
-        n_simulations=n_simulations
+        n_simulations=n_simulations_target
     )
     return targets, benchmark_port_val
 
@@ -147,7 +158,7 @@ def test_cvar_model(test_dataset, subset_of_assets, scenarios, cvar_target_data)
         cvar_alpha=0.05,
         trans_cost=0.001,
         max_weight=1,
-        solver="MOSEK"
+        solver="GLPK"
     )
 
     #port_allocation.to_csv("tests/port_allocation_ACTUAL.csv")
