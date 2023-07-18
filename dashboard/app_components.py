@@ -224,8 +224,7 @@ optionBacktest = html.Div([
             {'label': value, 'value': value} for value in ['CVaR model', 'Markowitz model']
         ],
         placeholder="Select portfolio optimization model",
-        style=OPTION_ELEMENT,
-        value='CVaR model'
+        style=OPTION_ELEMENT
     ),
 
     html.P("Solver", style=SUB_TITLE),
