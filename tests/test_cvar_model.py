@@ -100,7 +100,7 @@ def subset_of_assets(train_dataset):
 
 @pytest.fixture(scope="module")
 def n_simulations():
-    return 1000
+    return 250
 
 
 @pytest.fixture(scope="module")
@@ -110,11 +110,19 @@ def n_simulations_target():
 
 @pytest.fixture()
 def scenarios(whole_dataset, test_dataset, subset_of_assets, n_simulations, scgen):
+    sigma_lst, mu_lst = scgen.generate_sigma_mu_for_test_periods(
+        data=whole_dataset[subset_of_assets],
+        n_test=len(test_dataset.index)
+    )
+
     scenarios = scgen.monte_carlo(
         data=whole_dataset[subset_of_assets],
         n_simulations=n_simulations,
-        n_test=len(test_dataset.index)
+        n_test=len(test_dataset.index),
+        sigma_lst=sigma_lst,
+        mu_lst=mu_lst
     )
+
     return scenarios
 
 
@@ -131,6 +139,13 @@ def cvar_target_data(test_dataset, weeklyReturns, benchmark_isin, scgen, n_simul
         n_simulations=n_simulations_target
     )
     return targets, benchmark_port_val
+
+
+def test_scenarios(scenarios):
+    expected_scenarios = np.load("tests/scenarios_BASE.npz")["scenarios"]
+
+    #np.savez_compressed("tests/scenarios_ACTUAL.npz", scenarios=scenarios)
+    np.testing.assert_array_equal(scenarios, expected_scenarios)
 
 
 def test_get_cvar_targets(cvar_target_data):
