@@ -2,22 +2,24 @@ import cvxpy as cp
 import numpy as np
 import pandas as pd
 import pickle
+from typing import Tuple
 from loguru import logger
+
 
 # ----------------------------------------------------------------------
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
 # ----------------------------------------------------------------------
-def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_weight, solver, inaccurate):
+def rebalancing_model(mu, covariance, vty_targets, cash, x_old, trans_cost, max_weight, solver, inaccurate):
     """ This function finds the optimal enhanced index portfolio according to some benchmark.
     The portfolio corresponds to the tangency portfolio where risk is evaluated according to 
-    the CVaR of the tracking error. The model is formulated using fractional programming.
+    the volatility of the tracking error. The model is formulated using quadratic programming.
     
     Parameters
     ----------
     mu : pandas.Series with float values
         asset point forecast
-    scenarios : pandas.DataFrame with float values
-        Asset scenarios
+    covariance : pandas.DataFrame with covariances
+        Asset covariances
     cvar_targets:
         cvar targets for our optimal portfolio
     cash:
@@ -28,8 +30,6 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
         transaction costs
     max_weight : float
         Maximum allowed weight    
-    cvar_alpha : float
-        Alpha value used to evaluate Value-at-Risk one  
     solver: str
         The name of the solver to use, as returned by cvxpy.installed_solvers()  
     inaccurate: bool
@@ -41,7 +41,7 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
         Asset weights in an optimal portfolio 
     """ 
     # Number of assets
-    N = mu.size
+    N = covariance.columns.size
     
     # Variable transaction costs
     c = trans_cost
@@ -53,14 +53,11 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
     # - portfolio
     x = cp.Variable(N, name="x", nonneg=True)
     # - |x - x_old|
-    absdiff = cp.Variable(N, name="absdiff", nonneg=True)    
+    absdiff = cp.Variable(N, name="absdiff", nonneg=True) 
+    # - volatility
+    vty = cp.Variable(name="vty", nonneg=True)    
     # - cost
     cost = cp.Variable(name="cost", nonneg=True) 
-    # - loss deviation
-    vardev = cp.Variable(T, name="vardev", nonneg=True)        
-    # - VaR and CVaR
-    var = cp.Variable(name="var", nonneg=True)
-    cvar = cp.Variable(name="cvar", nonneg=True)
 
     # Define objective (max expected portfolio return)
     objective = cp.Maximize(mu.to_numpy() @ x)
@@ -68,7 +65,8 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
     # Define constraints
     constraints = [
         # - Volatility limit
-        cp.norm(G @ x) <= vty_target
+        cp.norm(G @ x) == vty
+        vty <= vty_target
 
         # - Cost of rebalancing
         c * cp.sum(absdiff) == cost,
@@ -98,22 +96,21 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
         # Set floating data points to zero and normalize
         opt_port[np.abs(opt_port) < 0.000001] = 0
         port_val = np.sum(opt_port)
-        cvar_result_p = cvar.value / port_val
+        vty_result_p = vty.value / port_val
         opt_port = opt_port / port_val
 
         # Remaining cash
         cash = cash - (port_val + cost.value - x_old.sum())
       
         # return portfolio, CVaR, and alpha
-        return opt_port, cvar_result_p, port_val, cash
+        return opt_port, vty_result_p, port_val, cash
              
     else:
         # Save inputs, so that failing problem can be investigated separately e. g. in a notebook
         inputs = {
              "mu": mu, 
-             "scenarios": scenarios, 
-             "cvar_targets": cvar_targets, 
-             "cvar_alpha": cvar_alpha, 
+             "covariance": covariance, 
+             "vty_targets": vty_targets, 
              "cash": cash, 
              "x_old": x_old, 
              "trans_cost": trans_cost, 
@@ -124,23 +121,32 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
         file.close()
         
         # Print an error if the model is not optimal
-        logger.exception(f"Linear solver does not find optimal solution. Status code is {model.status}")
+        logger.exception(f"Solver does not find optimal solution. Status code is {model.status}")
  
 
 # ----------------------------------------------------------------------
 # Mathematical Optimization: RUN THE CVAR MODEL
 # ----------------------------------------------------------------------
-def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max_weight, solver="ECOS", inaccurate=True):
+def volatility_model(
+        test_ret: pd.DataFrame,
+        mu_lst: list,
+        sigma_lst: list,
+        targets: pd.DataFrame,
+        budget: float,
+        trans_cost: float,
+        max_weight: float,
+        solver: str,
+        inaccurate: bool = True
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
-    Method to run the CVaR model over given periods
+    Method to run the MVO model over given periods
     """
-    p_points, s_points, _ = scenarios.shape   # number of periods, number of scenarios 
-    prob = 1/s_points                       # probability of each scenario
+    p_points = len(mu_lst)     # number of periods 
 
-    assets = test_ret.columns                # names of all assets
+    assets = test_ret.columns  # names of all assets
 
-    # LIST TO STORE CVaR TARGETS
-    list_portfolio_cvar = []
+    # LIST TO STORE VOLATILITY TARGETS
+    list_portfolio_vty = []
     # LIST TO STORE VALUE OF THE PORTFOLIO
     list_portfolio_value = []
     # LIST TO STORE PORTFOLIO ALLOCATION
@@ -149,21 +155,20 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
     x_old = pd.Series(0, index=assets)
     cash = budget
     portfolio_value_w = budget
+
+    logger.debug(f"Selected solver is {solver}")
     for p in range(p_points):
         logger.info(f"Optimizing period {p}.")
 
-        # Create dataframe with scenarios for a period p
-        scenarios_df = pd.DataFrame(scenarios[p, :, :], columns=test_ret.columns)
-
-        # compute expected returns of all assets (EP)
-        expected_returns = sum(prob * scenarios_df.loc[i, :] for i in scenarios_df.index)
+        # Get MVO parameters
+        mu = mu_lst[p]
+        sigma = sigma_lst[p]
 
         # run CVaR model
-        p_alloc, cvar_val, port_val, cash = rebalancing_model(
-            mu=expected_returns,
-            scenarios=scenarios_df,
-            cvar_targets=targets.loc[p, "CVaR_Target"] * portfolio_value_w,
-            cvar_alpha=cvar_alpha,
+        p_alloc, vty_val, port_val, cash = rebalancing_model(
+            mu=mu,
+            covariance=sigma,
+            vty_targets=targets.loc[p, "Vty_Target"] * portfolio_value_w,
             cash=cash,
             x_old=x_old,
             trans_cost=trans_cost,
@@ -173,7 +178,7 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
         )
 
         # save the result
-        list_portfolio_cvar.append(cvar_val)
+        list_portfolio_vty.append(vty_val)
         # save allocation
         list_portfolio_allocation.append(p_alloc)
 
@@ -185,8 +190,8 @@ def cvar_model(test_ret, scenarios, targets, budget, cvar_alpha, trans_cost, max
 
         x_old = p_alloc * portfolio_value_w
 
-    portfolio_cvar = pd.DataFrame(columns=["CVaR"], data=list_portfolio_cvar)
+    portfolio_vty = pd.DataFrame(columns=["Volatility"], data=list_portfolio_vty)
     portfolio_value = pd.DataFrame(columns=["Date", "Portfolio_Value"], data=list_portfolio_value).set_index("Date", drop=True)
     portfolio_allocation = pd.DataFrame(columns=assets, data=list_portfolio_allocation)
 
-    return portfolio_allocation, portfolio_value, portfolio_cvar
+    return portfolio_allocation, portfolio_value, portfolio_vty
