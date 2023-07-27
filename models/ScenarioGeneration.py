@@ -2,6 +2,7 @@ import numpy as np
 import math
 import pandas as pd
 from loguru import logger
+from typing import Tuple, List
 
 
 class ScenarioGenerator(object):
@@ -13,7 +14,7 @@ class ScenarioGenerator(object):
         self.rng = rng
 
     @staticmethod
-    def generate_sigma_mu_for_test_periods(data: pd.DataFrame, n_test: int) -> (list, list):
+    def generate_sigma_mu_for_test_periods(data: pd.DataFrame, n_test: int) -> Tuple[List, List]:
         logger.debug(f"Computing covariance matrix and mean array for each investment period")
 
         # Initialize variables
@@ -28,6 +29,13 @@ class ScenarioGenerator(object):
             rolling_train_dataset = data.iloc[(n_iter * p): (n_train_weeks + n_iter * p), :]
 
             sigma = np.cov(rolling_train_dataset, rowvar=False)     # The covariance matrix
+
+            # Make sure sigma is positive semidefinite
+            sigma = 0.5 * (sigma + sigma.T)
+            min_eig = np.min(np.linalg.eigvalsh(sigma))
+            if min_eig < 0:
+                sigma -= 5 * min_eig * np.eye(*sigma.shape)
+
             # RHO = np.corrcoef(ret_train, rowvar=False)            # The correlation matrix
             mu = np.mean(rolling_train_dataset, axis=0)             # The mean array
             # sd = np.sqrt(np.diagonal(SIGMA))                      # The standard deviation

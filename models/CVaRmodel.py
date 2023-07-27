@@ -2,6 +2,7 @@ import cvxpy as cp
 import numpy as np
 import pandas as pd
 import pickle
+from typing import Tuple
 from loguru import logger
 
 
@@ -145,7 +146,7 @@ def cvar_model(
         max_weight: float,
         solver: str,
         inaccurate: bool = True
-) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Method to run the CVaR model over given periods
     """

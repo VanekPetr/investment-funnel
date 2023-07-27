@@ -10,7 +10,7 @@ def minimum_spanning_tree(dataset: pd.DataFrame) -> (list, pd.DataFrame, float, 
 
     corr = dataset.corr(method="spearman")              # calculate the correlation
     distance_corr = (2 * (1 - corr)) ** 0.5             # calculate the distance
-    mask = np.triu(np.ones_like(corr, dtype=np.bool))   # get only the upper half of the matrix
+    mask = np.triu(np.ones_like(corr, dtype=bool))   # get only the upper half of the matrix
     distance_corr = distance_corr * mask 
    
     # use the correlation matrix to create links
