@@ -11,6 +11,8 @@ from models.Clustering import cluster, pick_cluster
 from models.ScenarioGeneration import ScenarioGenerator
 from models.CVaRtargets import get_cvar_targets
 from models.CVaRmodel import cvar_model
+from models.MVOtargets import get_mvo_targets
+from models.MVOmodel import mvo_model
 from financial_data.etf_isins import ETFlist
 from pathlib import Path
 
@@ -325,25 +327,47 @@ class TradeBot(object):
         # TARGETS GENERATION
         # ---------------------------------------------------------------------------------------------------
         start_of_test_dataset = str(test_dataset.index.date[0])
-        targets, benchmark_port_val = get_cvar_targets(test_date=start_of_test_dataset,
-                                                       benchmark=benchmark_isin,  # MSCI World benchmark
-                                                       budget=100,
-                                                       cvar_alpha=0.05,
-                                                       data=whole_dataset,
-                                                       scgen=sg,
-                                                       n_simulations=n_simulations)
+        if model == 'Markowitz model':
+            targets, benchmark_port_val = get_mvo_targets(test_date=start_of_test_dataset,
+                                                          benchmark=benchmark_isin,
+                                                          budget=100,
+                                                          data=whole_dataset,
+                                                          scgen=sg)
+
+        # CVaR model or any other TODO
+        else:
+            targets, benchmark_port_val = get_cvar_targets(test_date=start_of_test_dataset,
+                                                           benchmark=benchmark_isin,
+                                                           budget=100,
+                                                           cvar_alpha=0.05,
+                                                           data=whole_dataset,
+                                                           scgen=sg,
+                                                           n_simulations=n_simulations)
  
         # MATHEMATICAL MODELING
-        # ------------------------------------------------------------------
-        port_allocation, port_value, port_cvar = cvar_model(test_ret=test_dataset[subset_of_assets],
-                                                            scenarios=scenarios,  # Scenarios
-                                                            targets=targets,  # Target
-                                                            budget=100,
-                                                            cvar_alpha=0.05,
-                                                            trans_cost=0.001,
-                                                            max_weight=1,
-                                                            solver=solver)
-        #                                                   inaccurate=inaccurate_solution)
+        # ---------------------------------------------------------------------------------------------------
+        if model == 'Markowitz model':
+            port_allocation, port_value, port_cvar = mvo_model(test_ret=test_dataset[subset_of_assets],
+                                                               mu_lst=mu_lst,
+                                                               sigma_lst=sigma_lst,
+                                                               targets=targets,
+                                                               budget=100,
+                                                               trans_cost=0.001,
+                                                               max_weight=1,
+                                                               solver=solver)
+        #                                                      inaccurate=inaccurate_solution)
+
+        # CVaR model or any other TODO
+        else:
+            port_allocation, port_value, port_cvar = cvar_model(test_ret=test_dataset[subset_of_assets],
+                                                                scenarios=scenarios,  # Scenarios
+                                                                targets=targets,  # Target
+                                                                budget=100,
+                                                                cvar_alpha=0.05,
+                                                                trans_cost=0.001,
+                                                                max_weight=1,
+                                                                solver=solver)
+        #                                                       inaccurate=inaccurate_solution)
 
         # PLOTTING
         # ------------------------------------------------------------------
@@ -388,4 +412,5 @@ if __name__ == "__main__":
                             subset_of_assets=mst_subset_of_assets,
                             benchmarks=['BankInvest Danske Aktier W'],
                             scenarios_type='Bootstrapping',
-                            n_simulations=500)
+                            n_simulations=500,
+                            model="Markowitz model")
