@@ -1,10 +1,27 @@
 import cvxpy as cp
 import numpy as np
+import scipy as sp
 import pandas as pd
 import pickle
 from typing import Tuple
 from loguru import logger
 
+
+def cholesky_psd(m):
+    """
+    Computes the Cholesky decomposition of the given matrix, that is not positive definite, only semidefinite. 
+    """
+    lu, d, perm = sp.linalg.ldl(m)
+    assert np.max(np.abs(d - np.diag(np.diag(d)))) < 1e-8, "Matrix 'd' is not diagonal!"
+
+    # Do nonnegativity fix
+    min_eig = np.min(np.diag(d))
+    if min_eig < 0:
+        d -= 5 * min_eig * np.eye(*d.shape)
+
+    sqrtd = sp.linalg.sqrtm(d)
+    C = lu @ sqrtd 
+    return C
 
 # ----------------------------------------------------------------------
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
@@ -47,7 +64,7 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
     c = trans_cost
 
     # Factorize the covariance
-    G = np.linalg.cholesky(covariance)
+    G = cholesky_psd(covariance)
 
     # Define variables
     # - portfolio

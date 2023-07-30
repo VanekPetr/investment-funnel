@@ -31,7 +31,7 @@ class ScenarioGenerator(object):
             sigma = np.cov(rolling_train_dataset, rowvar=False)     # The covariance matrix
 
             # Make sure sigma is positive semidefinite
-            sigma = 0.5 * (sigma + sigma.T)
+            sigma = np.atleast_2d(0.5 * (sigma + sigma.T))
             min_eig = np.min(np.linalg.eigvalsh(sigma))
             if min_eig < 0:
                 sigma -= 5 * min_eig * np.eye(*sigma.shape)
