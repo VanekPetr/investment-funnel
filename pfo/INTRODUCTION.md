@@ -8,7 +8,10 @@ As part of your curriculum, you will be experimenting
 with the [Investment Funnel](https://github.com/VanekPetr/investment-funnel) open-source Python project. You can find 
 more information about the project in the project's [README file](https://github.com/VanekPetr/investment-funnel/blob/main/README.md).
 
-In the following lines, you will find brief instructions on how to get started with the project.
+In the following lines, you will find brief instructions on how to get started with the project. If you have any 
+questions, please feel free to contact me at my email address `petrr.vanekk@gmail.com`. Additionally, during the 
+second week of the course, I will provide an introductory lecture on Git and the Investment Funnel, where you will 
+have the opportunity to ask questions as well.
 
 ## Prerequisites
 
