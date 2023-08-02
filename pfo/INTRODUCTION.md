@@ -71,7 +71,7 @@ attached in the picture below.
   <img width="100%" src="images/dash.png"></a>
 </p>
 
-### [Additionally] Install a code editor
+### [non-compulsory] Install a code editor
 
 To efficiently study the code, edit it, and write your own code, you need to install a code editor. I would recommend
 PyCharm, which is my favorite code editor. However, you can use any other editor that you prefer. You can find a great 
