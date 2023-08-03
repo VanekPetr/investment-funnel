@@ -20,7 +20,7 @@ def cholesky_psd(m):
         d -= 5 * min_eig * np.eye(*d.shape)
 
     sqrtd = sp.linalg.sqrtm(d)
-    C = lu @ sqrtd 
+    C = (lu @ sqrtd).T 
     return C
 
 # ----------------------------------------------------------------------
