@@ -29,9 +29,11 @@ def save_into_gdx(monthly_returns_df):
     asset_returns = m.addParameter('AssetReturn', domain=[date_set, asset_set, asset_name_set], records=returns_gams,
                                    description='Weekly adjusted returns')
 
-    m.write(os.path.join(working_dir, 'financial_data/input_data.gdx'))
+    m.write(os.path.join(os.path.dirname(working_dir), 'financial_data/input_data.gdx'))
 
 
 if __name__ == '__main__':
-    monthly_returns = pd.read_parquet('financial_data/all_etfs_rets.parquet.gzip')
+    monthly_returns = pd.read_parquet(
+        os.path.join(os.path.dirname(os.getcwd()), 'financial_data/all_etfs_rets.parquet.gzip'))
+
     save_into_gdx(monthly_returns)

@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 
 def clean_data(data_raw):
@@ -67,11 +68,13 @@ def clean_data(data_raw):
     wanted_columns = [col for col in data_wed_rets.columns if col[0] != 'nan']
     data_wed_rets = data_wed_rets[wanted_columns]
     # Save results with returns into data folder for the app
-    data_wed_rets.to_parquet('financial_data/all_etfs_rets.parquet.gzip', compression='gzip')
+    data_wed_rets.to_parquet(
+        os.path.join(os.path.dirname(os.getcwd()), 'financial_data/all_etfs_rets.parquet.gzip'), compression='gzip'
+    )
 
 
 if __name__ == '__main__':
-    daily_prices = pd.read_parquet('financial_data/daily_price.parquet')
+    daily_prices = pd.read_parquet(os.path.join(os.path.dirname(os.getcwd()), 'financial_data/daily_price.parquet'))
 
     # Select just some indices
     subset_data = daily_prices[(daily_prices.index > '2023-01-01') & (daily_prices.index < '2023-07-30')]
