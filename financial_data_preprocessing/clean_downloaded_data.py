@@ -74,7 +74,7 @@ if __name__ == '__main__':
     daily_prices = pd.read_parquet('financial_data/daily_price.parquet')
 
     # Select just some indices
-    subset_data = daily_prices[(daily_prices.index > '2013-01-01') & (daily_prices.index < '2023-08-01')]
+    subset_data = daily_prices[(daily_prices.index > '2023-01-01') & (daily_prices.index < '2023-07-30')]
 
     # Clean data and save for the investment funnel app
     clean_data(data_raw=subset_data)

@@ -26,7 +26,7 @@ if __name__ == '__main__':
     mapping = dict(zip(data_excel['List of Top 100 ETFs'].to_list()[1:], data_excel['Unnamed: 1'].to_list()[1:]))
 
     # Download raw data
-    data_yahoo = download_data(start_date='2023-05-30', end_date='2023-07-30', tickers=tickers)
+    data_yahoo = download_data(start_date='2022-12-31', end_date='2023-07-30', tickers=tickers)
     data_yahoo.columns = [data_yahoo.columns, [mapping[col] for col in data_yahoo.columns]]
-    data_yahoo.to_parquet('financial_data/daily_price_yahoo.parquet')
+    data_yahoo.to_parquet('financial_data/daily_price.parquet')
 
