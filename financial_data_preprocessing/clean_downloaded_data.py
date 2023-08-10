@@ -1,14 +1,10 @@
 import pandas as pd
-from financial_data_preprocessing.get_yahoo_data import download_data
 
 
-def clean_data(data_raw, ticker_to_name_mapping=None, into_gdx=False, one_df=False):
+def clean_data(data_raw):
     """
     Function to clean raw data from Yahoo! finance and transform it into weekly returns
     """
-    if into_gdx and not ticker_to_name_mapping:
-        raise Exception('Ticker to name mapping is required when into_gdx is True')
-
     data_raw = data_raw.fillna('')
 
     # Delete tickers fo which we don't have data for the whole time period
@@ -60,59 +56,25 @@ def clean_data(data_raw, ticker_to_name_mapping=None, into_gdx=False, one_df=Fal
     # Sort df by index
     data_wed = data_wed.sort_index()
 
-    if into_gdx:
-        return data_wed
-    elif one_df:
-        # Create dataframes with returns instead of prices
-        data_wed_rets = data_wed.copy()
-        for asset in data_wed.columns:
-            data_wed_rets[asset] = data_wed[asset].pct_change()
+    # Create dataframes with returns instead of prices
+    data_wed_rets = data_wed.copy()
+    for asset in data_wed.columns:
+        data_wed_rets[asset] = data_wed[asset].pct_change()
 
-        # drop the first row, because it contains NaNs
-        data_wed_rets = data_wed_rets.drop(data_wed_rets.index[0])
+    # drop the first row, because it contains NaNs
+    data_wed_rets = data_wed_rets.drop(data_wed_rets.index[0])
 
-        wanted_columns = [col for col in data_wed_rets.columns if col[0] != 'nan']
-        data_wed_rets = data_wed_rets[wanted_columns]
-        # Save results with returns into data folder for the app
-        data_wed_rets.to_parquet('financial_data/all_etfs_rets.parquet.gzip', compression='gzip')
-    else:
-        # Create dataframes with returns instead of prices
-        data_wed_rets = data_wed.copy()
-        for asset in data_wed.columns:
-            data_wed_rets[asset] = data_wed[asset].pct_change()
-
-        # drop the first row, because it contains NaNs
-        data_wed_rets = data_wed_rets.drop(data_wed_rets.index[0])
-        data_wed_rets_name = data_wed_rets.copy()
-        new_column = [ticker_to_name_mapping[asset] for asset in data_wed_rets.columns]
-        data_wed_rets_name.columns = new_column
-
-        # Save results with returns into data folder for the app
-        data_wed_rets.to_parquet('financial_data/all_etfs_rets.parquet.gzip', compression='gzip')
-        data_wed_rets_name.to_parquet('financial_data/all_etfs_rets_name.parquet.gzip', compression='gzip')
+    wanted_columns = [col for col in data_wed_rets.columns if col[0] != 'nan']
+    data_wed_rets = data_wed_rets[wanted_columns]
+    # Save results with returns into data folder for the app
+    data_wed_rets.to_parquet('financial_data/all_etfs_rets.parquet.gzip', compression='gzip')
 
 
 if __name__ == '__main__':
-    data_source = 'algostrata'
+    daily_prices = pd.read_parquet('financial_data/daily_price.parquet')
 
-    if data_source == 'yahoo':
-        # Load tickers' names
-        path_to_tickers = 'financial_data/top_2000_etfs.xlsx'
-        data_excel = pd.read_excel(path_to_tickers)
-        tickers = data_excel['List of Top 100 ETFs'].to_list()[1:]
-        mapping = dict(zip(data_excel['List of Top 100 ETFs'].to_list()[1:], data_excel['Unnamed: 1'].to_list()[1:]))
+    # Select just some indices
+    subset_data = daily_prices[(daily_prices.index > '2013-01-01') & (daily_prices.index < '2023-08-01')]
 
-        # Download raw data
-        data_yahoo = download_data(start_date='2014-05-30', end_date='2022-07-30', tickers=tickers)
-        # Clean data and save for the investment funnel app
-        clean_data(data_raw=data_yahoo, ticker_to_name_mapping=mapping)
-
-    elif data_source == 'algostrata':
-        data_algostrata = pd.read_parquet('financial_data/daily_price.parquet')
-        # Select just some indices
-        subset_data = data_algostrata[(data_algostrata.index > '2013-01-01') & (data_algostrata.index < '2023-04-01')]
-        # Clean data and save for the investment funnel app
-        clean_data(data_raw=subset_data, one_df=True)
-
-    else:
-        raise Exception('Data source not recognized')
+    # Clean data and save for the investment funnel app
+    clean_data(data_raw=subset_data)

@@ -64,7 +64,7 @@ for subIdList in batch(idList, batchSize):
 
             # IF THE FIRST RUN, THEN CREATE A TABLE
             if firstRun:
-                dailyPrices = pd.DataFrame(prices, index=dates, columns=[isinList[0:1], nameList[0:1]])
+                daily_prices = pd.DataFrame(prices, index=dates, columns=[isinList[0:1], nameList[0:1]])
                 firstRun = False
             # IF NOT THE FIRST RUN, JUST CONCAT THE COLUMN INTO EXISTING TABLE
             else:
@@ -72,8 +72,8 @@ for subIdList in batch(idList, batchSize):
                                                                 nameList[rep*batchSize+num: rep*batchSize+num+1]])
                 # IF THE PRICE DATA ARE NOT ALL NaN, THEN
                 if not df.isnull().values.all():
-                    dailyPrices = pd.concat([dailyPrices, df], axis=1)
+                    daily_prices = pd.concat([daily_prices, df], axis=1)
     rep += 1
 
-# Save dailyPrices into parquet file
-dailyPrices.to_parquet('financial_data/daily_price.parquet')
+# Save daily_prices into parquet file
+daily_prices.to_parquet('financial_data/daily_price.parquet')
