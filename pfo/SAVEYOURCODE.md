@@ -1,4 +1,4 @@
-# How to save you GAMS code
+# How to save your GAMS code
 
 Dear students 🧑‍🎓,
 
