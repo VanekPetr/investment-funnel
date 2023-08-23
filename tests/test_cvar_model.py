@@ -144,7 +144,7 @@ def cvar_target_data(test_dataset, weeklyReturns, benchmark_isin, scgen, n_simul
 def test_scenarios(scenarios):
     expected_scenarios = np.load("tests/cvar/scenarios_BASE.npz")["scenarios"]
 
-    np.savez_compressed("tests/cvar/scenarios_ACTUAL.npz", scenarios=scenarios)
+    #np.savez_compressed("tests/cvar/scenarios_ACTUAL.npz", scenarios=scenarios)
     np.testing.assert_array_equal(scenarios, expected_scenarios)
 
 

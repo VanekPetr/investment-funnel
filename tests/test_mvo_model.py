@@ -167,7 +167,7 @@ def test_mvo_model(test_dataset, subset_of_assets, mvo_inputs, mvo_target_data):
 
     #port_allocation.to_csv("tests/mvo/port_allocation_ACTUAL.csv")
     #port_value.to_csv("tests/mvo/port_value_ACTUAL.csv")
-    #port_cvar.to_csv("tests/mvo/port_risk_ACTUAL.csv")
+    #port_risk.to_csv("tests/mvo/port_risk_ACTUAL.csv")
 
     active_constraints = (targets.to_numpy() - port_risk.to_numpy()) < 1e-5
     pd.testing.assert_frame_equal(port_allocation, expected_port_allocation, atol=1e-5)

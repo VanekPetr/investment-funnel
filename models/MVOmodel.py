@@ -64,7 +64,8 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
     c = trans_cost
 
     # Factorize the covariance
-    G = cholesky_psd(covariance)
+    #G = cholesky_psd(covariance)
+    G = np.linalg.cholesky(covariance)
 
     # Define variables
     # - portfolio
