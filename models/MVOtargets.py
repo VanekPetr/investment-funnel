@@ -43,17 +43,16 @@ def get_mvo_targets(
     weeks_n = len(test_dataset_benchmark.index)
 
     # Get parameters
-    sigma_lst, mu_lst = scgen.generate_sigma_mu_for_test_periods(whole_dataset_benchmark, weeks_n)
+    sigma_lst, _ = scgen.generate_sigma_mu_for_test_periods(whole_dataset_benchmark, weeks_n)
 
     # Compute the optimal portfolio outperforming zero percentage return
     # ----------------------------------------------------------------------
-    p_points = len(mu_lst)       # number of periods
+    p_points = len(sigma_lst)       # number of periods
 
     # COMPUTE MVO TARGETS
     list_targets = []
     for p in range(p_points):
         # Get parameters for a given period p
-        mu = mu_lst[p]
         sigma = sigma_lst[p]
 
         # Compute volatility targets

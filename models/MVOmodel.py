@@ -20,7 +20,7 @@ def cholesky_psd(m):
         d -= 5 * min_eig * np.eye(*d.shape)
 
     sqrtd = sp.linalg.sqrtm(d)
-    C = lu @ sqrtd 
+    C = (lu @ sqrtd).T 
     return C
 
 # ----------------------------------------------------------------------
@@ -64,7 +64,8 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
     c = trans_cost
 
     # Factorize the covariance
-    G = cholesky_psd(covariance)
+    #G = cholesky_psd(covariance)
+    G = np.linalg.cholesky(covariance)
 
     # Define variables
     # - portfolio

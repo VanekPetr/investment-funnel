@@ -149,12 +149,12 @@ def test_get_mvo_targets(mvo_target_data):
 def test_mvo_model(test_dataset, subset_of_assets, mvo_inputs, mvo_target_data):
     expected_port_allocation = pd.read_csv("tests/mvo/port_allocation_BASE.csv", index_col=0)
     expected_port_value = pd.read_csv("tests/mvo/port_value_BASE.csv", index_col=0, parse_dates=True)
-    expected_port_cvar = pd.read_csv("tests/mvo/port_cvar_BASE.csv", index_col=0)
+    expected_port_risk = pd.read_csv("tests/mvo/port_risk_BASE.csv", index_col=0)
 
     targets, _ = mvo_target_data
     sigma_lst, mu_lst = mvo_inputs
     
-    port_allocation, port_value, port_cvar = mvo_model(
+    port_allocation, port_value, port_risk = mvo_model(
         mu_lst=mu_lst,
         sigma_lst=sigma_lst,
         test_ret=test_dataset[subset_of_assets],        
@@ -167,9 +167,9 @@ def test_mvo_model(test_dataset, subset_of_assets, mvo_inputs, mvo_target_data):
 
     #port_allocation.to_csv("tests/mvo/port_allocation_ACTUAL.csv")
     #port_value.to_csv("tests/mvo/port_value_ACTUAL.csv")
-    #port_cvar.to_csv("tests/mvo/port_cvar_ACTUAL.csv")
+    #port_risk.to_csv("tests/mvo/port_risk_ACTUAL.csv")
 
-    active_constraints = (targets.to_numpy() - port_cvar.to_numpy()) < 1e-5
+    active_constraints = (targets.to_numpy() - port_risk.to_numpy()) < 1e-5
     pd.testing.assert_frame_equal(port_allocation, expected_port_allocation, atol=1e-5)
     pd.testing.assert_frame_equal(port_value, expected_port_value)
-    pd.testing.assert_frame_equal(port_cvar[active_constraints], expected_port_cvar[active_constraints])
+    pd.testing.assert_frame_equal(port_risk[active_constraints], expected_port_risk[active_constraints])
