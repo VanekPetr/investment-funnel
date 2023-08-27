@@ -24,7 +24,6 @@ class ScenarioGenerator(object):
         s /= (T**2)
         return s
 
-
     @staticmethod
     def ledoit_wolf_shrinkage(X, S):
         """
@@ -36,6 +35,7 @@ class ScenarioGenerator(object):
         X = (X - X.mean(0)).to_numpy().T
 
         # Target.
+        # TODO what if S if one dimensional? Let's fix it :)
         s_avg2 = np.trace(S) / N
         B = s_avg2 * np.eye(N)
 
@@ -48,7 +48,6 @@ class ScenarioGenerator(object):
         shrunk = (1 - alpha) * S + alpha * B
 
         return shrunk
-
 
     @staticmethod
     def generate_sigma_mu_for_test_periods(data: pd.DataFrame, n_test: int) -> Tuple[List, List]:
