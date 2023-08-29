@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from models.ScenarioGeneration import ScenarioGenerator
+from models.ScenarioGeneration import MomentGenerator
 from typing import Tuple
 from loguru import logger
 
@@ -26,8 +26,7 @@ def get_mvo_targets(
         test_date: str,
         benchmark: list,
         budget: int,
-        data: pd.DataFrame,
-        scgen: ScenarioGenerator,
+        data: pd.DataFrame
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     logger.debug(f"Generating Volatility targets for {benchmark}")
 
@@ -43,7 +42,7 @@ def get_mvo_targets(
     weeks_n = len(test_dataset_benchmark.index)
 
     # Get parameters
-    sigma_lst, _ = scgen.generate_sigma_mu_for_test_periods(whole_dataset_benchmark, weeks_n)
+    sigma_lst, _ = MomentGenerator.generate_sigma_mu_for_test_periods(whole_dataset_benchmark, weeks_n)
 
     # Compute the optimal portfolio outperforming zero percentage return
     # ----------------------------------------------------------------------

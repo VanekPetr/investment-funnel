@@ -8,7 +8,7 @@ from typing import Tuple, Union
 from models.dataAnalyser import mean_an_returns, final_stats
 from models.MST import minimum_spanning_tree
 from models.Clustering import cluster, pick_cluster
-from models.ScenarioGeneration import ScenarioGenerator
+from models.ScenarioGeneration import ScenarioGenerator, MomentGenerator
 from models.CVaRtargets import get_cvar_targets
 from models.CVaRmodel import cvar_model
 from models.MVOtargets import get_mvo_targets
@@ -310,8 +310,10 @@ class TradeBot(object):
         sg = ScenarioGenerator(np.random.default_rng())
 
         if model == 'Markowitz model' or scenarios_type == 'MonteCarlo':
-            sigma_lst, mu_lst = sg.generate_sigma_mu_for_test_periods(data=whole_dataset[subset_of_assets],
-                                                                      n_test=len(test_dataset.index))
+            sigma_lst, mu_lst = MomentGenerator.generate_sigma_mu_for_test_periods(
+                data=whole_dataset[subset_of_assets],
+                n_test=len(test_dataset.index)
+            )
 
         if scenarios_type == 'MonteCarlo':
             scenarios = sg.monte_carlo(data=whole_dataset[subset_of_assets],    # subsetMST_df or subsetCLUST_df
@@ -331,8 +333,7 @@ class TradeBot(object):
             targets, benchmark_port_val = get_mvo_targets(test_date=start_of_test_dataset,
                                                           benchmark=benchmark_isin,
                                                           budget=100,
-                                                          data=whole_dataset,
-                                                          scgen=sg)
+                                                          data=whole_dataset)
 
         # CVaR model or any other TODO
         else:

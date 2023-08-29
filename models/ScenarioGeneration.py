@@ -5,16 +5,12 @@ from loguru import logger
 from typing import Tuple, List
 
 
-class ScenarioGenerator(object):
+class MomentGenerator(object):
     """
-    Provides methods for scenario generation.
+    Provides methods for mean, variace generation.
     """
-
-    def __init__(self, rng: np.random.Generator):
-        self.rng = rng
-
     @staticmethod    
-    def alpha_numerator(Z, S):
+    def _alpha_numerator(Z, S):
         s = 0
         T = Z.shape[1]
         for k in range(T):
@@ -25,11 +21,13 @@ class ScenarioGenerator(object):
         return s
 
     @staticmethod
-    def ledoit_wolf_shrinkage(X, S):
+    def _ledoit_wolf_shrinkage(X, S):
         """
         Computes the Ledoit--Wolf shrinkage, using a target of scaled identity. 
         """
         N = len(X.columns)
+        if N == 1:
+            return S
 
         # Center the data
         X = (X - X.mean(0)).to_numpy().T
@@ -40,7 +38,7 @@ class ScenarioGenerator(object):
         B = s_avg2 * np.eye(N)
 
         # Shrinkage coefficient. 
-        alpha_num = ScenarioGenerator.alpha_numerator(X, S) 
+        alpha_num = MomentGenerator._alpha_numerator(X, S) 
         alpha_den = np.trace((S - B) @ (S - B))
         alpha = alpha_num / alpha_den
 
@@ -64,10 +62,10 @@ class ScenarioGenerator(object):
         for p in range(int(n_rolls)):
             rolling_train_dataset = data.iloc[(n_iter * p): (n_train_weeks + n_iter * p), :]
 
-            sigma = np.cov(rolling_train_dataset, rowvar=False, bias=True)     # The sample covariance matrix
+            sigma = np.atleast_2d(np.cov(rolling_train_dataset, rowvar=False, bias=True))     # The sample covariance matrix
 
             # Add a shrinkage term (Ledoit--Wolf multiple of identity)
-            sigma = ScenarioGenerator.ledoit_wolf_shrinkage(rolling_train_dataset, sigma)
+            sigma = MomentGenerator._ledoit_wolf_shrinkage(rolling_train_dataset, sigma)
 
             # Make sure sigma is positive semidefinite
             #sigma = np.atleast_2d(0.5 * (sigma + sigma.T))
@@ -83,6 +81,15 @@ class ScenarioGenerator(object):
             mu_lst.append(mu)
 
         return sigma_lst, mu_lst
+
+
+class ScenarioGenerator(object):
+    """
+    Provides methods for scenario generation.
+    """
+
+    def __init__(self, rng: np.random.Generator):
+        self.rng = rng
 
     # ----------------------------------------------------------------------
     # Scenario Generation: THE MONTE CARLO METHOD
