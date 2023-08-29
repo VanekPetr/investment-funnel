@@ -18,11 +18,11 @@ def n_simulations_target():
 
 
 @pytest.fixture()
-def cvar_target_data(start_test_date, weekly_returns, benchmark_isin, scgen, n_simulations_target):
+def cvar_target_data(start_test_date, weekly_returns, scgen, n_simulations_target, request):
     start_of_test_dataset = str(start_test_date + timedelta(days=1))
     targets, benchmark_port_val = get_cvar_targets(
         test_date=start_of_test_dataset,
-        benchmark=benchmark_isin,  # MSCI World benchmark
+        benchmark=request.getfixturevalue(request.param),  # MSCI World benchmark
         budget=100,
         cvar_alpha=0.05,
         data=weekly_returns,
@@ -32,16 +32,24 @@ def cvar_target_data(start_test_date, weekly_returns, benchmark_isin, scgen, n_s
     return targets, benchmark_port_val
 
 
-def test_get_cvar_targets(cvar_target_data):
-    expected_targets = pd.read_csv("tests/cvar/targets_BASE.csv", index_col=0)
-    expected_benchmark_port_val = pd.read_csv("tests/cvar/benchmark_port_val_BASE.csv", index_col=0, parse_dates=True)
+@pytest.mark.parametrize(
+        "cvar_target_data, label", 
+        [("benchmark_isin_1", "1"), ("benchmark_isin_2", "2")], 
+        indirect=["cvar_target_data"]
+    )
+def test_get_cvar_targets(cvar_target_data, label):
+    expected_targets = pd.read_csv(f"tests/cvar/targets_{label}_BASE.csv", index_col=0)
+    expected_benchmark_port_val = pd.read_csv(f"tests/cvar/benchmark_port_val_{label}_BASE.csv", index_col=0, parse_dates=True)
 
     targets, benchmark_port_val = cvar_target_data
 
+    #targets.to_csv(f"tests/cvar/targets_{label}_ACTUAL.csv")
+    #benchmark_port_val.to_csv(f"tests/cvar/benchmark_port_val_{label}_ACTUAL.csv")
     pd.testing.assert_frame_equal(targets, expected_targets)
     pd.testing.assert_frame_equal(benchmark_port_val, expected_benchmark_port_val)
 
 
+@pytest.mark.parametrize("cvar_target_data", ["benchmark_isin_2"], indirect=True)
 def test_cvar_model(test_narrow_dataset, mc_scenarios, cvar_target_data):
     expected_port_allocation = pd.read_csv("tests/cvar/port_allocation_BASE.csv", index_col=0)
     expected_port_value = pd.read_csv("tests/cvar/port_value_BASE.csv", index_col=0, parse_dates=True)

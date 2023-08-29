@@ -63,7 +63,7 @@ class MomentGenerator(object):
         for p in range(int(n_rolls)):
             rolling_train_dataset = data.iloc[(n_iter * p): (n_train_weeks + n_iter * p), :]
 
-            sigma = np.cov(rolling_train_dataset, rowvar=False, bias=True)     # The sample covariance matrix
+            sigma = np.atleast_2d(np.cov(rolling_train_dataset, rowvar=False, bias=True))     # The sample covariance matrix
 
             # Add a shrinkage term (Ledoit--Wolf multiple of identity)
             sigma = MomentGenerator._ledoit_wolf_shrinkage(rolling_train_dataset, sigma)

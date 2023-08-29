@@ -63,7 +63,14 @@ def end_test_date():
 
 
 @pytest.fixture(scope="session")
-def benchmark_isin(tickers, names):
+def benchmark_isin_1(tickers, names):
+    benchmarks = ['iShares MSCI ACWI ETF']
+    benchmark_isin = [tickers[list(names).index(name)] for name in benchmarks]
+    return benchmark_isin
+
+
+@pytest.fixture(scope="session")
+def benchmark_isin_2(tickers, names):
     benchmarks = ['iShares MSCI All Country Asia ex Japan Index Fund ETF', 'iShares MSCI ACWI ETF']
     benchmark_isin = [tickers[list(names).index(name)] for name in benchmarks]
     return benchmark_isin

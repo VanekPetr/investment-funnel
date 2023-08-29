@@ -11,29 +11,35 @@ TEST_DIR = Path(__file__).parent
 
 
 @pytest.fixture(scope="module")
-def mvo_target_data(start_test_date, weekly_returns, benchmark_isin):
+def mvo_target_data(start_test_date, weekly_returns, request):
     start_of_test_dataset = str(start_test_date + timedelta(days=1))
     targets, benchmark_port_val = get_mvo_targets(
         test_date=start_of_test_dataset,
-        benchmark=benchmark_isin,  # MSCI World benchmark
+        benchmark=request.getfixturevalue(request.param),  # MSCI World benchmark
         budget=100,
         data=weekly_returns
     )
     return targets, benchmark_port_val
 
 
-def test_get_mvo_targets(mvo_target_data):
-    expected_targets = pd.read_csv("tests/mvo/targets_BASE.csv", index_col=0)
-    expected_benchmark_port_val = pd.read_csv("tests/mvo/benchmark_port_val_BASE.csv", index_col=0, parse_dates=True)
+@pytest.mark.parametrize(
+        "mvo_target_data, label", 
+        [("benchmark_isin_1", "1"), ("benchmark_isin_2", "2")], 
+        indirect=["mvo_target_data"]
+    )
+def test_get_mvo_targets(mvo_target_data, label):
+    expected_targets = pd.read_csv(f"tests/mvo/targets_{label}_BASE.csv", index_col=0)
+    expected_benchmark_port_val = pd.read_csv(f"tests/mvo/benchmark_port_val_{label}_BASE.csv", index_col=0, parse_dates=True)
 
     targets, benchmark_port_val = mvo_target_data
 
-    #targets.to_csv("tests/mvo/targets_ACTUAL.csv")
-    #benchmark_port_val.to_csv("tests/mvo/benchmark_port_val_ACTUAL.csv")
+    #targets.to_csv(f"tests/mvo/targets_{label}_ACTUAL.csv")
+    #benchmark_port_val.to_csv(f"tests/mvo/benchmark_port_val_{label}_ACTUAL.csv")
     pd.testing.assert_frame_equal(targets, expected_targets)
     pd.testing.assert_frame_equal(benchmark_port_val, expected_benchmark_port_val)
 
 
+@pytest.mark.parametrize("mvo_target_data", ["benchmark_isin_2"], indirect=True)
 def test_mvo_model(test_narrow_dataset, moments, mvo_target_data):
     expected_port_allocation = pd.read_csv("tests/mvo/port_allocation_BASE.csv", index_col=0)
     expected_port_value = pd.read_csv("tests/mvo/port_value_BASE.csv", index_col=0, parse_dates=True)
