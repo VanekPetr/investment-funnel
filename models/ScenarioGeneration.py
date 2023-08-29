@@ -26,6 +26,7 @@ class MomentGenerator(object):
         Computes the Ledoit--Wolf shrinkage, using a target of scaled identity. 
         """
         N = len(X.columns)
+        # In case only one asset in the matrix, for example for benchmark with one asset, no shrinkage is needed
         if N == 1:
             return S
 
@@ -33,7 +34,6 @@ class MomentGenerator(object):
         X = (X - X.mean(0)).to_numpy().T
 
         # Target.
-        # TODO what if S if one dimensional? Let's fix it :)
         s_avg2 = np.trace(S) / N
         B = s_avg2 * np.eye(N)
 
@@ -68,10 +68,10 @@ class MomentGenerator(object):
             sigma = MomentGenerator._ledoit_wolf_shrinkage(rolling_train_dataset, sigma)
 
             # Make sure sigma is positive semidefinite
-            #sigma = np.atleast_2d(0.5 * (sigma + sigma.T))
-            #min_eig = np.min(np.linalg.eigvalsh(sigma))
-            #if min_eig < 0:
-            #    sigma -= 5 * min_eig * np.eye(*sigma.shape)
+            # sigma = np.atleast_2d(0.5 * (sigma + sigma.T))
+            # min_eig = np.min(np.linalg.eigvalsh(sigma))
+            # if min_eig < 0:
+            #     sigma -= 5 * min_eig * np.eye(*sigma.shape)
 
             # RHO = np.corrcoef(ret_train, rowvar=False)            # The correlation matrix
             mu = np.mean(rolling_train_dataset, axis=0)             # The mean array
