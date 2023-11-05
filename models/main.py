@@ -74,10 +74,13 @@ class TradeBot(object):
         composition = composition.loc[:, (composition != 0).any(axis=0)]
         data = []
         idx_color = 0
+        # TODO add color
         composition_color = (px.colors.sequential.turbid
                              + px.colors.sequential.Brwnyl
                              + px.colors.sequential.YlOrBr
-                             + px.colors.sequential.gray)
+                             + px.colors.sequential.gray
+                             + px.colors.sequential.Mint
+                             + px.colors.sequential.dense)
         for isin in composition.columns:
             trace = go.Bar(
                 x=composition.index,
