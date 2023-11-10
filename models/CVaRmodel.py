@@ -41,7 +41,10 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
     -------
     float
         Asset weights in an optimal portfolio 
-    """ 
+    """
+
+    # This will be my code
+
     # Define index
     i_idx = scenarios.columns
     N = i_idx.size
