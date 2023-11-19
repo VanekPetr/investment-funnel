@@ -21,4 +21,4 @@ cvxpy==1.4.1
 ecos==2.0.12
 pydantic==2.5.1
 pydantic-settings==2.1.0
-tqdm=4.66.1
+tqdm==4.66.1
