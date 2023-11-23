@@ -26,7 +26,7 @@ def cholesky_psd(m):
 # ----------------------------------------------------------------------
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
 # ----------------------------------------------------------------------
-def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_weight, solver, inaccurate):
+def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_weight, solver, inaccurate, lower_bound):
     """ This function finds the optimal enhanced index portfolio according to some benchmark.
     The portfolio corresponds to the tangency portfolio where risk is evaluated according to 
     the volatility of the tracking error. The model is formulated using quadratic programming.
@@ -50,7 +50,9 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
     solver: str
         The name of the solver to use, as returned by cvxpy.installed_solvers()  
     inaccurate: bool
-        Whether to also use solution with status "optimal_inaccurate". 
+        Whether to also use solution with status "optimal_inaccurate"
+    lower_bound: int
+        Minimum weight given to each selected asset.
 
     Returns
     -------
@@ -87,6 +89,9 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
         c * cp.sum(absdiff) == cost,
         x - x_old <= absdiff,
         x - x_old >= -absdiff,
+
+        # Quantity constraint
+        x >= lower_bound,
 
         # - Budget
         x_old.sum() + cash - cp.sum(x) - cost == 0,
@@ -129,7 +134,8 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
              "cash": cash, 
              "x_old": x_old, 
              "trans_cost": trans_cost, 
-             "max_weight": max_weight
+             "max_weight": max_weight,
+            "lower_bound": lower_bound,
         }
         file = open('rebalance_inputs.pkl', 'wb')
         pickle.dump(inputs, file)
@@ -151,7 +157,8 @@ def mvo_model(
         trans_cost: float,
         max_weight: float,
         solver: str,
-        inaccurate: bool = True
+        lower_bound: int,
+        inaccurate: bool = True,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Method to run the MVO model over given periods
@@ -189,7 +196,8 @@ def mvo_model(
             trans_cost=trans_cost,
             max_weight=max_weight,
             solver=solver,
-            inaccurate=inaccurate
+            inaccurate=inaccurate,
+            lower_bound = lower_bound
         )
 
         # save the result

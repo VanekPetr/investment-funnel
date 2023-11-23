@@ -295,6 +295,7 @@ class TradeBot(object):
         n_simulations: int,
         model: str,
         solver: str = "ECOS",
+        lower_bound = int,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure]:
         """ METHOD TO COMPUTE THE BACKTEST """
 
@@ -358,7 +359,8 @@ class TradeBot(object):
                                                                budget=100,
                                                                trans_cost=0.001,
                                                                max_weight=1,
-                                                               solver=solver)
+                                                               solver=solver,
+                                                               lower_bound = lower_bound)
         #                                                      inaccurate=inaccurate_solution)
 
         # CVaR model or any other TODO
@@ -417,4 +419,5 @@ if __name__ == "__main__":
                             benchmarks=['BankInvest Danske Aktier W'],
                             scenarios_type='Bootstrapping',
                             n_simulations=500,
-                            model="Markowitz model")
+                            model="Markowitz model",
+                            lower_bound=0)
