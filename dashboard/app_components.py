@@ -285,7 +285,7 @@ optionBacktest = html.Div([
         id='slider-trading-sizes',
         min=0,
         max=10,
-        step=2,
+        step=1,
         value=0
     ),
 

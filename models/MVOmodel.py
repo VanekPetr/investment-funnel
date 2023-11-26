@@ -91,7 +91,7 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
         x - x_old >= -absdiff,
 
         # Quantity constraint
-        x >= lower_bound,
+        x >= lower_bound * cp.Variable(N, boolean=True),
 
         # - Budget
         x_old.sum() + cash - cp.sum(x) - cost == 0,
