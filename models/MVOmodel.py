@@ -90,15 +90,15 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
         x - x_old <= absdiff,
         x - x_old >= -absdiff,
 
-        # Quantity constraint
-        x >= lower_bound * cp.Variable(N, boolean=True),
-
         # - Budget
         x_old.sum() + cash - cp.sum(x) - cost == 0,
 
         # - Concentration limits
         x <= max_weight * cp.sum(x)
     ]
+
+    if lower_bound != 0:
+        constraints.append(x >= lower_bound * cp.Variable(N, boolean=True))
 
     # Define model
     model = cp.Problem(objective=objective, constraints=constraints)
