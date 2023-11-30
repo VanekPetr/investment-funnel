@@ -132,7 +132,7 @@ def get_callbacks(app):
         Output(component_id='slider-trading-sizes-container', component_property='style'),
         [Input(component_id='select-solver', component_property='value')])
     def show_hide_element(solver):
-        if solver == 'ECOS_BB':
+        if solver == 'ECOS_BB' or solver == 'CPLEX' or solver == 'MOSEK':
             return {'display': 'block'}
         else:
             return {'display': 'none'}
