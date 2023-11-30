@@ -80,7 +80,10 @@ class TradeBot(object):
                              + px.colors.sequential.YlOrBr
                              + px.colors.sequential.gray
                              + px.colors.sequential.Mint
-                             + px.colors.sequential.dense)
+                             + px.colors.sequential.dense
+                             + px.colors.sequential.Plasma
+                            + px.colors.sequential.Viridis
+                            + px.colors.sequential.Cividis)
         for isin in composition.columns:
             trace = go.Bar(
                 x=composition.index,
@@ -372,7 +375,8 @@ class TradeBot(object):
                                                                 cvar_alpha=0.05,
                                                                 trans_cost=0.001,
                                                                 max_weight=1,
-                                                                solver=solver)
+                                                                solver=solver,
+                                                                lower_bound=lower_bound)
         #                                                       inaccurate=inaccurate_solution)
 
         # PLOTTING

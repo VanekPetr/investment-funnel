@@ -9,7 +9,7 @@ from loguru import logger
 # ----------------------------------------------------------------------
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
 # ----------------------------------------------------------------------
-def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight, solver, inaccurate):
+def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight, solver, inaccurate, lower_bound):
     """ This function finds the optimal enhanced index portfolio according to some benchmark.
     The portfolio corresponds to the tangency portfolio where risk is evaluated according to 
     the CVaR of the tracking error. The model is formulated using fractional programming.
@@ -92,6 +92,15 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
         x <= max_weight * cp.sum(x)
     ]
 
+    if lower_bound != 0:
+        z = cp.Variable(N, boolean=True) # Binary variable indicates if asset is selected
+        eps = 10**(-5)
+
+        constraints.append(-1 + eps <= x - z) # if x[i] is not selected, z[i] cannot be 1 (so should be 0)
+        constraints.append(x - z <= 0) # if z[i] is 0, x[i] must be less or equal to 0
+        constraints.append(x - z >= lower_bound - 1) # if selected: x[i] - 1 >= lower_bound - 1
+
+
     # Define model
     model = cp.Problem(objective=objective, constraints=constraints)
 
@@ -149,7 +158,8 @@ def cvar_model(
         trans_cost: float,
         max_weight: float,
         solver: str,
-        inaccurate: bool = True
+        inaccurate: bool = True,
+        lower_bound = int
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Method to run the CVaR model over given periods
@@ -191,7 +201,8 @@ def cvar_model(
             trans_cost=trans_cost,
             max_weight=max_weight,
             solver=solver,
-            inaccurate=inaccurate
+            inaccurate=inaccurate,
+            lower_bound=lower_bound
         )
 
         # save the result

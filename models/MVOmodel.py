@@ -75,7 +75,8 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
     # - |x - x_old|
     absdiff = cp.Variable(N, name="absdiff", nonneg=True)    
     # - cost
-    cost = cp.Variable(name="cost", nonneg=True) 
+    cost = cp.Variable(name="cost", nonneg=True)
+
 
     # Define objective (max expected portfolio return)
     objective = cp.Maximize(mu.to_numpy() @ x)
@@ -98,7 +99,13 @@ def rebalancing_model(mu, covariance, vty_target, cash, x_old, trans_cost, max_w
     ]
 
     if lower_bound != 0:
-        constraints.append(x >= lower_bound * cp.Variable(N, boolean=True))
+        z = cp.Variable(N, boolean=True) # Binary variable indicates if asset is selected
+        eps = 10**(-5)
+
+        for i in range(N):
+            constraints.append(-1 + eps <= x[i] - z[i])  # if x[i] is not selected, z[i] cannot be 1 (so should be 0)
+            constraints.append(x[i] - z[i] <= 0)  # if z[i] is 0, x[i] must be less or equal to 0
+            constraints.append(x[i] - z[i] >= lower_bound - 1)  # if selected: x[i] - 1 >= lower_bound - 1
 
     # Define model
     model = cp.Problem(objective=objective, constraints=constraints)
