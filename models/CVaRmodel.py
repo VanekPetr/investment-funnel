@@ -94,11 +94,11 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
 
     if lower_bound != 0:
         z = cp.Variable(N, boolean=True) # Binary variable indicates if asset is selected
-        eps = 10**(-5)
+        upper_bound = 100
 
-        constraints.append(-1 + eps <= x - z) # if x[i] is not selected, z[i] cannot be 1 (so should be 0)
-        constraints.append(x - z <= 0) # if z[i] is 0, x[i] must be less or equal to 0
-        constraints.append(x - z >= lower_bound - 1) # if selected: x[i] - 1 >= lower_bound - 1
+        constraints.append(lower_bound * z <= x)
+        constraints.append(x <= upper_bound * z)
+        constraints.append(cp.sum(z)>=1)
 
 
     # Define model
