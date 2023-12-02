@@ -1,7 +1,8 @@
+import flask
 from dash.dependencies import Input, Output, State
 from models.main import TradeBot
 from dash import dcc
-from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout
+from dashboard.app_layouts import page_1_layout, page_2_layout, page_3_layout, page_mobile_layout
 
 
 algo = TradeBot()
@@ -14,7 +15,10 @@ def get_callbacks(app):
         [Input('url', 'pathname')]
     )
     def display_page(pathname: str):
-        if pathname == '/':
+        is_mobile = flask.request.headers.get('User-Agent').lower()
+        if 'mobile' in is_mobile or 'mobi' in is_mobile:
+            return page_mobile_layout
+        elif pathname == '/':
             return page_1_layout
         elif pathname == '/page-1':
             return page_2_layout
