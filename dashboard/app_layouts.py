@@ -10,7 +10,8 @@ from dashboard.app_components import (
     graphOverview,
     spinner_dots,
     spinner_ml,
-    spinner_backtest
+    spinner_backtest,
+    mobile_page
 )
 
 '''
@@ -64,4 +65,14 @@ page_1_layout = html.Div([
         # Row 1, Col 3 - table
         dbc.Col([graphOverview, spinner_dots]),
     ])
+])
+
+'''
+# ----------------------------------------------------------------------------------------------------------------------
+# MOBILE PAGE
+# ----------------------------------------------------------------------------------------------------------------------
+'''
+page_mobile_layout = html.Div([
+    # Row 1 - body
+    dbc.Row([mobile_page])
 ])

@@ -18,15 +18,6 @@ top_height = 0
 side_bar_width = '12%'
 option_width = '20%'
 
-TOPBAR_STYLE = {
-    "position": "fixed",
-    "top": 0,
-    "left": 0,
-    "right": 0,
-    "height": top_height,
-    "background-color": "#111723",
-    "textAlign": "right",
-}
 
 OPTION_ELEMENT = {
     "margin": "1%",
@@ -112,6 +103,20 @@ GRAPH_RIGHT = {
     'display': 'flex', 
     'flex-direction': 'column',
     'overflow': 'auto',
+}
+
+
+MOBILE_PAGE = {
+    "position": "fixed",
+    "padding": "4px",
+    'display': 'flex',
+    'flex-direction': 'column',
+    'overflow': 'auto',
+    "background-color": "#111723",
+    'top': 0,
+    "left": 0,
+    "bottom": 0,
+    "width": '100%',
 }
 
 # loading sign on the top of the button
@@ -458,3 +463,13 @@ optionGraph = html.Div([
 
 # Table
 graphOverview = html.Div(id='dotsFig', style=GRAPH_RIGHT)
+
+# Page which shows message for mobile device
+mobile_page = html.Div([
+    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),
+             style={"position": "fixed", 'width': '90%', 'margin-top': '16px', 'right': '5%'}),
+    html.H1("Investment Funnel", style={'color': '#ffd0b3', "position": "fixed", 'top': '8%', 'right': '5%'}),
+    html.H4("This page is not available on mobile devices. Please use a desktop browser.",
+            style={'color': 'white', "position": "fixed", 'top': '20%', 'right': '5%', 'left': '5%'})
+
+], style=MOBILE_PAGE)

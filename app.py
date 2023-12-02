@@ -52,6 +52,7 @@ def load_page():
 
 # Initialize the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
 
 # App layout
 app.layout = load_page()
@@ -60,5 +61,4 @@ get_callbacks(app)
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False, dev_tools_hot_reload=True)
-
+    app.run_server(debug=False, dev_tools_hot_reload=False)
