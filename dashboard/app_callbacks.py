@@ -75,9 +75,8 @@ def get_callbacks(app):
          State('select-solver', 'value'),
          State('saved-solver', 'data'),
          State('select-optimization-model', 'value'),
-         State('saved-optimization-model', 'data') ,
-         State('slider-trading-sizes', 'value')
-            ]
+         State('saved-optimization-model', 'data'),
+         State('slider-trading-sizes', 'value')]
     )
     def plot_backtest(click, model, model_spec, pick_top, scen_model, scen_spec, benchmark, start_data,
                       end_train, start_test, end_data, saved_model, saved_model_spec, saved_pick_top, saved_scen_model,
@@ -157,7 +156,7 @@ def get_callbacks(app):
         Output('slider-trading-sizes-output', 'children'),
         [Input('slider-trading-sizes', 'value')])
     def update_trading_sizes(value):
-        return 'Minimum allocated proportion of each selected asset: {}'.format(value)
+        return 'Minimum required asset weight in the portfolio: {}%'.format(value)
 
     @app.callback(
         [Output('picker-test', 'start_date'),
