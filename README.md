@@ -9,6 +9,9 @@
 <img src="https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor "align="center">
 </p>
 
+
+🎉 UPDATE - tests our new no-code Investment Funnel [dashboard application](https://investment-funnel.algostrata.com) 🎉
+
 Welcome to our open-source project for developing and backtesting investment strategies.
 
 Having been utilized by over 500 students from Asset Allocation classes at Copenhagen University and Danish Technical 
