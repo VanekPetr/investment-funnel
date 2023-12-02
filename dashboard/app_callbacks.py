@@ -75,12 +75,13 @@ def get_callbacks(app):
          State('select-solver', 'value'),
          State('saved-solver', 'data'),
          State('select-optimization-model', 'value'),
-         State('saved-optimization-model', 'data')]
+         State('saved-optimization-model', 'data'),
+         State('slider-trading-sizes', 'value')]
     )
     def plot_backtest(click, model, model_spec, pick_top, scen_model, scen_spec, benchmark, start_data,
                       end_train, start_test, end_data, saved_model, saved_model_spec, saved_pick_top, saved_scen_model,
                       saved_scen_spec, saved_benchmark, saved_perf_figure, saved_comp_figure, saved_universe_figure,
-                      solver, saved_solver, optimization_model, saved_optimization_model):
+                      solver, saved_solver, optimization_model, saved_optimization_model, lower_bound):
         # Initialize
         opt_init = ['Optimal', 'Optimal Portfolio', 'Optimal Portfolio', 3]
         bench_init = ['Benchmark', 'Benchmark Portfolio', 'Benchmark Portfolio', 3]
@@ -101,7 +102,8 @@ def get_callbacks(app):
                                                                                      scenarios_type=scen_model,
                                                                                      n_simulations=scen_spec,
                                                                                      model=optimization_model,
-                                                                                     solver=solver)
+                                                                                     solver=solver,
+                                                                                     lower_bound=lower_bound)
             # Save page values
             perf_figure = dcc.Graph(figure=fig_performance, style={'margin': '0%', 'height': '800px'})
             comp_figure = dcc.Graph(figure=fig_composition, style={'margin': '0%'})
@@ -130,6 +132,15 @@ def get_callbacks(app):
         return '# of scenarios: {}'.format(value)
 
     @app.callback(
+        Output(component_id='slider-trading-sizes-container', component_property='style'),
+        [Input(component_id='select-solver', component_property='value')])
+    def show_hide_element(solver):
+        if solver == 'ECOS_BB' or solver == 'CPLEX' or solver == 'MOSEK':
+            return {'display': 'block'}
+        else:
+            return {'display': 'none'}
+
+    @app.callback(
         Output('slider-output-container-backtest', 'children'),
         [Input('slider-backtest', 'value')])
     def update_output_cluster(value):
@@ -140,6 +151,12 @@ def get_callbacks(app):
         [Input('slider-backtest-ml', 'value')])
     def update_output_ml_type(value):
         return '# of clusters or # of MST runs: {}'.format(value)
+
+    @app.callback(
+        Output('slider-trading-sizes-output', 'children'),
+        [Input('slider-trading-sizes', 'value')])
+    def update_trading_sizes(value):
+        return 'Minimum required asset weight in the portfolio: {}%'.format(value)
 
     @app.callback(
         [Output('picker-test', 'start_date'),

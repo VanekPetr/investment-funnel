@@ -9,6 +9,9 @@
 <img src="https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor "align="center">
 </p>
 
+
+🎉 UPDATE - tests our new no-code Investment Funnel [dashboard application](https://investment-funnel.algostrata.com) 🎉
+
 Welcome to our open-source project for developing and backtesting investment strategies.
 
 Having been utilized by over 500 students from Asset Allocation classes at Copenhagen University and Danish Technical 
@@ -148,6 +151,7 @@ To make the best of this project, you'll likely need access to up-to-date financ
 * **Petr Vanek** - *Co-founder & Initial work* - [VanekPetr](https://github.com/VanekPetr)
 * **Kourosh Rasmussen** - *Co-founder* - [AlgoStrata](https://algostrata.com) & [Penly](https://penly.dk)
 * **Gábor Balló** - *Implementation of CVaR model with CVXPY and MOSEK* - [szelidvihar](https://github.com/szelidvihar) & [MOSEK](https://github.com/MOSEK)
+* **Mariska Van de Sompele** - *Implementation of minimum asset portfolio weights constraint for CVaR and Markowitz models* - [MariskaVandeSompele](https://github.com/MariskaVandeSompele)
 * **Auður Anna Jónsdóttir** - *Initial work for MST and Hierarchical Clustering*
 * **Chanyu Yang** - *First contributor to our dash application* - [cicadaa](https://github.com/cicadaa)
 * **Alexandra Mourier** - *Design of our GitHub README banner* 

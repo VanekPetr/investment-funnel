@@ -9,7 +9,7 @@ from loguru import logger
 # ----------------------------------------------------------------------
 # MODEL FOR OPTIMIZING THE BACKTEST PERIODS 
 # ----------------------------------------------------------------------
-def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight, solver, inaccurate):
+def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, trans_cost, max_weight, solver, inaccurate, lower_bound):
     """ This function finds the optimal enhanced index portfolio according to some benchmark.
     The portfolio corresponds to the tangency portfolio where risk is evaluated according to 
     the CVaR of the tracking error. The model is formulated using fractional programming.
@@ -41,7 +41,8 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
     -------
     float
         Asset weights in an optimal portfolio 
-    """ 
+    """
+
     # Define index
     i_idx = scenarios.columns
     N = i_idx.size
@@ -87,6 +88,15 @@ def rebalancing_model(mu, scenarios, cvar_targets, cvar_alpha, cash, x_old, tran
         # - Concentration limits
         x <= max_weight * cp.sum(x)
     ]
+
+    if lower_bound != 0:
+        z = cp.Variable(N, boolean=True) # Binary variable indicates if asset is selected
+        upper_bound = 100
+
+        constraints.append(lower_bound * z <= x)
+        constraints.append(x <= upper_bound * z)
+        constraints.append(cp.sum(z)>=1)
+
 
     # Define model
     model = cp.Problem(objective=objective, constraints=constraints)
@@ -145,7 +155,8 @@ def cvar_model(
         trans_cost: float,
         max_weight: float,
         solver: str,
-        inaccurate: bool = True
+        inaccurate: bool = True,
+        lower_bound = int
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Method to run the CVaR model over given periods
@@ -187,7 +198,8 @@ def cvar_model(
             trans_cost=trans_cost,
             max_weight=max_weight,
             solver=solver,
-            inaccurate=inaccurate
+            inaccurate=inaccurate,
+            lower_bound=lower_bound
         )
 
         # save the result

@@ -273,8 +273,31 @@ optionBacktest = html.Div([
         step=1,
         value=2,
     ),
-    html.Div(id='slider-output-container-backtest',
-             style=DESCRIP_INFO),
+
+
+    html.Div(id='slider-trading-sizes-container', children=[
+            html.Div(id='slider-output-container-backtest',
+                     style=DESCRIP_INFO),
+
+            html.P("Trading Sizes",
+                   style=SUB_TITLE),
+
+            html.P("Select the lower bound for the allocated proportion of each selected asset",
+                   style=DESCRIP_INFO),
+
+            html.Div(id='slider-trading-sizes-output',
+                     style=DESCRIP_INFO),
+
+            # Create element to hide/show, in this case a slider
+            dcc.Slider(id='slider-trading-sizes',
+                       min=0,
+                       max=10,
+                       step=1,
+                       value=0)
+        ], style={'display': 'none'}),
+
+
+
     html.P("Scenarios",
            style=SUB_TITLE),
     dcc.Dropdown(
