@@ -298,7 +298,7 @@ class TradeBot(object):
         n_simulations: int,
         model: str,
         solver: str = "ECOS",
-        lower_bound = int,
+        lower_bound: int = 0
     ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure]:
         """ METHOD TO COMPUTE THE BACKTEST """
 
@@ -342,7 +342,6 @@ class TradeBot(object):
                                                           budget=100,
                                                           data=whole_dataset)
 
-        # CVaR model or any other TODO
         else:
             targets, benchmark_port_val = get_cvar_targets(test_date=start_of_test_dataset,
                                                            benchmark=benchmark_isin,
@@ -363,10 +362,9 @@ class TradeBot(object):
                                                                trans_cost=0.001,
                                                                max_weight=1,
                                                                solver=solver,
-                                                               lower_bound = lower_bound)
+                                                               lower_bound=lower_bound)
         #                                                      inaccurate=inaccurate_solution)
 
-        # CVaR model or any other TODO
         else:
             port_allocation, port_value, port_cvar = cvar_model(test_ret=test_dataset[subset_of_assets],
                                                                 scenarios=scenarios,  # Scenarios
