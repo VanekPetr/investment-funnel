@@ -19,6 +19,6 @@ gunicorn==21.2.0
 python-dotenv==1.0.0
 cvxpy==1.4.1
 ecos==2.0.12
-pydantic==2.5.1
+pydantic==2.5.2
 pydantic-settings==2.1.0
 tqdm==4.66.1
