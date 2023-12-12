@@ -47,7 +47,9 @@ def rebalancing_model(
     solver: str
         The name of the solver to use, as returned by cvxpy.installed_solvers()
     inaccurate: bool
-        Whether to also use solution with status "optimal_inaccurate".
+        Whether to also use solution with status "optimal_inaccurate"
+    lower_bound: int
+        Minimum weight given to each selected asset.
 
     Returns
     -------

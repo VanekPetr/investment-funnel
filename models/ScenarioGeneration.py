@@ -7,7 +7,7 @@ from typing import Tuple, List
 
 class MomentGenerator:
     """
-    Provides methods for mean, variace generation.
+    Provides methods for mean, variance generation.
     """
 
     @staticmethod
