@@ -43,8 +43,8 @@ git clone copied_link
 ```bash
 cd Documents/code/your_project_name
 ```
-or 
-    
+or
+
 ```bash
 cd your_project_name
 ```

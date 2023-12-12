@@ -14,8 +14,8 @@
 
 Welcome to our open-source project for developing and backtesting investment strategies.
 
-Having been utilized by over 500 students from Asset Allocation classes at Copenhagen University and Danish Technical 
-University, this project is also a pivotal tool for amateur/beginner quants. 
+Having been utilized by over 500 students from Asset Allocation classes at Copenhagen University and Danish Technical
+University, this project is also a pivotal tool for amateur/beginner quants.
 
 The primary goal of this project is to provide a better overview of the ETF/Mutual fund market and to allow users to
 experiment with various investment techniques and algorithms. Ultimately, it offers a platform to backtest and refine investment strategies.
@@ -40,9 +40,9 @@ experiment with various investment techniques and algorithms. Ultimately, it off
 <!-- tocstop -->
 
 # Technologies and Models
-The Investment Funnel brings together various optimization models for asset allocation, machine learning (ML) 
-methodologies for feature selection, and algorithms for scenario generation. Coupled with the backtesting 
-framework and Dash application, it presents a comprehensive environment for the development and backtesting of 
+The Investment Funnel brings together various optimization models for asset allocation, machine learning (ML)
+methodologies for feature selection, and algorithms for scenario generation. Coupled with the backtesting
+framework and Dash application, it presents a comprehensive environment for the development and backtesting of
 investment strategies
 
 #### Portfolio optimization models
@@ -71,22 +71,22 @@ pip install -r requirements.txt
 ```
 STEP 3: run dash application
 ``` bash
-python app.py 
+python app.py
 ```
 The app is running on http://127.0.0.1:8050
 
 # Usage
-Investment Funnel contains multiple portfolio optimization models, machine learning methods and algorithms located in 
+Investment Funnel contains multiple portfolio optimization models, machine learning methods and algorithms located in
 [models folder](models). <br/>
 
-Furthermore, this project contains dash application for visualizing the data, output of ML methods as well as results from backtesting. 
+Furthermore, this project contains dash application for visualizing the data, output of ML methods as well as results from backtesting.
 You can explore the dash application by running [app.py](app.py) file. <br/>
 
 ### Market Overview
-On the first page of our Dash application, you'll find an overview of the performance of the ETF/Mutual fund market 
+On the first page of our Dash application, you'll find an overview of the performance of the ETF/Mutual fund market
 in terms of risk and returns. This can provide a clearer understanding of the data included in the project.
 
-Moreover, you have the option to search and select one or more assets for a comparison against the entire 
+Moreover, you have the option to search and select one or more assets for a comparison against the entire
 universe of assets. For even deeper insight, you can repeat this experiment for various time periods.
 
 <p>
@@ -94,11 +94,11 @@ universe of assets. For even deeper insight, you can repeat this experiment for 
 </p>
 
 ### AI Feature Selection
-An integral part of optimal portfolio allocation involves feature selection. In this regard, we've implemented 
-two machine learning methods, Minimum Spanning Tree and Hierarchical Clustering, to streamline the number of assets 
-needed for the optimization model. 
+An integral part of optimal portfolio allocation involves feature selection. In this regard, we've implemented
+two machine learning methods, Minimum Spanning Tree and Hierarchical Clustering, to streamline the number of assets
+needed for the optimization model.
 
-To gain a deeper understanding of these two ML models, you're afforded the opportunity to experiment with their 
+To gain a deeper understanding of these two ML models, you're afforded the opportunity to experiment with their
 configurations and visualize the outcomes in interactive graphs. This empowers you to delve into which assets were
 selected, and scrutinize the performance, specifically the risk and returns, of the selected assets over a given time period.
 
@@ -107,18 +107,18 @@ selected, and scrutinize the performance, specifically the risk and returns, of 
 </p>
 
 ### Backtesting
-Backtesting is arguably the most crucial aspect of this project. It allows you to test your investment strategies 
+Backtesting is arguably the most crucial aspect of this project. It allows you to test your investment strategies
 on historical data and compare their performance with other models.
 
-You have the flexibility to select your own train (out-of-sample) and test (in-sample) periods. You can choose 
+You have the flexibility to select your own train (out-of-sample) and test (in-sample) periods. You can choose
 an optimization portfolio allocation model as well as a machine learning model for feature selection - this helps
-optimize the number of assets for your model. 
+optimize the number of assets for your model.
 
-Further customization can be achieved by specifying your machine learning model's configurations and the algorithm 
+Further customization can be achieved by specifying your machine learning model's configurations and the algorithm
 for scenario generation. And lastly, you have the option to select the benchmark for comparison.
 
 Once your backtest run completes, you will be presented with a comparative view of your optimal portfolio's performance
-against this benchmark for the test period. 
+against this benchmark for the test period.
 <p>
   <img width="100%" src="assets/backtesting1.png"></a>
 </p>
@@ -134,11 +134,11 @@ each investment period, as well as comparisons in terms of average annual return
 ### Develop and test your own model
 Lastly, you have the option to develop your own optimization and machine learning models for portfolio allocation or
 feature selection, and seamlessly integrate those into the investment funnel. By utilizing our Dash application,
-you can leverage the backtesting framework to visualize your model's results and conveniently compare its performance 
+you can leverage the backtesting framework to visualize your model's results and conveniently compare its performance
 against those of existing models in this repository.
 
 # Further configuration for professionals or students
-Are you intrigued by the Investment Funnel project? Do you wish to utilize it for your own research, teaching, 
+Are you intrigued by the Investment Funnel project? Do you wish to utilize it for your own research, teaching,
 or the development of investment strategies?
 
 To make the best of this project, you'll likely need access to up-to-date financial data and a professional solver.
@@ -154,7 +154,7 @@ To make the best of this project, you'll likely need access to up-to-date financ
 * **Mariska Van de Sompele** - *Implementation of minimum asset portfolio weights constraint for CVaR and Markowitz models* - [MariskaVandeSompele](https://github.com/MariskaVandeSompele)
 * **Auður Anna Jónsdóttir** - *Initial work for MST and Hierarchical Clustering*
 * **Chanyu Yang** - *First contributor to our dash application* - [cicadaa](https://github.com/cicadaa)
-* **Alexandra Mourier** - *Design of our GitHub README banner* 
+* **Alexandra Mourier** - *Design of our GitHub README banner*
 
 ## Research related to Investment Funnel
 * **Arnar Tjörvi Charlesson & Thorvaldur Ingi Ingimundarson** - *Self-Organizing Maps and Strategic Fund Selection* (Master Thesis, DTU, 2023)
@@ -176,7 +176,7 @@ Thank you for considering contributing to this project! We welcome contributions
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/VanekPetr/investment-funnel/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/VanekPetr/investment-funnel/tags).
 
 ## License
 
