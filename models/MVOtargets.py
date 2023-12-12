@@ -8,7 +8,6 @@ from loguru import logger
 # FUNCTION RUNNING THE OPTIMIZATION
 # ----------------------------------------------------------------------
 def portfolio_risk_target(covariance: np.array) -> float:
-    
     # Fixed equal weight x
     n = covariance.shape[0]
     x = np.ones(n) / n
@@ -21,12 +20,9 @@ def portfolio_risk_target(covariance: np.array) -> float:
 
 # ----------------------------------------------------------------------
 # Mathematical Optimization: TARGETS GENERATION
-# ---------------------------------------------------------------------- 
+# ----------------------------------------------------------------------
 def get_mvo_targets(
-        test_date: str,
-        benchmark: list,
-        budget: int,
-        data: pd.DataFrame
+    test_date: str, benchmark: list, budget: int, data: pd.DataFrame
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     logger.debug(f"Generating Volatility targets for {benchmark}")
 
@@ -36,17 +32,21 @@ def get_mvo_targets(
     whole_dataset_benchmark = data[tickers].copy()
 
     # Get weekly data just for testing period
-    test_dataset_benchmark = whole_dataset_benchmark[whole_dataset_benchmark.index >= test_date]
+    test_dataset_benchmark = whole_dataset_benchmark[
+        whole_dataset_benchmark.index >= test_date
+    ]
 
     # Number of weeks for testing
     weeks_n = len(test_dataset_benchmark.index)
 
     # Get parameters
-    sigma_lst, _ = MomentGenerator.generate_sigma_mu_for_test_periods(whole_dataset_benchmark, weeks_n)
+    sigma_lst, _ = MomentGenerator.generate_sigma_mu_for_test_periods(
+        whole_dataset_benchmark, weeks_n
+    )
 
     # Compute the optimal portfolio outperforming zero percentage return
     # ----------------------------------------------------------------------
-    p_points = len(sigma_lst)       # number of periods
+    p_points = len(sigma_lst)  # number of periods
 
     # COMPUTE MVO TARGETS
     list_targets = []
@@ -59,20 +59,24 @@ def get_mvo_targets(
 
         # save the result
         list_targets.append(vty_target)
-    
+
     # Generate new column so that dtype is set right.
     targets = pd.DataFrame(columns=["Vty_Target"], data=list_targets)
 
     # COMPUTE PORTFOLIO VALUE
     list_portfolio_values = []
     for w in test_dataset_benchmark.index:
-        budget_next = sum((budget/len(tickers)) * (1 + test_dataset_benchmark.loc[w, :]))
+        budget_next = sum(
+            (budget / len(tickers)) * (1 + test_dataset_benchmark.loc[w, :])
+        )
         list_portfolio_values.append(budget_next)
         budget = budget_next
 
     # Generate dataframe so that dtype is set right.
-    portfolio_value = pd.DataFrame(columns=["Benchmark_Value"],
-                                   index=test_dataset_benchmark.index,
-                                   data=list_portfolio_values)
+    portfolio_value = pd.DataFrame(
+        columns=["Benchmark_Value"],
+        index=test_dataset_benchmark.index,
+        data=list_portfolio_values,
+    )
 
     return targets, portfolio_value
