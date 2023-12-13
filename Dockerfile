@@ -4,14 +4,17 @@ FROM python:3.10
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=100
+    POETRY_VERSION=1.7.1
 
-# Install requirements
-COPY requirements.txt .
-RUN pip install -U pip setuptools wheel
-RUN pip install -r requirements.txt
+# install poetry
+RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/etc/poetry python3 - && \
+    cd /usr/local/bin && \
+    ln -s /etc/poetry/bin/poetry && \
+    poetry config virtualenvs.create false
+
+# install dependencies
+COPY pyproject.toml poetry.lock /
+RUN poetry install --no-interaction --no-cache --no-ansi
 
 # Copy source files
 WORKDIR /app
