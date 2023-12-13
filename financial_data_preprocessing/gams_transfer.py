@@ -1,6 +1,7 @@
+import os
+
 import gamstransfer as gt
 import pandas as pd
-import os
 from tqdm import tqdm
 
 

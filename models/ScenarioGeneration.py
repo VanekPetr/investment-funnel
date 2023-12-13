@@ -1,8 +1,9 @@
-import numpy as np
 import math
+from typing import List, Tuple
+
+import numpy as np
 import pandas as pd
 from loguru import logger
-from typing import Tuple, List
 
 
 class MomentGenerator:

@@ -1,8 +1,9 @@
+import pickle
+from typing import Tuple
+
 import cvxpy as cp
 import numpy as np
 import pandas as pd
-import pickle
-from typing import Tuple
 from loguru import logger
 
 

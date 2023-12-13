@@ -1,8 +1,10 @@
-import pandas as pd
-import numpy as np
-import dateutil.parser
-import requests
 import os
+
+import dateutil.parser
+import numpy as np
+import pandas as pd
+import requests
+
 from settings import settings
 
 

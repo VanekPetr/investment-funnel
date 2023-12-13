@@ -1,8 +1,10 @@
+from typing import Tuple
+
 import numpy as np
 import pandas as pd
-from models.ScenarioGeneration import MomentGenerator
-from typing import Tuple
 from loguru import logger
+
+from models.ScenarioGeneration import MomentGenerator
 
 
 # FUNCTION RUNNING THE OPTIMIZATION
