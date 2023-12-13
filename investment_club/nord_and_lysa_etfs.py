@@ -21,7 +21,7 @@ lysa_bond_etfs = {
     "Vanguard Global Short-Term Bond": "BSV",
     "Vanguard Euro Investment Grade Bond": "VECP",
     "Vanguard Eurozone Inflation-Linked Bond": "VTIP",
-    "Vanguard Global Aggregate Bond": "VGAB.TO",  # Toronto Real Time Price. Currency in CAD (only in CAD in Yahoofinance)
+    "Vanguard Global Aggregate Bond": "VGAB.TO",  # Toronto Real Time Price. Currency in CAD
     "iShares Global Inflation Linked Govt Bond": "IGIL.L",  # LSE Delayed Price. Currency in USD
     "Vanguard EUR Corporate Bond": "VECP.DE",  # XETRA Delayed Price. Currency in EUR
     "iShares Core € Corp Bond": "IEAC.L",  # LSE Delayed Price. Currency in EUR
