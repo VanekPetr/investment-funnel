@@ -8,7 +8,7 @@ TEST_DIR = Path(__file__).parent
 def test_monte_carlo_scenarios(mc_scenarios):
     expected_scenarios = np.load("tests/scgen/scenarios_BASE.npz")["scenarios"]
 
-    # np.savez_compressed("scgen/scenarios_BASE.npz", scenarios=scenarios)
+    # np.savez_compressed("scgen/scenarios_BASE.npz", scenarios=mc_scenarios)
     np.testing.assert_array_equal(mc_scenarios, expected_scenarios)
 
 

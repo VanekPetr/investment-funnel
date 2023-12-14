@@ -42,6 +42,9 @@ def test_get_cvar_targets(cvar_target_data, label):
     expected_benchmark_port_val = pd.read_csv(
         f"tests/cvar/benchmark_port_val_{label}_BASE.csv", index_col=0, parse_dates=True
     )
+    expected_benchmark_port_val.index = expected_benchmark_port_val.index.astype(
+        "datetime64[us]"
+    )
 
     targets, benchmark_port_val = cvar_target_data
 
@@ -71,12 +74,13 @@ def test_cvar_model(test_narrow_dataset, mc_scenarios, cvar_target_data):
         cvar_alpha=0.05,
         trans_cost=0.001,
         max_weight=1,
-        solver="GLPK",
+        solver="ECOS",
+        lower_bound=0,
     )
 
-    # port_allocation.to_csv("tests/cvar/port_allocation_ACTUAL.csv")
-    # port_value.to_csv("tests/cvar/port_value_ACTUAL.csv")
-    # port_cvar.to_csv("tests/cvar/port_cvar_ACTUAL.csv")
+    # port_allocation.to_csv("cvar/port_allocation_BASE.csv")
+    # port_value.to_csv("cvar/port_value_BASE.csv")
+    # port_cvar.to_csv("cvar/port_cvar_BASE.csv")
 
     active_constraints = (targets.to_numpy() - port_cvar.to_numpy()) < 1e-5
     pd.testing.assert_frame_equal(port_allocation, expected_port_allocation, atol=1e-5)
