@@ -1,6 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -64,11 +65,14 @@ def test_cvar_model(test_narrow_dataset, mc_scenarios, cvar_target_data):
     )
     expected_port_cvar = pd.read_csv("tests/cvar/port_cvar_BASE.csv", index_col=0)
 
+    # np.savez_compressed("scgen/scenarios_BASE.npz", scenarios=mc_scenarios)
+    generated_scenarios = np.load("tests/scgen/scenarios_BASE.npz")["scenarios"]
+
     targets, _ = cvar_target_data
 
     port_allocation, port_value, port_cvar = cvar_model(
         test_ret=test_narrow_dataset,
-        scenarios=mc_scenarios,  # Scenarios
+        scenarios=generated_scenarios,  # Scenarios
         targets=targets,  # Target
         budget=100,
         cvar_alpha=0.05,
