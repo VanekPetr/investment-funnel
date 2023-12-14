@@ -1,8 +1,9 @@
 import yfinance as yf
 from loguru import logger
+
 from investment_club.nord_and_lysa_etfs import (
-    lysa_stock_etfs,
     lysa_bond_etfs,
+    lysa_stock_etfs,
     nord_etfs,
 )
 

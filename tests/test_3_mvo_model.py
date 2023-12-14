@@ -1,11 +1,11 @@
-import pytest
-from pathlib import Path
 from datetime import timedelta
+from pathlib import Path
+
 import pandas as pd
+import pytest
 
-from models.MVOtargets import get_mvo_targets
 from models.MVOmodel import mvo_model
-
+from models.MVOtargets import get_mvo_targets
 
 TEST_DIR = Path(__file__).parent
 

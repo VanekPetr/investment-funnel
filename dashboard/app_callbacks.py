@@ -1,14 +1,14 @@
 import flask
-from dash.dependencies import Input, Output, State
-from models.main import TradeBot
 from dash import dcc
+from dash.dependencies import Input, Output, State
+
 from dashboard.app_layouts import (
     page_1_layout,
     page_2_layout,
     page_3_layout,
     page_mobile_layout,
 )
-
+from models.main import TradeBot
 
 algo = TradeBot()
 
@@ -28,7 +28,7 @@ def get_callbacks(app):
             return page_3_layout
 
     # BACK-TESTING
-    # ----------------------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------
     # PLOT GRAPH WITH DOTS
     @app.callback(
         [
@@ -272,7 +272,7 @@ def get_callbacks(app):
         return split_date, algo.max_date, algo.min_date, split_date, split_date
 
     # AI Feature Selection
-    # ----------------------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------
     # PLOT ML MST GRAPH
     @app.callback(
         [
@@ -409,7 +409,7 @@ def get_callbacks(app):
             )
 
     # MARKET OVERVIEW
-    # ----------------------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------
     # PLOT GRAPH WITH DOTS
     @app.callback(
         [

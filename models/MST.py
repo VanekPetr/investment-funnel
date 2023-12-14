@@ -1,8 +1,8 @@
-import pandas as pd
-import numpy as np
 import networkx as nx
-from sklearn.decomposition import PCA
+import numpy as np
+import pandas as pd
 from loguru import logger
+from sklearn.decomposition import PCA
 
 
 def minimum_spanning_tree(dataset: pd.DataFrame) -> (list, pd.DataFrame, float, float):

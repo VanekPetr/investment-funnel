@@ -1,12 +1,12 @@
 import dash
 import dash_bootstrap_components as dbc
-import pandas as pd
 import numpy as np
+import pandas as pd
 from dash import dcc, html
-from dashboard.app_layouts import page_1_layout
-from dashboard.app_callbacks import get_callbacks
-from models.main import TradeBot
 
+from dashboard.app_callbacks import get_callbacks
+from dashboard.app_layouts import page_1_layout
+from models.main import TradeBot
 
 algo = TradeBot()
 

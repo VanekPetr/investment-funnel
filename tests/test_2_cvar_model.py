@@ -1,11 +1,11 @@
-import pytest
-from pathlib import Path
-import pandas as pd
 from datetime import timedelta
+from pathlib import Path
 
-from models.CVaRtargets import get_cvar_targets
+import pandas as pd
+import pytest
+
 from models.CVaRmodel import cvar_model
-
+from models.CVaRtargets import get_cvar_targets
 
 TEST_DIR = Path(__file__).parent
 

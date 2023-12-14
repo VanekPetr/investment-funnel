@@ -1,17 +1,18 @@
 import dash_bootstrap_components as dbc
 from dash import html
+
 from dashboard.app_components import (
-    sideBar,
-    optionBacktest,
-    graphResults,
-    optionML,
     graphML,
-    optionGraph,
     graphOverview,
+    graphResults,
+    mobile_page,
+    optionBacktest,
+    optionGraph,
+    optionML,
+    sideBar,
+    spinner_backtest,
     spinner_dots,
     spinner_ml,
-    spinner_backtest,
-    mobile_page,
 )
 
 """

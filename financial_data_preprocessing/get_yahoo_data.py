@@ -1,8 +1,9 @@
-import yfinance as yf
-import pandas as pd
 import os
-from loguru import logger
 from typing import List
+
+import pandas as pd
+import yfinance as yf
+from loguru import logger
 
 
 def download_data(start_date: str, end_date: str, tickers: List[str]) -> pd.DataFrame:

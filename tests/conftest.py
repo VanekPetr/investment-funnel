@@ -1,12 +1,12 @@
-import pytest
-from pathlib import Path
 import os
-import pandas as pd
+from pathlib import Path
+
 import numpy as np
+import pandas as pd
+import pytest
 
-from models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
 from models.MST import minimum_spanning_tree
-
+from models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
 
 TEST_DIR = Path(__file__).parent
 

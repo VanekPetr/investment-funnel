@@ -1,9 +1,10 @@
-import cvxpy as cp
-import numpy as np
-import scipy as sp
-import pandas as pd
 import pickle
 from typing import Tuple
+
+import cvxpy as cp
+import numpy as np
+import pandas as pd
+import scipy as sp
 from loguru import logger
 
 

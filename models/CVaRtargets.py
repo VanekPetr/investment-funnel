@@ -1,8 +1,10 @@
+from typing import Tuple
+
 import numpy as np
 import pandas as pd
-from models.ScenarioGeneration import ScenarioGenerator
-from typing import Tuple
 from loguru import logger
+
+from models.ScenarioGeneration import ScenarioGenerator
 
 
 # Primal CVaR formula
@@ -11,7 +13,8 @@ def CVaR(alpha: float, p: np.array, q: np.array) -> Tuple[float, float]:
     Computes CVaR using primal formula.
     NOTE: Inputs p and q should be numpy arrays.
     """
-    # We need to be careful that math index starts from 1 but numpy starts from 0 (matters in formulas like ceil(alpha * T))
+    # We need to be careful that math index starts from 1 but numpy starts from 0
+    # (matters in formulas like ceil(alpha * T))
     # T = q.shape[0]
     sort_idx = np.argsort(q)
     sorted_q = q[sort_idx]

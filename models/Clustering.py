@@ -1,8 +1,8 @@
-import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.spatial.distance import squareform
-from scipy.cluster.hierarchy import dendrogram, fcluster, complete
+import pandas as pd
 from loguru import logger
+from scipy.cluster.hierarchy import complete, dendrogram, fcluster
+from scipy.spatial.distance import squareform
 
 
 def fancy_dendrogram(*args, **kwargs):

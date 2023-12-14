@@ -1,21 +1,23 @@
+import os
+from pathlib import Path
+from typing import Tuple, Union
+
 import numpy as np
 import pandas as pd
-import os
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
-from typing import Tuple, Union
-from models.dataAnalyser import mean_an_returns, final_stats
-from models.MST import minimum_spanning_tree
-from models.Clustering import cluster, pick_cluster
-from models.ScenarioGeneration import ScenarioGenerator, MomentGenerator
-from models.CVaRtargets import get_cvar_targets
-from models.CVaRmodel import cvar_model
-from models.MVOtargets import get_mvo_targets
-from models.MVOmodel import mvo_model
-from financial_data.etf_isins import ETFlist
-from pathlib import Path
 from loguru import logger
+
+from financial_data.etf_isins import ETFlist
+from models.Clustering import cluster, pick_cluster
+from models.CVaRmodel import cvar_model
+from models.CVaRtargets import get_cvar_targets
+from models.dataAnalyser import final_stats, mean_an_returns
+from models.MST import minimum_spanning_tree
+from models.MVOmodel import mvo_model
+from models.MVOtargets import get_mvo_targets
+from models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
 
 pio.renderers.default = "browser"
 ROOT_DIR = Path(__file__).parent.parent
