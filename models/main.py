@@ -383,7 +383,7 @@ class TradeBot:
         # SCENARIO GENERATION
         # ---------------------------------------------------------------------------------------------------
         # Create scenario generator
-        sg = ScenarioGenerator(np.random.default_rng())
+        sg = ScenarioGenerator(np.random.default_rng(seed=42))
 
         if model == "Markowitz model" or scenarios_type == "MonteCarlo":
             sigma_lst, mu_lst = MomentGenerator.generate_sigma_mu_for_test_periods(

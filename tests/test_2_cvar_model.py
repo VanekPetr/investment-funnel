@@ -48,8 +48,8 @@ def test_get_cvar_targets(cvar_target_data, label):
 
     targets, benchmark_port_val = cvar_target_data
 
-    # targets.to_csv(f"tests/cvar/targets_{label}_ACTUAL.csv")
-    # benchmark_port_val.to_csv(f"tests/cvar/benchmark_port_val_{label}_ACTUAL.csv")
+    # targets.to_csv(f"cvar/targets_{label}_BASE.csv")
+    # benchmark_port_val.to_csv(f"cvar/benchmark_port_val_{label}_BASE.csv")
     pd.testing.assert_frame_equal(targets, expected_targets)
     pd.testing.assert_frame_equal(benchmark_port_val, expected_benchmark_port_val)
 

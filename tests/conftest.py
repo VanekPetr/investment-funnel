@@ -13,7 +13,7 @@ TEST_DIR = Path(__file__).parent
 
 @pytest.fixture()
 def rng():
-    test_rng = np.random.default_rng(0)
+    test_rng = np.random.default_rng(seed=42)
     return test_rng
 
 
