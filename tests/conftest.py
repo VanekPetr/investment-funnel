@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import numpy as np
@@ -8,7 +7,11 @@ import pytest
 from models.MST import minimum_spanning_tree
 from models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
 
-TEST_DIR = Path(__file__).parent
+
+@pytest.fixture(scope="session", name="resource_dir")
+def resource_fixture():
+    """resource fixture"""
+    return Path(__file__).parent / "resources"
 
 
 @pytest.fixture()
@@ -24,9 +27,9 @@ def scgen(rng):
 
 
 @pytest.fixture(scope="session")
-def weekly_returns():
+def weekly_returns(resource_dir):
     weekly_returns = pd.read_parquet(
-        os.path.join(TEST_DIR, "data/all_etfs_rets.parquet.gzip")
+        resource_dir / "data/all_etfs_rets.parquet.gzip"
     )
     return weekly_returns
 
@@ -38,9 +41,9 @@ def tickers(weekly_returns):
 
 
 @pytest.fixture(scope="session")
-def names():
+def names(resource_dir):
     df_names = pd.read_parquet(
-        os.path.join(TEST_DIR, "data/all_etfs_rets_name.parquet.gzip")
+        resource_dir / "data/all_etfs_rets_name.parquet.gzip"
     )
     names = df_names.columns.values
     return names
