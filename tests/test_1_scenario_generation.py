@@ -1,6 +1,5 @@
 import numpy as np
 
-
 # def test_monte_carlo_scenarios(mc_scenarios):
 #     expected_scenarios = np.load("tests/scgen/scenarios_BASE.npz")["scenarios"]
 #

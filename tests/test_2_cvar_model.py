@@ -7,6 +7,7 @@ import pytest
 from models.CVaRmodel import cvar_model
 from models.CVaRtargets import get_cvar_targets
 
+
 @pytest.fixture(scope="module")
 def n_simulations_target():
     return 250
@@ -35,9 +36,13 @@ def cvar_target_data(
     indirect=["cvar_target_data"],
 )
 def test_get_cvar_targets(cvar_target_data, label, resource_dir):
-    expected_targets = pd.read_csv( resource_dir / f"cvar/targets_{label}_BASE.csv", index_col=0)
+    expected_targets = pd.read_csv(
+        resource_dir / f"cvar/targets_{label}_BASE.csv", index_col=0
+    )
     expected_benchmark_port_val = pd.read_csv(
-        resource_dir / f"cvar/benchmark_port_val_{label}_BASE.csv", index_col=0, parse_dates=True
+        resource_dir / f"cvar/benchmark_port_val_{label}_BASE.csv",
+        index_col=0,
+        parse_dates=True,
     )
     expected_benchmark_port_val.index = expected_benchmark_port_val.index.astype(
         "datetime64[us]"
@@ -52,9 +57,7 @@ def test_get_cvar_targets(cvar_target_data, label, resource_dir):
 
 
 @pytest.mark.parametrize("cvar_target_data", ["benchmark_isin_2"], indirect=True)
-def test_cvar_model(test_narrow_dataset, mc_scenarios, cvar_target_data,
-                    resource_dir):
-
+def test_cvar_model(test_narrow_dataset, mc_scenarios, cvar_target_data, resource_dir):
     expected_port_allocation = pd.read_csv(
         resource_dir / "cvar/port_allocation_BASE.csv", index_col=0
     )
@@ -62,10 +65,13 @@ def test_cvar_model(test_narrow_dataset, mc_scenarios, cvar_target_data,
         resource_dir / "cvar/port_value_BASE.csv", index_col=0, parse_dates=True
     )
     expected_port_cvar = pd.read_csv(
-        resource_dir / "cvar/port_cvar_BASE.csv", index_col=0)
+        resource_dir / "cvar/port_cvar_BASE.csv", index_col=0
+    )
 
     # np.savez_compressed("scgen/scenarios_BASE.npz", scenarios=mc_scenarios)
-    generated_scenarios = np.load(resource_dir / "scgen/scenarios_BASE.npz")["scenarios"]
+    generated_scenarios = np.load(resource_dir / "scgen/scenarios_BASE.npz")[
+        "scenarios"
+    ]
 
     targets, _ = cvar_target_data
 
