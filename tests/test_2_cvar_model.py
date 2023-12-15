@@ -29,6 +29,7 @@ def cvar_target_data(
     )
     return targets, benchmark_port_val
 
+
 @pytest.fixture(scope="module")
 def cvar_dir(resource_dir):
     return resource_dir / "cvar"
@@ -39,9 +40,8 @@ def cvar_dir(resource_dir):
     [("benchmark_isin_1", "1"), ("benchmark_isin_2", "2")],
     indirect=["cvar_target_data"],
 )
-
 def test_get_cvar_targets(cvar_target_data, label, cvar_dir):
-    expected_targets = pd.read_csv( cvar_dir / f"targets_{label}_BASE.csv", index_col=0)
+    expected_targets = pd.read_csv(cvar_dir / f"targets_{label}_BASE.csv", index_col=0)
     expected_benchmark_port_val = pd.read_csv(
         cvar_dir / f"benchmark_port_val_{label}_BASE.csv",
         index_col=0,
@@ -60,7 +60,9 @@ def test_get_cvar_targets(cvar_target_data, label, cvar_dir):
 
 
 @pytest.mark.parametrize("cvar_target_data", ["benchmark_isin_2"], indirect=True)
-def test_cvar_model(test_narrow_dataset, mc_scenarios, cvar_target_data, resource_dir, cvar_dir):
+def test_cvar_model(
+    test_narrow_dataset, mc_scenarios, cvar_target_data, resource_dir, cvar_dir
+):
     expected_port_allocation = pd.read_csv(
         cvar_dir / "port_allocation_BASE.csv", index_col=0
     )
