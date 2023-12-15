@@ -1,13 +1,10 @@
 from datetime import timedelta
-from pathlib import Path
 
 import pandas as pd
 import pytest
 
 from models.MVOmodel import mvo_model
 from models.MVOtargets import get_mvo_targets
-
-TEST_DIR = Path(__file__).parent
 
 
 @pytest.fixture(scope="module")
@@ -27,10 +24,17 @@ def mvo_target_data(start_test_date, weekly_returns, request):
     [("benchmark_isin_1", "1"), ("benchmark_isin_2", "2")],
     indirect=["mvo_target_data"],
 )
-def test_get_mvo_targets(mvo_target_data, label):
-    expected_targets = pd.read_csv(f"tests/mvo/targets_{label}_BASE.csv", index_col=0)
+def test_get_mvo_targets(mvo_target_data, label, resource_dir):
+    expected_targets = pd.read_csv(
+        resource_dir / f"mvo/targets_{label}_BASE.csv", index_col=0
+    )
     expected_benchmark_port_val = pd.read_csv(
-        f"tests/mvo/benchmark_port_val_{label}_BASE.csv", index_col=0, parse_dates=True
+        resource_dir / f"mvo/benchmark_port_val_{label}_BASE.csv",
+        index_col=0,
+        parse_dates=True,
+    )
+    expected_benchmark_port_val.index = expected_benchmark_port_val.index.astype(
+        "datetime64[us]"
     )
 
     targets, benchmark_port_val = mvo_target_data
@@ -42,14 +46,16 @@ def test_get_mvo_targets(mvo_target_data, label):
 
 
 @pytest.mark.parametrize("mvo_target_data", ["benchmark_isin_2"], indirect=True)
-def test_mvo_model(test_narrow_dataset, moments, mvo_target_data):
+def test_mvo_model(test_narrow_dataset, moments, mvo_target_data, resource_dir):
     expected_port_allocation = pd.read_csv(
-        "tests/mvo/port_allocation_BASE.csv", index_col=0
+        resource_dir / "mvo/port_allocation_BASE.csv", index_col=0
     )
     expected_port_value = pd.read_csv(
-        "tests/mvo/port_value_BASE.csv", index_col=0, parse_dates=True
+        resource_dir / "mvo/port_value_BASE.csv", index_col=0, parse_dates=True
     )
-    expected_port_risk = pd.read_csv("tests/mvo/port_risk_BASE.csv", index_col=0)
+    expected_port_risk = pd.read_csv(
+        resource_dir / "mvo/port_risk_BASE.csv", index_col=0
+    )
 
     targets, _ = mvo_target_data
     sigma_lst, mu_lst = moments
@@ -63,11 +69,12 @@ def test_mvo_model(test_narrow_dataset, moments, mvo_target_data):
         trans_cost=0.001,
         max_weight=1,
         solver="ECOS",
+        lower_bound=0,
     )
 
-    # port_allocation.to_csv("tests/mvo/port_allocation_ACTUAL.csv")
-    # port_value.to_csv("tests/mvo/port_value_ACTUAL.csv")
-    # port_risk.to_csv("tests/mvo/port_risk_ACTUAL.csv")
+    # port_allocation.to_csv("mvo/port_allocation_BASE.csv")
+    # port_value.to_csv("mvo/port_value_BASE.csv")
+    # port_risk.to_csv("mvo/port_risk_BASE.csv")
 
     active_constraints = (targets.to_numpy() - port_risk.to_numpy()) < 1e-5
     pd.testing.assert_frame_equal(port_allocation, expected_port_allocation, atol=1e-5)

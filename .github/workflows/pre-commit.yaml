@@ -1,0 +1,15 @@
+# Run pre-commit on all files in the repository
+name: pre-commit
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: pre-commit/action@v3.0.0
+      with:
+          extra_args: '--verbose --all-files'

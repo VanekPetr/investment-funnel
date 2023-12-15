@@ -1,0 +1,20 @@
+name: pre-commit
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: cvxgrp/.github/actions/test@main
+        with:
+          source-folder: models
+
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v2
+        with:
+          files: artifacts/tests/coverage/coverage.info
+          format: lcov
