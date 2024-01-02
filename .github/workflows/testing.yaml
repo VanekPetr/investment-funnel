@@ -18,3 +18,5 @@ jobs:
       - uses: cvxgrp/.github/actions/test@main
         with:
           python-version: ${{ matrix.python-version }}
+	  source-folder: models
+
