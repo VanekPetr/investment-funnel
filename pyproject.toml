@@ -2,13 +2,13 @@
 name = "investment-funnel"
 version = "0.0.0"
 description = "Open-source testing and benchmarking plaform for asset allocation."
-authors = ["Thomas Schmelzer", "Petr Vanek"]
+authors = ["Petr Vanek"]
 readme = "README.md"
 repository = "https://github.com/VanekPetr/investment-funnel"
 homepage = "https://investment-funnel.algostrata.com"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.13"
 pandas = "2.1.4"
 pandas-datareader = "0.10.0"
 dash = "2.14.2"
