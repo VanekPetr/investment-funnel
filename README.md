@@ -65,9 +65,9 @@ python -m venv venv
 source venv/bin/activate
 ```
 
-STEP 2: install requirements
+STEP 2: install requirements with [poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
 ``` bash
-pip install -r requirements.txt
+poetry install -vv
 ```
 STEP 3: run dash application
 ``` bash
