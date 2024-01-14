@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: cvxgrp/.github/actions/test@main
         with:
-          source-folder: models
+          source-folder: funnel
 
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v2
