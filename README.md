@@ -71,7 +71,7 @@ poetry install -vv
 ```
 STEP 3: run dash application
 ``` bash
-python app.py
+python -m funnel.app
 ```
 The app is running on http://127.0.0.1:8050
 
