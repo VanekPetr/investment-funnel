@@ -1,6 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import html
-from dashboard.app_components import (
+
+from funnel.dashboard.app_components import (
     graphML,
     graphOverview,
     graphResults,

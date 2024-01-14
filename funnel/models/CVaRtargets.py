@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from loguru import logger
 
-from models.ScenarioGeneration import ScenarioGenerator
+from funnel.models.ScenarioGeneration import ScenarioGenerator
 
 
 # Primal CVaR formula
