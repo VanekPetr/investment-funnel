@@ -7,9 +7,9 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
-from financial_data.etf_isins import ETFlist
 from loguru import logger
 
+from funnel.financial_data.etf_isins import ETFlist
 from funnel.models.Clustering import cluster, pick_cluster
 from funnel.models.CVaRmodel import cvar_model
 from funnel.models.CVaRtargets import get_cvar_targets
