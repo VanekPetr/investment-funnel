@@ -1,7 +1,6 @@
 import flask
 from dash import dcc
 from dash.dependencies import Input, Output, State
-
 from dashboard.app_layouts import (
     page_1_layout,
     page_2_layout,

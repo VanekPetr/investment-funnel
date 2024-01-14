@@ -3,7 +3,6 @@ import base64
 import cvxpy
 import dash_bootstrap_components as dbc
 from dash import dash_table, dcc, html
-
 from models.main import TradeBot
 
 algo = TradeBot()
