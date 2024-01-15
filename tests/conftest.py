@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from models.MST import minimum_spanning_tree
-from models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
+from funnel.models.MST import minimum_spanning_tree
+from funnel.models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
 
 
 @pytest.fixture(scope="session", name="resource_dir")

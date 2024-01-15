@@ -1,5 +1,5 @@
 <p>
-  <img width="100%" src="assets/InvestmentFunnel 3.png"></a>
+  <img width="100%" src="funnel/assets/InvestmentFunnel 3.png"></a>
 </p>
 
 <p align="center">
@@ -71,16 +71,16 @@ poetry install -vv
 ```
 STEP 3: run dash application
 ``` bash
-python app.py
+python -m funnel.app
 ```
 The app is running on http://127.0.0.1:8050
 
 # Usage
 Investment Funnel contains multiple portfolio optimization models, machine learning methods and algorithms located in
-[models folder](models). <br/>
+[models folder](funnel/models). <br/>
 
 Furthermore, this project contains dash application for visualizing the data, output of ML methods as well as results from backtesting.
-You can explore the dash application by running [app.py](app.py) file. <br/>
+You can explore the dash application by running [app.py](funnel/app.py) file. <br/>
 
 ### Market Overview
 On the first page of our Dash application, you'll find an overview of the performance of the ETF/Mutual fund market
@@ -90,7 +90,7 @@ Moreover, you have the option to search and select one or more assets for a comp
 universe of assets. For even deeper insight, you can repeat this experiment for various time periods.
 
 <p>
-  <img width="100%" src="assets/market_overview.png"></a>
+  <img width="100%" src="funnel/assets/market_overview.png"></a>
 </p>
 
 ### AI Feature Selection
@@ -103,7 +103,7 @@ configurations and visualize the outcomes in interactive graphs. This empowers y
 selected, and scrutinize the performance, specifically the risk and returns, of the selected assets over a given time period.
 
 <p>
-  <img width="100%" src="assets/feature_selection.png"></a>
+  <img width="100%" src="funnel/assets/feature_selection.png"></a>
 </p>
 
 ### Backtesting
@@ -120,14 +120,14 @@ for scenario generation. And lastly, you have the option to select the benchmark
 Once your backtest run completes, you will be presented with a comparative view of your optimal portfolio's performance
 against this benchmark for the test period.
 <p>
-  <img width="100%" src="assets/backtesting1.png"></a>
+  <img width="100%" src="funnel/assets/backtesting1.png"></a>
 </p>
 
 This performance review will offer insights into portfolio value development, allocation to individual assets for
 each investment period, as well as comparisons in terms of average annual return, standard deviation, and Sharpe ratio.
 
 <p>
-  <img width="100%" src="assets/backtesting2.png"></a>
+  <img width="100%" src="funnel/assets/backtesting2.png"></a>
 </p>
 
 
@@ -151,7 +151,7 @@ To make the best of this project, you'll likely need access to up-to-date financ
 * **Petr Vanek** - *Co-founder & Initial work* - [VanekPetr](https://github.com/VanekPetr)
 * **Kourosh Rasmussen** - *Co-founder* - [AlgoStrata](https://algostrata.com) & [Penly](https://penly.dk)
 * **Gábor Balló** - *Implementation of CVaR model with CVXPY and MOSEK* - [szelidvihar](https://github.com/szelidvihar) & [MOSEK](https://github.com/MOSEK)
-* **Thomas Schmelzer** - *Help with 'Aging of the code', GitOps, Maintainability of an OpenSource project* - [tschm](https://github.com/tschm) & [ADIA](https://www.adia.ae) & [cvxgrp/simulator](https://github.com/cvxgrp/simulator)
+* **Thomas Schmelzer** - *Help with [Aging of the code](https://www.linkedin.com/pulse/aging-code-thomas-schmelzer-7o4jf/), GitOps and Maintainability of an OpenSource project* - [tschm](https://github.com/tschm) & [ADIA](https://www.adia.ae) & [cvxgrp/simulator](https://github.com/cvxgrp/simulator)
 * **Mariska Van de Sompele** - *Implementation of minimum asset portfolio weights constraint for CVaR and Markowitz models* - [MariskaVandeSompele](https://github.com/MariskaVandeSompele)
 * **Auður Anna Jónsdóttir** - *Initial work for MST and Hierarchical Clustering*
 * **Chanyu Yang** - *First contributor to our dash application* - [cicadaa](https://github.com/cicadaa)

@@ -139,6 +139,6 @@ notes
 .vscode/
 rebalance_inputs.pkl
 *.ipynb
-financial_data/pfo_data_2023.gdx
-financial_data/pfo_data_2023.xlsx
-financial_data/daily_price_algostrata.parquet
+funnel/financial_data/pfo_data_2023.gdx
+funnel/financial_data/pfo_data_2023.xlsx
+funnel/financial_data/daily_price_algostrata.parquet

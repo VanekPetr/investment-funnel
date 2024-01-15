@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 from dash import dcc, html
 
-from dashboard.app_callbacks import get_callbacks
-from dashboard.app_layouts import page_1_layout
-from models.main import TradeBot
+from funnel.dashboard.app_callbacks import get_callbacks
+from funnel.dashboard.app_layouts import page_1_layout
+from funnel.models.main import TradeBot
 
 algo = TradeBot()
 

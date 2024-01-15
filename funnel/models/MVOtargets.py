@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from loguru import logger
 
-from models.ScenarioGeneration import MomentGenerator
+from funnel.models.ScenarioGeneration import MomentGenerator
 
 
 # FUNCTION RUNNING THE OPTIMIZATION

@@ -39,8 +39,6 @@
 **/financial_data/pfo_data_2023.xlsx
 **/financial_data/top_2000_etfs.xlsx
 **/financial_data_preprocessing
-**/investment_club
 **/rebalance_inputs.pkl
 **/venv
-**/pfo
 **/tests

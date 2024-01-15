@@ -1,10 +1,12 @@
 import base64
+import os
+from pathlib import Path
 
 import cvxpy
 import dash_bootstrap_components as dbc
 from dash import dash_table, dcc, html
 
-from models.main import TradeBot
+from funnel.models.main import TradeBot
 
 algo = TradeBot()
 
@@ -138,7 +140,10 @@ LOADING_STYLE = {
 
 # GENERAL
 # ----------------------------------------------------------------------------------------------------------------------
-image_filename = "assets/ALGO_logo.png"  # replace with your own image
+ROOT_DIR = Path(__file__).parent.parent
+image_filename = os.path.join(
+    ROOT_DIR, "assets/ALGO_logo.png"
+)  # replace with your own image
 encoded_image = base64.b64encode(open(image_filename, "rb").read())
 
 spinner_dots = html.Div(
