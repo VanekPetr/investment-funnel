@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 
 
 def minimum_spanning_tree(dataset: pd.DataFrame) -> (list, pd.DataFrame, float, float):
-    logger.debug("Running MST method")
+    logger.debug("💡 Running MST method")
 
     corr = dataset.corr(method="spearman")  # calculate the correlation
     distance_corr = (2 * (1 - corr)) ** 0.5  # calculate the distance

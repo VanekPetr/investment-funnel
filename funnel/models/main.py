@@ -60,7 +60,7 @@ class TradeBot:
         try:
             df_to_plot = pd.concat([performance, performance_benchmark], axis=1)
         except Exception:
-            logger.debug("Old data format")
+            logger.warning("⚠️ Old data format.")
             performance.index = [
                 date.date() for date in performance.index
             ]  # needed for old data

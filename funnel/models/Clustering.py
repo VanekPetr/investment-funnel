@@ -44,7 +44,7 @@ def cluster(
     """
     FUNCTION TO CLUSTER DATA
     """
-    logger.debug("Running hierarchical clustering method")
+    logger.info("💡 Running hierarchical clustering method")
 
     corr = data.corr(method="spearman")  # calculate the correlation
     distance_corr = 1 - corr  # distance based on correlation
@@ -120,7 +120,7 @@ def pick_cluster(
                 .nlargest(max_size, ["Sharpe Ratio"])
                 .index
             )
-            logger.warning(f"In {clus} was picked only {max_size} assets")
+            logger.warning(f"⚠️ In {clus} was picked only {max_size} assets")
 
     # Get returns
     result = data[ids]
