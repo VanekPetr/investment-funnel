@@ -143,7 +143,7 @@ def rebalancing_model(
         return opt_port, vty_result_p, port_val, cash
 
     else:
-        # Save inputs, so that failing problem can be investigated separately e. g. in a notebook
+        # Save inputs, so that failing problem can be investigated separately e.g. in a notebook
         inputs = {
             "mu": mu,
             "covariance": covariance,
@@ -199,7 +199,7 @@ def mvo_model(
 
     logger.debug(f"🤖 Selected solver is {solver}")
     for p in range(p_points):
-        logger.info(f"🚀 Optimizing period {p} out of {p_points}.")
+        logger.info(f"🚀 Optimizing period {p + 1} out of {p_points}.")
 
         # Get MVO parameters
         mu = mu_lst[p]

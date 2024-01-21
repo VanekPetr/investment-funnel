@@ -193,7 +193,7 @@ def cvar_model(
 
     logger.info(f"🤖 Selected solver is {solver}")
     for p in range(p_points):
-        logger.info(f"🚀 Optimizing period {p} out of {p_points}.")
+        logger.info(f"🚀 Optimizing period {p + 1} out of {p_points}.")
 
         # Create dataframe with scenarios for a period p
         scenarios_df = pd.DataFrame(scenarios[p, :, :], columns=test_ret.columns)
