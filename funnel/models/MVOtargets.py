@@ -26,7 +26,7 @@ def portfolio_risk_target(covariance: np.array) -> float:
 def get_mvo_targets(
     test_date: str, benchmark: list, budget: int, data: pd.DataFrame
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    logger.debug(f"Generating Volatility targets for {benchmark}")
+    logger.info(f"🎯 Generating Volatility targets for {benchmark}")
 
     # Define Benchmark
     tickers = benchmark

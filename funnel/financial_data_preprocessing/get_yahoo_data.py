@@ -15,7 +15,7 @@ def download_data(start_date: str, end_date: str, tickers: List[str]) -> pd.Data
     try:
         daily_prices = yf.download(tickers, start=start_date, end=end_date)["Adj Close"]
     except Exception as e:
-        logger.warning(f"Problem when downloading our data with an error: {e}")
+        logger.warning(f"⚠️ Problem when downloading our data with an error: {e}")
         daily_prices = None
 
     return daily_prices

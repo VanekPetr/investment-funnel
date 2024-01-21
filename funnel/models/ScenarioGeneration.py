@@ -53,8 +53,8 @@ class MomentGenerator:
     def generate_sigma_mu_for_test_periods(
         data: pd.DataFrame, n_test: int
     ) -> Tuple[List, List]:
-        logger.debug(
-            "Computing covariance matrix and mean array for each investment period"
+        logger.info(
+            "⏳ Computing covariance matrix and mean array for each investment period"
         )
 
         # Initialize variables
@@ -112,8 +112,8 @@ class ScenarioGenerator:
         sigma_lst: list,
         mu_lst: list,
     ) -> np.ndarray:
-        logger.debug(
-            f"Generating {n_simulations} scenarios for each investment period with Monte Carlo method"
+        logger.info(
+            f"⏳ Generating {n_simulations} scenarios for each investment period with Monte Carlo method"
         )
 
         n_iter = 4  # we work with 4-week periods
@@ -150,8 +150,8 @@ class ScenarioGenerator:
     def bootstrapping(
         self, data: pd.DataFrame, n_simulations: int, n_test: int
     ) -> np.ndarray:
-        logger.debug(
-            f"Generating {n_simulations} scenarios for each investment period with Bootstrapping method"
+        logger.info(
+            f"⏳ Generating {n_simulations} scenarios for each investment period with Bootstrapping method"
         )
 
         n_iter = 4  # 4 weeks compounded in our scenario

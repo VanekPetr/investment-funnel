@@ -68,7 +68,7 @@ def get_cvar_targets(
     scgen: ScenarioGenerator,
     n_simulations: int,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    logger.debug(f"Generating CVaR targets for {benchmark}")
+    logger.info(f"🎯 Generating CVaR targets for {benchmark}")
 
     # Define Benchmark
     tickers = benchmark

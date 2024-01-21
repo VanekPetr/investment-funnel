@@ -153,7 +153,7 @@ def rebalancing_model(
 
         # Print an error if the model is not optimal
         logger.exception(
-            f"Linear solver does not find optimal solution. Status code is {model.status}"
+            f"❌ Solver does not find optimal solution. Status code is {model.status}"
         )
 
 
@@ -191,9 +191,9 @@ def cvar_model(
     cash = budget
     portfolio_value_w = budget
 
-    logger.debug(f"Selected solver is {solver}")
+    logger.info(f"🤖 Selected solver is {solver}")
     for p in range(p_points):
-        logger.info(f"Optimizing period {p}.")
+        logger.info(f"🚀 Optimizing period {p} out of {p_points}.")
 
         # Create dataframe with scenarios for a period p
         scenarios_df = pd.DataFrame(scenarios[p, :, :], columns=test_ret.columns)

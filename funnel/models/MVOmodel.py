@@ -160,7 +160,7 @@ def rebalancing_model(
 
         # Print an error if the model is not optimal
         logger.exception(
-            f"Solver does not find optimal solution. Status code is {model.status}"
+            f"❌ Solver does not find optimal solution. Status code is {model.status}"
         )
 
 
@@ -197,9 +197,9 @@ def mvo_model(
     cash = budget
     portfolio_value_w = budget
 
-    logger.debug(f"Selected solver is {solver}")
+    logger.debug(f"🤖 Selected solver is {solver}")
     for p in range(p_points):
-        logger.info(f"Optimizing period {p}.")
+        logger.info(f"🚀 Optimizing period {p} out of {p_points}.")
 
         # Get MVO parameters
         mu = mu_lst[p]
