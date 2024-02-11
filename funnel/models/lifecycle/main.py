@@ -10,13 +10,16 @@ import plotly.io as pio
 from loguru import logger
 from scipy.stats import gaussian_kde
 
-from funnel.lifecycleModel.benchmark import calculate_target_allocation
-from funnel.lifecycleModel.glidePathCreator import RiskCurveGenerator
-from funnel.lifecycleModel.MVOlifecycleModel import (
+from funnel.models.lifecycle.benchmark import calculate_target_allocation
+from funnel.models.lifecycle.glidePathCreator import RiskCurveGenerator
+from funnel.models.lifecycle.MVOlifecycleModel import (
     get_port_allocations,
     riskadjust_model_scen,
 )
-from funnel.lifecycleModel.ScenarioGeneration import MomentGenerator, ScenarioGenerator
+from funnel.models.lifecycle.ScenarioGeneration import (
+    MomentGenerator,
+    ScenarioGenerator,
+)
 from funnel.models.MST import minimum_spanning_tree
 
 pio.renderers.default = "browser"

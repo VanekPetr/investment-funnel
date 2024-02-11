@@ -1,29 +1,40 @@
+import math
+
 import cvxpy as cp
 import numpy as np
 import pandas as pd
 import scipy as sp
-import math
 from loguru import logger
 
-''''
+"""'
 Hvad med at vi splitter dataet f.eks. 70/30 og så sampler på de 70% og estimerer parametrer på de 30%
-'''
+"""
 
 
 def calculate_risk_metrics(yearly_returns, risk_free_rate=0.02):
     annual_return = yearly_returns.mean()
     annual_std_dev = yearly_returns.std()
 
-    sharpe_ratio = (annual_return - risk_free_rate) / annual_std_dev if annual_std_dev != 0 else None
+    sharpe_ratio = (
+        (annual_return - risk_free_rate) / annual_std_dev
+        if annual_std_dev != 0
+        else None
+    )
 
     # Calculate downside deviation
     downside_diffs = [min(0, return_ - risk_free_rate) for return_ in yearly_returns]
     downside_std_dev = np.std(downside_diffs)
 
     # Calculate Sortino ratio
-    sortino_ratio = (annual_return - risk_free_rate) / downside_std_dev if downside_std_dev != 0 else None
+    sortino_ratio = (
+        (annual_return - risk_free_rate) / downside_std_dev
+        if downside_std_dev != 0
+        else None
+    )
 
     return annual_return, annual_std_dev, sharpe_ratio, downside_std_dev, sortino_ratio
+
+
 def calculate_analysis_metrics(terminal_values):
     mean_terminal_value = np.mean(terminal_values)
     stdev_terminal_value = np.std(terminal_values)
@@ -43,16 +54,18 @@ def calculate_analysis_metrics(terminal_values):
     upper_quartile_avg = np.mean(sorted_terminal_values[-upper_quartile_count:])
 
     # Creating a DataFrame to store the metrics
-    metrics_df = pd.DataFrame({
-        'Mean Terminal Value': [mean_terminal_value],
-        'Standard Deviation Terminal Value': [stdev_terminal_value],
-        'Max Terminal Value': [max_terminal_value],
-        'Min Terminal Value': [min_terminal_value],
-        'Lower Decile Average': [lower_decile_avg],
-        'Upper Decile Average': [upper_decile_avg],
-        'Lower Quartile Average': [lower_quartile_avg],
-        'Upper Quartile Average': [upper_quartile_avg]
-    })
+    metrics_df = pd.DataFrame(
+        {
+            "Mean Terminal Value": [mean_terminal_value],
+            "Standard Deviation Terminal Value": [stdev_terminal_value],
+            "Max Terminal Value": [max_terminal_value],
+            "Min Terminal Value": [min_terminal_value],
+            "Lower Decile Average": [lower_decile_avg],
+            "Upper Decile Average": [upper_decile_avg],
+            "Lower Quartile Average": [lower_quartile_avg],
+            "Upper Quartile Average": [upper_quartile_avg],
+        }
+    )
 
     return metrics_df
 
@@ -74,12 +87,16 @@ def cholesky_psd(m):
     return C
 
 
-def lifecycle_rebalance_model(mu, sigma, vol_target, max_weight, solver, inaccurate: bool = True, lower_bound=0):
+def lifecycle_rebalance_model(
+    mu, sigma, vol_target, max_weight, solver, inaccurate: bool = True, lower_bound=0
+):
     N = len(mu)  # Number of assets
-    cash_index = mu.index.get_loc('Cash')  # Identify the index of the 'Cash' asset
+    cash_index = mu.index.get_loc("Cash")  # Identify the index of the 'Cash' asset
     non_cash_indices = np.array([i for i in range(len(mu)) if i != cash_index])
 
-    x = cp.Variable(N, name="x", nonneg=True)  # The weights of the assets (to be optimized)
+    x = cp.Variable(
+        N, name="x", nonneg=True
+    )  # The weights of the assets (to be optimized)
 
     G = cholesky_psd(sigma)  # Transform to standard deviation matrix
 
@@ -88,9 +105,8 @@ def lifecycle_rebalance_model(mu, sigma, vol_target, max_weight, solver, inaccur
     constraints = [
         cp.sum(x) == 1,
         cp.norm(G @ x, 2) <= vol_target,
-        #x <= max_weight * cp.sum(x)
-        x[non_cash_indices] <= max_weight * cp.sum(x[non_cash_indices])
-
+        # x <= max_weight * cp.sum(x)
+        x[non_cash_indices] <= max_weight * cp.sum(x[non_cash_indices]),
     ]
 
     if lower_bound != 0:
@@ -111,7 +127,9 @@ def lifecycle_rebalance_model(mu, sigma, vol_target, max_weight, solver, inaccur
     if inaccurate:
         accepted_statuses.append("optimal_inaccurate")
     if model.status in accepted_statuses:
-        port_nom = pd.Series(x.value, index=mu.index)  # Nominal allocations in each asset
+        port_nom = pd.Series(
+            x.value, index=mu.index
+        )  # Nominal allocations in each asset
         port_val = np.sum(port_nom)  # Portfolio value
         port_nom[np.abs(port_nom) < 0.000001] = 0  # Remove excessive noise.
         return port_nom, port_val
@@ -119,7 +137,9 @@ def lifecycle_rebalance_model(mu, sigma, vol_target, max_weight, solver, inaccur
     else:
         # Print an error if the model is not optimal
         logger.exception(f"It's not looking good lad. Status code is {model.status}")
-        port_nom = pd.Series(x.value, index=mu.index)  # Nominal allocations in each asset
+        port_nom = pd.Series(
+            x.value, index=mu.index
+        )  # Nominal allocations in each asset
         port_val = np.sum(port_nom)
         return port_nom, port_val
 
@@ -151,28 +171,34 @@ def get_port_allocations(mu_lst, sigma_lst, targets, max_weight, solver):
     allocation_df = pd.DataFrame(index=years, columns=assets)
 
     for year in range(num_years):
-        #logger.info(f'Rebalancing portfolio in the beginning of year {year + 2023}')
+        # logger.info(f'Rebalancing portfolio in the beginning of year {year + 2023}')
 
         port_weights, _ = lifecycle_rebalance_model(
             mu=mu_lst,
             sigma=sigma_lst,
             vol_target=targets.loc[year],
             max_weight=max_weight,
-            solver=solver
+            solver=solver,
         )
 
         allocation_df.loc[allocation_df.index[year], :] = port_weights
 
-    logger.info(f'The optimal portfolio allocations has been obtained for the {num_years+1} years.')
+    logger.info(
+        f"The optimal portfolio allocations has been obtained for the {num_years+1} years."
+    )
     return allocation_df
 
 
-def lifecycle_model(alloc_targets, trans_cost, x_old, cash, solver, inaccurate: bool = True):
+def lifecycle_model(
+    alloc_targets, trans_cost, x_old, cash, solver, inaccurate: bool = True
+):
     assets = alloc_targets.index
     N = len(assets)
 
     c = trans_cost  # Variable transaction costs
-    x = cp.Variable(N, name="x", nonneg=True)  # The weights of the assets (to be optimized)
+    x = cp.Variable(
+        N, name="x", nonneg=True
+    )  # The weights of the assets (to be optimized)
     absdiff = cp.Variable(N, name="absdiff", nonneg=True)  # - |x - x_old|
     cost = cp.Variable(name="cost", nonneg=True)  # - cost
 
@@ -182,7 +208,6 @@ def lifecycle_model(alloc_targets, trans_cost, x_old, cash, solver, inaccurate: 
         x - x_old <= absdiff,
         x - x_old >= -absdiff,
         c * cp.sum(absdiff) == cost,
-
         x_old.sum() + cash - cp.sum(x) - cost == 0,
     ]
 
@@ -197,22 +222,39 @@ def lifecycle_model(alloc_targets, trans_cost, x_old, cash, solver, inaccurate: 
     if inaccurate:
         accepted_statuses.append("optimal_inaccurate")
     if model.status in accepted_statuses:
-        port_nom = pd.Series(x.value, index=alloc_targets.index)  # Nominal allocations in each asset
+        port_nom = pd.Series(
+            x.value, index=alloc_targets.index
+        )  # Nominal allocations in each asset
         port_val = np.sum(port_nom)  # Portfolio value
-        opt_port = port_nom / port_val if port_val > 0 else pd.Series(0,
-                                                                      index=alloc_targets.columns)  # Percentage allocation in each asset
-        cash = cash - (port_val + cost.value - x_old.sum())  # Update cash accordingly in each period
+        opt_port = (
+            port_nom / port_val
+            if port_val > 0
+            else pd.Series(0, index=alloc_targets.columns)
+        )  # Percentage allocation in each asset
+        cash = cash - (
+            port_val + cost.value - x_old.sum()
+        )  # Update cash accordingly in each period
         opt_port[np.abs(opt_port) < 0.00001] = 0  # Remove excessive noise.
-        return opt_port, port_val, cost.value, cash, absdiff.value, absdiff.value.sum(), 'optimal'
+        return (
+            opt_port,
+            port_val,
+            cost.value,
+            cash,
+            absdiff.value,
+            absdiff.value.sum(),
+            "optimal",
+        )
 
     else:
         # Print an error if the model is not optimal
         logger.exception(f"It's not looking good lad. Status code is {model.status}")
 
-        return None, None, None, cash, None, None, 'infeasible'
+        return None, None, None, cash, None, None, "infeasible"
 
 
-def rebalancing_model_risk(scen, targets, budget, trans_cost, withdrawal_lst, interest_rate, solver):
+def rebalancing_model_risk(
+    scen, targets, budget, trans_cost, withdrawal_lst, interest_rate, solver
+):
     """
     Parameters:
     - scen: Market scenarios
@@ -237,8 +279,13 @@ def rebalancing_model_risk(scen, targets, budget, trans_cost, withdrawal_lst, in
 
     # Initialize DataFrames
     ptf_columns = [
-        'Portfolio_Value', 'Costs', 'Withdrawal', 'Absolute DKK rebalanced',
-        'Return', 'Borrowed_Amount', 'Yearly Returns'
+        "Portfolio_Value",
+        "Costs",
+        "Withdrawal",
+        "Absolute DKK rebalanced",
+        "Return",
+        "Borrowed_Amount",
+        "Yearly Returns",
     ]
     ptf_df = pd.DataFrame(index=years, columns=ptf_columns)
     allocation_df = pd.DataFrame(index=years, columns=assets)
@@ -256,11 +303,16 @@ def rebalancing_model_risk(scen, targets, budget, trans_cost, withdrawal_lst, in
             interest_for_the_year = borrowed_amount * interest_rate
             borrowed_amount += interest_for_the_year  # Accumulate interest
             # Update DataFrame for infeasible period
-            ptf_df.loc[ptf_df.index[year]] = {'Portfolio_Value': -borrowed_amount, 'Costs': 0,
-                                              'Standard Deviation': 0, 'Withdrawal': withdrawal_amount,
-                                              'Absolute DKK rebalanced': 0, 'Return': -interest_for_the_year,
-                                              'Borrowed_Amount': borrowed_amount - interest_for_the_year}
-            ptf_df['infeasible_period'] = infeasible_period
+            ptf_df.loc[ptf_df.index[year]] = {
+                "Portfolio_Value": -borrowed_amount,
+                "Costs": 0,
+                "Standard Deviation": 0,
+                "Withdrawal": withdrawal_amount,
+                "Absolute DKK rebalanced": 0,
+                "Return": -interest_for_the_year,
+                "Borrowed_Amount": borrowed_amount - interest_for_the_year,
+            }
+            ptf_df["infeasible_period"] = infeasible_period
             continue
 
         if withdrawal_lst[year] >= portfolio_value * (1 + trans_cost):
@@ -269,12 +321,20 @@ def rebalancing_model_risk(scen, targets, budget, trans_cost, withdrawal_lst, in
             withdrawal_amount = withdrawal_lst[year]
         cash -= math.floor(withdrawal_amount * (1 - trans_cost))
 
-        port_weights, port_val, port_costs, cash, absdiff_alloc, absdiff_total, status = lifecycle_model(
-            alloc_targets=targets.loc[f'{2023 + year}'] * portfolio_value,
+        (
+            port_weights,
+            port_val,
+            port_costs,
+            cash,
+            absdiff_alloc,
+            absdiff_total,
+            status,
+        ) = lifecycle_model(
+            alloc_targets=targets.loc[f"{2023 + year}"] * portfolio_value,
             trans_cost=trans_cost,
             x_old=x_old,
             cash=cash,
-            solver=solver
+            solver=solver,
         )
 
         if withdrawal_amount == portfolio_value:
@@ -291,29 +351,43 @@ def rebalancing_model_risk(scen, targets, budget, trans_cost, withdrawal_lst, in
 
         allocation_df.loc[allocation_df.index[year], :] = port_weights
 
-        ptf_df.loc[allocation_df.index[year]] = {'Portfolio_Value': portfolio_value - borrowed_amount,
-                                                 'Costs': port_costs,
-                                                 'Withdrawal': withdrawal_lst[year],
-                                                 'Absolute DKK rebalanced': absdiff_total,
-                                                 'Return': port_val * year_return - interest_for_the_year,
-                                                 'Borrowed_Amount': borrowed_amount - interest_for_the_year,
-                                                 'Yearly Returns': year_return}
+        ptf_df.loc[allocation_df.index[year]] = {
+            "Portfolio_Value": portfolio_value - borrowed_amount,
+            "Costs": port_costs,
+            "Withdrawal": withdrawal_lst[year],
+            "Absolute DKK rebalanced": absdiff_total,
+            "Return": port_val * year_return - interest_for_the_year,
+            "Borrowed_Amount": borrowed_amount - interest_for_the_year,
+            "Yearly Returns": year_return,
+        }
 
-        ptf_df['infeasible_period'] = infeasible_period
+        ptf_df["infeasible_period"] = infeasible_period
 
     return ptf_df, allocation_df
 
 
-def riskadjust_model_scen(scen, targets, budget, trans_cost, withdrawal_lst,
-                          interest_rate, solver):
+def riskadjust_model_scen(
+    scen, targets, budget, trans_cost, withdrawal_lst, interest_rate, solver
+):
     s_points, p_points, a_points = scen.shape
     assets = targets.columns
     # Initialize DataFrame
     portfolio_df = pd.DataFrame(
-        columns=['Terminal Wealth', 'Total Returns', 'Total Costs', 'Total Withdrawals', 'Infeasible Period',
-                 'Average Cash Hold', "Annual StDev", 'Annual StDev_dd', 'Average Annual Return',
-                 'Sharpe Ratio', 'Sortino Ratio', "Total borrowed"],
-        index=range(s_points)
+        columns=[
+            "Terminal Wealth",
+            "Total Returns",
+            "Total Costs",
+            "Total Withdrawals",
+            "Infeasible Period",
+            "Average Cash Hold",
+            "Annual StDev",
+            "Annual StDev_dd",
+            "Average Annual Return",
+            "Sharpe Ratio",
+            "Sortino Ratio",
+            "Total borrowed",
+        ],
+        index=range(s_points),
     )
     all_allocations = np.zeros((s_points, p_points, a_points))
 
@@ -328,43 +402,51 @@ def riskadjust_model_scen(scen, targets, budget, trans_cost, withdrawal_lst,
             trans_cost=trans_cost,
             withdrawal_lst=withdrawal_lst,
             interest_rate=interest_rate,
-            solver=solver
+            solver=solver,
         )
 
         # Store the allocation results for this scenario
         all_allocations[scenario] = res_alloc.to_numpy()
-        annual_return, annual_std_dev, sr, downside_std_dev, sortino_ratio = calculate_risk_metrics(
-            res['Yearly Returns'])
+        annual_return, annual_std_dev, sr, downside_std_dev, sortino_ratio = (
+            calculate_risk_metrics(res["Yearly Returns"])
+        )
 
-        portfolio_df.loc[scenario] = {'Terminal Wealth': res['Portfolio_Value'].iloc[-1],
-                                      'Total Returns': res['Return'].sum(),
-                                      'Total Costs': res['Costs'].sum(),
-                                      'Total Withdrawals': res['Withdrawal'].sum(),
-                                      'Infeasible Period': res['infeasible_period'].max(),
-                                      'Average Cash Hold': res_alloc['Cash'].mean(),
-                                      "Annual StDev": annual_std_dev,
-                                      'Annual StDev_dd': downside_std_dev,
-                                      'Average Annual Return': annual_return,
-                                      'Sharpe Ratio': sr,
-                                      'Sortino Ratio': sortino_ratio,
-                                      "Total borrowed": res['Borrowed_Amount'].sum()
-                                      }
+        portfolio_df.loc[scenario] = {
+            "Terminal Wealth": res["Portfolio_Value"].iloc[-1],
+            "Total Returns": res["Return"].sum(),
+            "Total Costs": res["Costs"].sum(),
+            "Total Withdrawals": res["Withdrawal"].sum(),
+            "Infeasible Period": res["infeasible_period"].max(),
+            "Average Cash Hold": res_alloc["Cash"].mean(),
+            "Annual StDev": annual_std_dev,
+            "Annual StDev_dd": downside_std_dev,
+            "Average Annual Return": annual_return,
+            "Sharpe Ratio": sr,
+            "Sortino Ratio": sortino_ratio,
+            "Total borrowed": res["Borrowed_Amount"].sum(),
+        }
 
         if scenario % (s_points // 2) == 0 and scenario != 0:
             logger.info(f"{scenario} out of {s_points} scenarios finished")
-    non_zero_count = (portfolio_df['Infeasible Period'] != 0).sum()
+    non_zero_count = (portfolio_df["Infeasible Period"] != 0).sum()
 
     # Create a MultiIndex representing each scenario-period combination
-    index = pd.MultiIndex.from_product([range(s_points), range(p_points)], names=['scenario', 'period'])
+    index = pd.MultiIndex.from_product(
+        [range(s_points), range(p_points)], names=["scenario", "period"]
+    )
     # Reshape the allocations data to a long format
-    allocations_long = all_allocations.reshape(-1, a_points)  # a_points is the number of assets
+    allocations_long = all_allocations.reshape(
+        -1, a_points
+    )  # a_points is the number of assets
     # Create the DataFrame with the MultiIndex
     allocations_df = pd.DataFrame(allocations_long, index=index, columns=assets)
 
     # Group by the 'period' level of the index and calculate mean
-    mean_allocations_df = allocations_df.groupby('period').mean()
-    analysis_metrics = calculate_analysis_metrics(portfolio_df['Terminal Wealth'])
+    mean_allocations_df = allocations_df.groupby("period").mean()
+    analysis_metrics = calculate_analysis_metrics(portfolio_df["Terminal Wealth"])
 
     logger.info(
-        f"{s_points} out of {s_points} scenarios has now been made. We saw a total of {non_zero_count} incidents where the model is infeasible.")
+        f"{s_points} out of {s_points} scenarios has now been made. We saw a total of {non_zero_count} "
+        f"incidents where the model is infeasible."
+    )
     return portfolio_df, mean_allocations_df, analysis_metrics

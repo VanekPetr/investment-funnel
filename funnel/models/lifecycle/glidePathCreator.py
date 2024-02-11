@@ -10,13 +10,16 @@ class RiskCurveGenerator:
         self.risk_floor = risk_floor
         self.std_devs = std_devs
         # Ensure floor_starts values are integers
-        self.floor_starts = {k: int(v) for k, v in {
-            'Risk Class 3': periods // 2,
-            'Risk Class 4': periods // 1.8,
-            'Risk Class 5': periods // 1.6,
-            'Risk Class 6': periods // 1.3,
-            'Risk Class 7': periods // 1.1}
-            .items()}
+        self.floor_starts = {
+            k: int(v)
+            for k, v in {
+                "Risk Class 3": periods // 2,
+                "Risk Class 4": periods // 1.8,
+                "Risk Class 5": periods // 1.6,
+                "Risk Class 6": periods // 1.3,
+                "Risk Class 7": periods // 1.1,
+            }.items()
+        }
         self.df = pd.DataFrame  # None
 
     def find_start_value(self, avg_std, floor_start):
@@ -33,7 +36,7 @@ class RiskCurveGenerator:
         # Explicitly convert floor_start to an integer for slicing
         floor_start = int(floor_start)
         if floor_start < self.periods:
-            curve[floor_start - 1:] = self.risk_floor
+            curve[floor_start - 1 :] = self.risk_floor
         return curve
 
     def generate_curves(self):
@@ -41,20 +44,24 @@ class RiskCurveGenerator:
         for risk_class, avg_std in self.std_devs.items():
             floor_start = self.floor_starts[risk_class]
             self.df[risk_class] = self.generate_curve(avg_std, floor_start)
-        logger.debug(f'We have created 5 different concave gliding paths from the Investment Funnel risk classes. '
-                     f'The average annual Standard Deviation for the gliding paths are: \n {self.df.mean()}')
+        logger.debug(
+            f"We have created 5 different concave gliding paths from the Investment Funnel risk classes. "
+            f"The average annual Standard Deviation for the gliding paths are: \n {self.df.mean()}"
+        )
         return self.df
 
     def plot_curves(self):
         if self.df is not None:
-            fig = px.line(self.df,
-                          labels={'value': 'Annual Standard Deviation', 'index': 'Period'},
-                          title='Concave risk budget glide paths for each Risk Class in the Investment Funnel')
+            fig = px.line(
+                self.df,
+                labels={"value": "Annual Standard Deviation", "index": "Period"},
+                title="Concave risk budget glide paths for each Risk Class in the Investment Funnel",
+            )
             fig.update_layout(
-                yaxis_title='Annual Standard Deviation',
-                xaxis_title='Period',
-                legend_title='Risk Class',
-                template='plotly_white'
+                yaxis_title="Annual Standard Deviation",
+                xaxis_title="Period",
+                legend_title="Risk Class",
+                template="plotly_white",
             )
             fig.show()
         else:
@@ -66,11 +73,16 @@ class RiskCurveGenerator:
         risk_class_str = [str(rc) for rc in risk_class]
 
         # Identify columns that contain any of the specified risk class numbers
-        selected_columns = [col for col in df.columns if any(rc in col for rc in risk_class_str)]
+        selected_columns = [
+            col for col in df.columns if any(rc in col for rc in risk_class_str)
+        ]
 
         # Filter the DataFrame to keep only the selected columns
         filtered_df = df[selected_columns]
-        logger.debug(f'Qua the chosen risk classes, we only optimize portfolios for {selected_columns}')
+        logger.debug(
+            f"Qua the chosen risk classes, we only optimize portfolios for {selected_columns}"
+        )
         return filtered_df
+
 
 # generator.plot_curves()
