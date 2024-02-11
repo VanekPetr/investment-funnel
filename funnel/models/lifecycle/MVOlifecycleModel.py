@@ -3,8 +3,9 @@ import math
 import cvxpy as cp
 import numpy as np
 import pandas as pd
-import scipy as sp
 from loguru import logger
+
+from funnel.models.MVOmodel import cholesky_psd
 
 """'
 Hvad med at vi splitter dataet f.eks. 70/30 og så sampler på de 70% og estimerer parametrer på de 30%
@@ -68,23 +69,6 @@ def calculate_analysis_metrics(terminal_values):
     )
 
     return metrics_df
-
-
-def cholesky_psd(m):
-    """
-    Computes the Cholesky decomposition of the given matrix, that is not positive definite, only semidefinite.
-    """
-    lu, d, perm = sp.linalg.ldl(m)
-    assert np.max(np.abs(d - np.diag(np.diag(d)))) < 1e-8, "Matrix 'd' is not diagonal!"
-
-    # Do non-negativity fix
-    min_eig = np.min(np.diag(d))
-    if min_eig < 0:
-        d -= 5 * min_eig * np.eye(*d.shape)
-
-    sqrtd = sp.linalg.sqrtm(d)
-    C = (lu @ sqrtd).T
-    return C
 
 
 def lifecycle_rebalance_model(

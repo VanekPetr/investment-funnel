@@ -43,7 +43,7 @@ requires = ["poetry>=1.6.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
-select = ["E", "F", "I"]
+lint.select = ["E", "F", "I"]
 line-length = 120
 target-version = "py310"
 exclude = [

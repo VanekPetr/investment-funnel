@@ -1,8 +1,10 @@
+from typing import List
+
 import pandas as pd
 from loguru import logger
 
 
-def create_asset_class_df(tickers):
+def create_asset_class_df(tickers: List[str]) -> pd.DataFrame:
     """
     Create an asset classification DataFrame with an optional "Cash" entry.
 
@@ -93,7 +95,9 @@ def create_asset_class_df(tickers):
     return asset_class_df
 
 
-def calculate_target_allocation(annual_alloc_targets, tickers):
+def calculate_target_allocation(
+    annual_alloc_targets: pd.DataFrame, tickers: List[str]
+) -> pd.DataFrame:
     # Check if the length of the tickers list is not 19
     if len(tickers) != 35:
         logger.debug(

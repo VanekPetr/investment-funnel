@@ -6,6 +6,7 @@ from arch import arch_model
 from loguru import logger
 
 
+# TODO Simplify... again a bit of copy paste from ScenarioGeneration
 class MomentGenerator:
     """
     Provides methods for mean, variace generation.

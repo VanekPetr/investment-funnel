@@ -67,6 +67,7 @@ withdrawal_lst = [
 ]
 
 
+# TODO Simplify... looks like a copy-paste from main
 class TradeBot:
     def __init__(self):
         self.tickers = ticker_name_df.Ticker
