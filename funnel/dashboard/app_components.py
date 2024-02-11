@@ -206,6 +206,9 @@ sideBar = html.Div(
                     n_clicks=0,
                 ),
                 dbc.NavLink("Backtesting", id="page2", href="/page-2", active="exact"),
+                dbc.NavLink(
+                    "Lifecycle Investments", id="page3", href="/page-3", active="exact"
+                ),
             ],
             vertical=True,
             pills=True,

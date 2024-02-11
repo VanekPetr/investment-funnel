@@ -6,6 +6,7 @@ from funnel.dashboard.app_layouts import (
     page_1_layout,
     page_2_layout,
     page_3_layout,
+    page_4_layout,
     page_mobile_layout,
 )
 from funnel.models.main import TradeBot
@@ -24,8 +25,10 @@ def get_callbacks(app):
             return page_1_layout
         elif pathname == "/page-1":
             return page_2_layout
-        else:
+        elif pathname == "/page-2":
             return page_3_layout
+        else:
+            return page_4_layout
 
     # BACK-TESTING
     # -----------------------------------------------------------------------------------------------------------------
