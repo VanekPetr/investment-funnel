@@ -199,7 +199,6 @@ class TradeBot:
         scenarios_type: str,
         n_simulations: int,
         end_year: int,
-        model: str,
         risk_test: str,
         risk_class: list,
         compare_with_naive: bool = True,
@@ -211,20 +210,19 @@ class TradeBot:
         n_periods = end_year - 2023
         sg = ScenarioGenerator(np.random.default_rng())
 
-        if model == "Markowitz model" or scenarios_type == "MonteCarlo":
+        if scenarios_type == "MonteCarlo":
             sigma, mu, sigma_weekly, mu_weekly = (
                 MomentGenerator.generate_annual_sigma_mu_with_risk_free(
                     data=self.weeklyReturns[subset_of_assets]
                 )
             )
-
-        if scenarios_type == "MonteCarlo":
             scenarios = sg.MC_simulation_annual_from_weekly(
                 weekly_mu=mu_weekly,
                 weekly_sigma=sigma_weekly,
                 n_simulations=n_simulations,
                 n_years=n_periods,
             )
+
         elif scenarios_type == "FHS":
             scenarios = sg.FHS(
                 data=self.weeklyReturns[subset_of_assets],
@@ -232,41 +230,34 @@ class TradeBot:
                 n_years=n_periods,
             )
         else:
-            logger.debug(
-                "Currently we only simulate returns with the Monte Carlo method or FHS."
+            logger.exception(
+                "❌ Currently we only simulate returns with the Monte Carlo method or FHS."
             )
 
-        # ------------------------------- TARGETS GENERATION -------------------------------
-        if model == "Markowitz model":
-            # ------------------------------- Risk Target Generation -------------------------------
-            if risk_test == "simpleLinear":
-                targets_risk = pd.DataFrame(
-                    np.linspace(0.2, 0.05, n_periods), columns=["Linear Glide Path"]
-                )
+        # ------------------------------- Risk Target Generation -------------------------------
+        if risk_test == "simpleLinear":
+            targets_risk = pd.DataFrame(
+                np.linspace(0.2, 0.05, n_periods), columns=["Linear Glide Path"]
+            )
 
-            elif risk_test == "investmentFunnel":
-                # Configuration and usage
-                generator = RiskCurveGenerator(
-                    periods=n_periods,
-                    risk_floor=0.02,
-                    std_devs={
-                        "Risk Class 3": 0.05,
-                        "Risk Class 4": 0.10,
-                        "Risk Class 5": 0.15,
-                        "Risk Class 6": 0.25,
-                        "Risk Class 7": 0.30,
-                    },
-                )
+        elif risk_test == "investmentFunnel":
+            # Configuration and usage
+            generator = RiskCurveGenerator(
+                periods=n_periods,
+                risk_floor=0.02,
+                std_devs={
+                    "Risk Class 3": 0.05,
+                    "Risk Class 4": 0.10,
+                    "Risk Class 5": 0.15,
+                    "Risk Class 6": 0.25,
+                    "Risk Class 7": 0.30,
+                },
+            )
 
-                targets_risk = generator.generate_curves()
-                targets_risk = generator.filter_columns_by_risk_class(
-                    targets_risk, risk_class
-                )
-
-            else:
-                logger.debug(
-                    "We only work with simpleLinear or investmentFunnel risk curves."
-                )
+            targets_risk = generator.generate_curves()
+            targets_risk = generator.filter_columns_by_risk_class(
+                targets_risk, risk_class
+            )
 
             # ------------------------------- Allocation Target Generation -------------------------------
             allocation_targets = {}
@@ -293,34 +284,29 @@ class TradeBot:
         # ------------------------------- MATHEMATICAL MODELING -------------------------------
         exhibition_summary = pd.DataFrame()
         terminal_wealth_dict = {}
-        if model == "Markowitz model":
-            for key, df in allocation_targets.items():
-                logger.info(
-                    f"Optimizing portfolio for {key} over {n_simulations} scenarios. An info message will "
-                    f"appear, when we are halfway through the scenarios for the current strategy."
-                )
-                portfolio_df, mean_allocations_df, analysis_metrics = (
-                    riskadjust_model_scen(
-                        scen=scenarios[:, :, :],
-                        targets=df,
-                        budget=837000,
-                        trans_cost=0.002,
-                        withdrawal_lst=self.withdrawal_lst,
-                        interest_rate=0.04,
-                        solver="ECOS",
-                    )
-                )
 
-                # Add the analysis_metrics DataFrame as a new column in the storage DataFrame
-                exhibition_summary[key] = analysis_metrics.squeeze()
+        for key, df in allocation_targets.items():
+            logger.info(
+                f"Optimizing portfolio for {key} over {n_simulations} scenarios. An info message will "
+                f"appear, when we are halfway through the scenarios for the current strategy."
+            )
+            portfolio_df, mean_allocations_df, analysis_metrics = riskadjust_model_scen(
+                scen=scenarios[:, :, :],
+                targets=df,
+                budget=837000,
+                trans_cost=0.002,
+                withdrawal_lst=self.withdrawal_lst,
+                interest_rate=0.04,
+                solver="ECOS",
+            )
 
-                portfolio_df["Terminal Wealth"] = pd.to_numeric(
-                    portfolio_df["Terminal Wealth"], errors="coerce"
-                )
-                terminal_wealth_dict[f"{key}"] = portfolio_df
+            # Add the analysis_metrics DataFrame as a new column in the storage DataFrame
+            exhibition_summary[key] = analysis_metrics.squeeze()
 
-        else:
-            logger.debug("Currently we only have the Markowitz model approach.")
+            portfolio_df["Terminal Wealth"] = pd.to_numeric(
+                portfolio_df["Terminal Wealth"], errors="coerce"
+            )
+            terminal_wealth_dict[f"{key}"] = portfolio_df
 
         # ------------------------------- PLOTTING -------------------------------
         fig_performance = self.__plot_portfolio_densities(
@@ -344,7 +330,6 @@ if __name__ == "__main__":
         scenarios_type="MonteCarlo",
         n_simulations=1000,
         end_year=2050,
-        model="Markowitz model",
         risk_test="investmentFunnel",
         risk_class=[3, 4, 5, 6, 7],
     )

@@ -9,6 +9,7 @@ from funnel.dashboard.app_components import (
     optionBacktest,
     optionGraph,
     optionML,
+    options_lifecycle,
     sideBar,
     spinner_backtest,
     spinner_dots,
@@ -28,7 +29,7 @@ page_4_layout = html.Div(
                 # Row 1, Col 1 - navigation bar
                 dbc.Col([sideBar]),
                 # Row 1, col 2 - text description
-                dbc.Col([optionBacktest]),
+                dbc.Col([options_lifecycle]),
                 # Row 1, Col 3 - table
                 dbc.Col([graphResults, spinner_backtest]),
             ]
