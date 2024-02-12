@@ -100,9 +100,11 @@ def get_callbacks(app):
                 subset_of_assets=subset_of_assets,
                 scenarios_type=scen_model,
                 n_simulations=scen_spec,
-                end_year=2050,
+                # TODO as inputs!
+                end_year=2030,
                 risk_test="investmentFunnel",
-                risk_class=[3, 4, 5, 6, 7],
+                risk_class=[4],
+                compare_with_naive=False,
             )
             # Save page values
             lifecycle_figure = dcc.Graph(

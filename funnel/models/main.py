@@ -643,10 +643,6 @@ class TradeBot:
                 n_simulations=n_simulations,
                 n_years=n_periods,
             )
-        else:
-            logger.exception(
-                "❌ Currently we only simulate returns with the Monte Carlo method or FHS."
-            )
 
         # ------------------------------- Risk Target Generation -------------------------------
         if risk_test == "simpleLinear":
@@ -673,27 +669,27 @@ class TradeBot:
                 targets_risk, risk_class
             )
 
-            # ------------------------------- Allocation Target Generation -------------------------------
-            allocation_targets = {}
-            for r in targets_risk.columns:
-                targets = get_port_allocations(
-                    mu_lst=mu,
-                    sigma_lst=sigma,
-                    targets=targets_risk[r],
-                    max_weight=1 / 3,
-                    solver="ECOS_BB",
-                )
-                allocation_targets[f"{r}"] = targets
+        # ------------------------------- Allocation Target Generation -------------------------------
+        # TODO: this will work only with monte carlo! for FHS we need to change the function, missing mu and sigma
+        allocation_targets = {}
+        for r in targets_risk.columns:
+            targets = get_port_allocations(
+                mu_lst=mu,
+                sigma_lst=sigma,
+                targets=targets_risk[r],
+                max_weight=1 / 3,
+                solver="ECOS_BB",
+            )
+            allocation_targets[f"{r}"] = targets
 
-            # ------------------------------- Generate Naive 1/N in stock/bond portfolio -------------------------------
-            if compare_with_naive:
-                class_alloc_targets = pd.DataFrame(np.linspace(1, 0, n_periods))
-                naive_allocation = calculate_target_allocation(
-                    class_alloc_targets, subset_of_assets
-                )
-                allocation_targets["1/N bond/stock portfolio"] = naive_allocation
-        else:
-            logger.debug("Currently we only have the Markowitz model approach.")
+        # ------------------------------- Generate Naive 1/N in stock/bond portfolio -------------------------------
+        if compare_with_naive:
+            # TODO: this fails for 2030 and risk_classes [3]
+            class_alloc_targets = pd.DataFrame(np.linspace(1, 0, n_periods))
+            naive_allocation = calculate_target_allocation(
+                class_alloc_targets, subset_of_assets
+            )
+            allocation_targets["1/N bond/stock portfolio"] = naive_allocation
 
         # ------------------------------- MATHEMATICAL MODELING -------------------------------
         exhibition_summary = pd.DataFrame()
