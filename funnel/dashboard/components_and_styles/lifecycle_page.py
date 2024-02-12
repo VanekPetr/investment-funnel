@@ -4,6 +4,8 @@ from dash import dcc, html
 from funnel.dashboard.components_and_styles.styles import (
     DESCRIP_INFO,
     GRAPH_LEFT,
+    GRAPH_RIGHT,
+    LOADING_STYLE,
     MAIN_TITLE,
     OPTION_BTN,
     OPTION_ELEMENT,
@@ -111,4 +113,23 @@ options_lifecycle = html.Div(
         ),
     ],
     style=GRAPH_LEFT,
+)
+
+results_lifecycle = html.Div(
+    [
+        html.Div(id="lifecycle-output-fig", style=OPTION_ELEMENT),
+    ],
+    style=GRAPH_RIGHT,
+)
+
+spinner_lifecycle = html.Div(
+    [
+        dcc.Loading(
+            id="loading-backtest-lifecycle",
+            children=[html.Div([html.Div(id="loading-output-backtest-lifecycle")])],
+            type="circle",
+            style=LOADING_STYLE,
+            color="black",
+        ),
+    ]
 )

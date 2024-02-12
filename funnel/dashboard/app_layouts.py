@@ -12,7 +12,11 @@ from funnel.dashboard.components_and_styles.backtest_page import (
     spinner_backtest,
 )
 from funnel.dashboard.components_and_styles.general import mobile_page, sideBar
-from funnel.dashboard.components_and_styles.lifecycle_page import options_lifecycle
+from funnel.dashboard.components_and_styles.lifecycle_page import (
+    options_lifecycle,
+    results_lifecycle,
+    spinner_lifecycle,
+)
 from funnel.dashboard.components_and_styles.market_overview_page import (
     graphOverview,
     optionGraph,
@@ -30,7 +34,7 @@ page_4_layout = html.Div(
                 # Row 1, col 2 - text description
                 dbc.Col([options_lifecycle]),
                 # Row 1, Col 3 - table
-                dbc.Col([graphResults, spinner_backtest]),
+                dbc.Col([results_lifecycle, spinner_lifecycle]),
             ]
         )
     ]
