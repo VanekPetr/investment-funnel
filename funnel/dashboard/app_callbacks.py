@@ -32,7 +32,117 @@ def get_callbacks(app):
 
     # BACK-TESTING
     # -----------------------------------------------------------------------------------------------------------------
-    # PLOT GRAPH WITH DOTS
+    @app.callback(
+        [
+            Output("lifecycle-output-fig", "children"),
+            Output("select-ml-lifecycle", "value"),
+            Output("slider-lifecycle-ml", "value"),
+            Output("slider-lifecycle", "value"),
+            Output("select-scenarios-lifecycle", "value"),
+            Output("my-slider-2-lifecycle", "value"),
+            Output("saved-ml-model-lifecycle", "data"),
+            Output("saved-ml-spec-lifecycle", "data"),
+            Output("saved-pick-num-lifecycle", "data"),
+            Output("saved-scen-model-lifecycle", "data"),
+            Output("saved-scen-spec-lifecycle", "data"),
+            Output("saved-lifecycle-figure-page-3", "data"),
+            Output("loading-output-lifecycle", "children"),
+        ],
+        Input("lifecycle-run", "n_clicks"),
+        [
+            State("select-ml-lifecycle", "value"),
+            State("slider-lifecycle-ml", "value"),
+            State("slider-lifecycle", "value"),
+            State("select-scenarios-lifecycle", "value"),
+            State("my-slider-2-lifecycle", "value"),
+            State("picker-lifecycle", "start_date"),
+            State("picker-lifecycle", "end_date"),
+            State("saved-ml-model-lifecycle", "data"),
+            State("saved-ml-spec-lifecycle", "data"),
+            State("saved-pick-num-lifecycle", "data"),
+            State("saved-scen-model-lifecycle", "data"),
+            State("saved-scen-spec-lifecycle", "data"),
+            State("saved-lifecycle-figure-page-3", "data"),
+        ],
+    )
+    def plot_lifecycle(
+        click,
+        model,
+        model_spec,
+        pick_top,
+        scen_model,
+        scen_spec,
+        start_data,
+        end_train,
+        saved_model,
+        saved_model_spec,
+        saved_pick_top,
+        saved_scen_model,
+        saved_scen_spec,
+        saved_lifecycle_figure,
+    ):
+        # Lifecycle analysis
+        if click:
+            # RUN ML algo
+            if model == "MST":
+                _, subset_of_assets = algo.mst(
+                    start_date=start_data, end_date=end_train, n_mst_runs=model_spec
+                )
+            else:
+                _, subset_of_assets = algo.clustering(
+                    start_date=start_data,
+                    end_date=end_train,
+                    n_clusters=model_spec,
+                    n_assets=pick_top,
+                )
+            # RUN THE BACKTEST
+            _, _, fig_composition = algo.scenario_analysis(
+                subset_of_assets=subset_of_assets,
+                scenarios_type=scen_model,
+                n_simulations=scen_spec,
+                end_year=2050,
+                risk_test="investmentFunnel",
+                risk_class=[3, 4, 5, 6, 7],
+            )
+            # Save page values
+            lifecycle_figure = dcc.Graph(
+                figure=fig_composition, style={"margin": "0%", "height": "800px"}
+            )
+
+            return (
+                lifecycle_figure,
+                model,
+                model_spec,
+                pick_top,
+                scen_model,
+                scen_spec,
+                model,
+                model_spec,
+                pick_top,
+                scen_model,
+                scen_spec,
+                lifecycle_figure,
+                True,
+            )
+        else:
+            return (
+                saved_lifecycle_figure,
+                saved_model,
+                saved_model_spec,
+                saved_pick_top,
+                saved_scen_model,
+                saved_scen_spec,
+                saved_model,
+                saved_model_spec,
+                saved_pick_top,
+                saved_scen_model,
+                saved_scen_spec,
+                saved_lifecycle_figure,
+                True,
+            )
+
+    # BACK-TESTING
+    # -----------------------------------------------------------------------------------------------------------------
     @app.callback(
         [
             Output("backtestPerfFig", "children"),
@@ -214,9 +324,16 @@ def get_callbacks(app):
             )
 
     @app.callback(
-        Output("slider-output-container2", "children"), [Input("my-slider2", "value")]
+        Output("slider-output-container2", "children"), Input("my-slider2", "value")
     )
     def update_output(value):
+        return "# of scenarios: {}".format(value)
+
+    @app.callback(
+        Output("slider-output-container-2-lifecycle", "children"),
+        Input("my-slider-2-lifecycle", "value"),
+    )
+    def update_output_lifecycle(value):
         return "# of scenarios: {}".format(value)
 
     @app.callback(
@@ -245,6 +362,25 @@ def get_callbacks(app):
         [Input("slider-backtest-ml", "value")],
     )
     def update_output_ml_type(value):
+        return "# of clusters or # of MST runs: {}".format(value)
+
+    @app.callback(
+        Output(
+            component_id="slider-output-container-lifecycle", component_property="style"
+        ),
+        Input(component_id="select-ml-lifecycle", component_property="value"),
+    )
+    def update_output_cluster_lifecycle(value):
+        if value == "Clustering":
+            return {"display": "block"}
+        else:
+            return {"display": "none"}
+
+    @app.callback(
+        Output("slider-output-container-lifecycle-ml", "children"),
+        [Input("slider-lifecycle-ml", "value")],
+    )
+    def update_output_ml_type_lifecycle(value):
         return "# of clusters or # of MST runs: {}".format(value)
 
     @app.callback(

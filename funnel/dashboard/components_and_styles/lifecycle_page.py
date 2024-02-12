@@ -43,35 +43,22 @@ options_lifecycle = html.Div(
             placeholder="Select ML method",
             style=OPTION_ELEMENT,
         ),
-        html.Div(
-            id="slider-output-container-backtest-ml-lifecycle", style=DESCRIP_INFO
-        ),
+        html.Div(id="slider-output-container-lifecycle-ml", style=DESCRIP_INFO),
         # part2
-        dcc.Slider(id="slider-backtest-ml-lifecycle", min=1, max=5, step=1, value=2),
-        dcc.Slider(
-            id="slider-backtest-lifecycle",
-            min=1,
-            max=20,
-            step=1,
-            value=2,
-        ),
+        dcc.Slider(id="slider-lifecycle-ml", min=1, max=5, step=1, value=2),
         html.Div(
-            id="slider-trading-sizes-container-lifecycle",
+            id="slider-output-container-lifecycle",
             children=[
-                html.Div(
-                    id="slider-output-container-backtest-lifecycle", style=DESCRIP_INFO
-                ),
-                html.P("Trading Sizes", style=SUB_TITLE),
                 html.P(
-                    "Select the lower bound for the allocated proportion of each selected asset",
+                    "# of the best performing assets selected from each cluster",
                     style=DESCRIP_INFO,
                 ),
-                html.Div(
-                    id="slider-trading-sizes-output-lifecycle", style=DESCRIP_INFO
-                ),
-                # Create element to hide/show, in this case a slider
                 dcc.Slider(
-                    id="slider-trading-sizes-lifecycle", min=0, max=10, step=1, value=0
+                    id="slider-lifecycle",
+                    min=1,
+                    max=20,
+                    step=1,
+                    value=2,
                 ),
             ],
             style={"display": "none"},
@@ -80,18 +67,18 @@ options_lifecycle = html.Div(
         dcc.Dropdown(
             id="select-scenarios-lifecycle",
             options=[
-                {"label": "Bootstrapping", "value": "Bootstrapping"},
+                {"label": "FHS", "value": "FHS"},
                 {"label": "Monte Carlo", "value": "MonteCarlo"},
             ],
             placeholder="Select scenario generation method",
             style=OPTION_ELEMENT,
         ),
-        html.Div(id="slider-output-container2-lifecycle", style=DESCRIP_INFO),
+        html.Div(id="slider-output-container-2-lifecycle", style=DESCRIP_INFO),
         # part3
         dcc.Slider(
             250,
             2000,
-            id="my-slider2-lifecycle",
+            id="my-slider-2-lifecycle",
             step=None,
             marks={
                 250: "0.25k",
@@ -125,7 +112,7 @@ results_lifecycle = html.Div(
 spinner_lifecycle = html.Div(
     [
         dcc.Loading(
-            id="loading-backtest-lifecycle",
+            id="loading-output-lifecycle",
             children=[html.Div([html.Div(id="loading-output-backtest-lifecycle")])],
             type="circle",
             style=LOADING_STYLE,

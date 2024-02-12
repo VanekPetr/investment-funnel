@@ -65,6 +65,12 @@ def load_page():
             dcc.Store(id="saved-universe-figure-page-2", data=None),
             dcc.Store(id="saved-solver", data=""),
             dcc.Store(id="saved-optimization-model", data=""),
+            dcc.Store(id="saved-ml-model-lifecycle", data=""),
+            dcc.Store(id="saved-ml-spec-lifecycle", data=2),
+            dcc.Store(id="saved-pick-num-lifecycle", data=5),
+            dcc.Store(id="saved-scen-model-lifecycle", data=""),
+            dcc.Store(id="saved-scen-spec-lifecycle", data=1000),
+            dcc.Store(id="saved-lifecycle-figure-page-3", data=None),
         ]
     )
 
@@ -84,4 +90,4 @@ get_callbacks(app)
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False, dev_tools_hot_reload=True)
+    app.run_server(debug=False, dev_tools_hot_reload=False)
