@@ -1,26 +1,25 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-from funnel.dashboard.app_components import (
+from funnel.dashboard.components_and_styles.ai_feature_selection_page import (
     graphML,
-    graphOverview,
-    graphResults,
-    mobile_page,
-    optionBacktest,
-    optionGraph,
     optionML,
-    options_lifecycle,
-    sideBar,
-    spinner_backtest,
-    spinner_dots,
     spinner_ml,
 )
+from funnel.dashboard.components_and_styles.backtest_page import (
+    graphResults,
+    optionBacktest,
+    spinner_backtest,
+)
+from funnel.dashboard.components_and_styles.general import mobile_page, sideBar
+from funnel.dashboard.components_and_styles.lifecycle_page import options_lifecycle
+from funnel.dashboard.components_and_styles.market_overview_page import (
+    graphOverview,
+    optionGraph,
+    spinner_dots,
+)
 
-"""
-# ----------------------------------------------------------------------------------------------------------------------
-# LIFECYCLE
-# ----------------------------------------------------------------------------------------------------------------------
-"""
+# *** LIFECYCLE ***
 page_4_layout = html.Div(
     [
         # Row 1 - body
@@ -37,12 +36,7 @@ page_4_layout = html.Div(
     ]
 )
 
-
-"""
-# ----------------------------------------------------------------------------------------------------------------------
-# BACK-TESTING
-# ----------------------------------------------------------------------------------------------------------------------
-"""
+# *** BACK-TESTING ***
 page_3_layout = html.Div(
     [
         # Row 1 - body
@@ -60,11 +54,7 @@ page_3_layout = html.Div(
 )
 
 
-"""
-# ----------------------------------------------------------------------------------------------------------------------
-# AI Feature Selection
-# ----------------------------------------------------------------------------------------------------------------------
-"""
+# *** AI Feature Selection ***
 page_2_layout = html.Div(
     [
         # Row 1 - body
@@ -81,12 +71,7 @@ page_2_layout = html.Div(
     ]
 )
 
-
-"""
-# ----------------------------------------------------------------------------------------------------------------------
-# MARKET OVERVIEW
-# ----------------------------------------------------------------------------------------------------------------------
-"""
+# *** MARKET OVERVIEW ***
 page_1_layout = html.Div(
     [
         # Row 1 - body
@@ -103,11 +88,7 @@ page_1_layout = html.Div(
     ]
 )
 
-"""
-# ----------------------------------------------------------------------------------------------------------------------
-# MOBILE PAGE
-# ----------------------------------------------------------------------------------------------------------------------
-"""
+# *** MOBILE PAGE ***
 page_mobile_layout = html.Div(
     [
         # Row 1 - body
