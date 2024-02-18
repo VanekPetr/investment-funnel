@@ -45,6 +45,8 @@ def get_callbacks(app):
             Output("saved-pick-num-lifecycle", "data"),
             Output("saved-scen-model-lifecycle", "data"),
             Output("saved-scen-spec-lifecycle", "data"),
+            Output("saved_risk_preference", "data"),
+            Output("saved_end_year", "data"),
             Output("saved-lifecycle-figure-page-3", "data"),
             Output("loading-output-lifecycle", "children"),
         ],
@@ -57,11 +59,15 @@ def get_callbacks(app):
             State("my-slider-2-lifecycle", "value"),
             State("picker-lifecycle", "start_date"),
             State("picker-lifecycle", "end_date"),
+            State("slider-final-year-lifecycle", "value"),
+            State("select-risk-preference", "value"),
             State("saved-ml-model-lifecycle", "data"),
             State("saved-ml-spec-lifecycle", "data"),
             State("saved-pick-num-lifecycle", "data"),
             State("saved-scen-model-lifecycle", "data"),
             State("saved-scen-spec-lifecycle", "data"),
+            State("saved_risk_preference", "data"),
+            State("saved_end_year", "data"),
             State("saved-lifecycle-figure-page-3", "data"),
         ],
     )
@@ -74,11 +80,15 @@ def get_callbacks(app):
         scen_spec,
         start_data,
         end_train,
+        end_year,
+        risk_preference,
         saved_model,
         saved_model_spec,
         saved_pick_top,
         saved_scen_model,
         saved_scen_spec,
+        saved_risk_preference,
+        saved_end_year,
         saved_lifecycle_figure,
     ):
         # Lifecycle analysis
@@ -100,10 +110,9 @@ def get_callbacks(app):
                 subset_of_assets=subset_of_assets,
                 scenarios_type=scen_model,
                 n_simulations=scen_spec,
-                # TODO as inputs!
-                end_year=2030,
+                end_year=end_year,
                 risk_test="investmentFunnel",
-                risk_class=[4],
+                risk_class=risk_preference,
                 compare_with_naive=False,
             )
             # Save page values
@@ -123,6 +132,8 @@ def get_callbacks(app):
                 pick_top,
                 scen_model,
                 scen_spec,
+                end_year,
+                risk_preference,
                 lifecycle_figure,
                 True,
             )
@@ -139,6 +150,8 @@ def get_callbacks(app):
                 saved_pick_top,
                 saved_scen_model,
                 saved_scen_spec,
+                saved_risk_preference,
+                saved_end_year,
                 saved_lifecycle_figure,
                 True,
             )
