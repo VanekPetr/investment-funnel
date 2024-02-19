@@ -30,7 +30,7 @@ gunicorn = "21.2.0"
 python-dotenv = "1.0.1"
 cvxpy = "1.4.2"
 pydantic = "2.6.1"
-pydantic-settings = "2.1.0"
+pydantic-settings = "2.2.0"
 tqdm = "4.66.2"
 
 [tool.poetry.group.test.dependencies]
