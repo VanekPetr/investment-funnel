@@ -16,7 +16,7 @@ from funnel.models.Clustering import cluster, pick_cluster
 from funnel.models.CVaRmodel import cvar_model
 from funnel.models.CVaRtargets import get_cvar_targets
 from funnel.models.dataAnalyser import final_stats, mean_an_returns
-from funnel.models.lifecycle.benchmark import calculate_target_allocation
+from funnel.models.lifecycle.assetClassGlidePaths import calculate_target_allocation
 from funnel.models.lifecycle.glidePathCreator import RiskCurveGenerator
 from funnel.models.lifecycle.MVOlifecycleModel import (
     get_port_allocations,
@@ -56,7 +56,28 @@ withdrawal_lst = [
     91800,
     92800,
     93700,
-]
+    94600,
+    95500,
+    96400,
+    97300,
+    98200,
+    99100,
+    100000,
+    100900,
+    101800,
+    102700,
+    103600,
+    104500,
+    105400,
+    106300,
+    107200,
+    108100,
+    109000,
+    109900,
+    110800,
+    111700,
+    112600,
+    113500]
 
 pio.renderers.default = "browser"
 ROOT_DIR = Path(__file__).parent.parent
@@ -86,11 +107,11 @@ class TradeBot:
 
     @staticmethod
     def __plot_backtest(
-        performance: pd.DataFrame,
-        performance_benchmark: pd.DataFrame,
-        composition: pd.DataFrame,
-        names: list,
-        tickers: list,
+            performance: pd.DataFrame,
+            performance_benchmark: pd.DataFrame,
+            composition: pd.DataFrame,
+            names: list,
+            tickers: list,
     ) -> Tuple[px.line, go.Figure]:
         """METHOD TO PLOT THE BACKTEST RESULTS"""
 
@@ -131,15 +152,15 @@ class TradeBot:
         data = []
         idx_color = 0
         composition_color = (
-            px.colors.sequential.turbid
-            + px.colors.sequential.Brwnyl
-            + px.colors.sequential.YlOrBr
-            + px.colors.sequential.gray
-            + px.colors.sequential.Mint
-            + px.colors.sequential.dense
-            + px.colors.sequential.Plasma
-            + px.colors.sequential.Viridis
-            + px.colors.sequential.Cividis
+                px.colors.sequential.turbid
+                + px.colors.sequential.Brwnyl
+                + px.colors.sequential.YlOrBr
+                + px.colors.sequential.gray
+                + px.colors.sequential.Mint
+                + px.colors.sequential.dense
+                + px.colors.sequential.Plasma
+                + px.colors.sequential.Viridis
+                + px.colors.sequential.Cividis
         )
         for isin in composition.columns:
             trace = go.Bar(
@@ -169,7 +190,7 @@ class TradeBot:
 
     @staticmethod
     def __plot_portfolio_densities(
-        portfolio_performance_dict: dict,
+            portfolio_performance_dict: dict,
     ) -> Tuple[go.Figure]:
         """METHOD TO PLOT THE LIFECYCLE SIMULATION RESULTS"""
 
@@ -269,7 +290,7 @@ class TradeBot:
         weekly_data = self.weeklyReturns[
             (self.weeklyReturns.index >= start_date)
             & (self.weeklyReturns.index <= end_date)
-        ].copy()
+            ].copy()
 
         # Create table with summary statistics
         mu_ga = mean_an_returns(weekly_data)  # Annualised geometric mean of returns
@@ -300,14 +321,14 @@ class TradeBot:
         return stat_df
 
     def plot_dots(
-        self,
-        start_date: str,
-        end_date: str,
-        ml: str = "",
-        ml_subset: Union[list, pd.DataFrame] = None,
-        fund_set: list = [],
-        optimal_portfolio: list = [],
-        benchmark: list = [],
+            self,
+            start_date: str,
+            end_date: str,
+            ml: str = "",
+            ml_subset: Union[list, pd.DataFrame] = None,
+            fund_set: list = [],
+            optimal_portfolio: list = [],
+            benchmark: list = [],
     ) -> px.scatter:
         """METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS"""
 
@@ -358,9 +379,9 @@ class TradeBot:
             hover_data={"Sharpe Ratio": True, "ISIN": True, "Size": False},
             color_discrete_map=color_discrete_map,
             title="Annual Returns and Standard Deviation of Returns from "
-            + start_date[:10]
-            + " to "
-            + end_date[:10],
+                  + start_date[:10]
+                  + " to "
+                  + end_date[:10],
         )
 
         # AXIS IN PERCENTAGES
@@ -419,7 +440,7 @@ class TradeBot:
         return fig
 
     def mst(
-        self, start_date: str, end_date: str, n_mst_runs: int, plot: bool = False
+            self, start_date: str, end_date: str, n_mst_runs: int, plot: bool = False
     ) -> Tuple[Union[None, px.scatter], list]:
         """METHOD TO RUN MST METHOD AND PRINT RESULTS"""
         fig, subset_mst = None, []
@@ -428,7 +449,7 @@ class TradeBot:
         subset_mst_df = self.weeklyReturns[
             (self.weeklyReturns.index >= start_date)
             & (self.weeklyReturns.index <= end_date)
-        ].copy()
+            ].copy()
 
         for i in range(n_mst_runs):
             subset_mst, subset_mst_df, corr_mst_avg, pdi_mst = minimum_spanning_tree(
@@ -448,12 +469,12 @@ class TradeBot:
         return fig, subset_mst
 
     def clustering(
-        self,
-        start_date: str,
-        end_date: str,
-        n_clusters: int,
-        n_assets: int,
-        plot: bool = False,
+            self,
+            start_date: str,
+            end_date: str,
+            n_clusters: int,
+            n_assets: int,
+            plot: bool = False,
     ) -> Tuple[Union[None, px.scatter], list]:
         """
         METHOD TO RUN MST METHOD AND PRINT RESULTS
@@ -462,7 +483,7 @@ class TradeBot:
         dataset = self.weeklyReturns[
             (self.weeklyReturns.index >= start_date)
             & (self.weeklyReturns.index <= end_date)
-        ].copy()
+            ].copy()
         # CLUSTER DATA
         clusters = cluster(dataset, n_clusters)
 
@@ -485,17 +506,17 @@ class TradeBot:
         return fig, subset_clustering
 
     def backtest(
-        self,
-        start_train_date: str,
-        start_test_date: str,
-        end_test_date: str,
-        subset_of_assets: list,
-        benchmarks: list,
-        scenarios_type: str,
-        n_simulations: int,
-        model: str,
-        solver: str = "ECOS",
-        lower_bound: int = 0,
+            self,
+            start_train_date: str,
+            start_test_date: str,
+            end_test_date: str,
+            subset_of_assets: list,
+            benchmarks: list,
+            scenarios_type: str,
+            n_simulations: int,
+            model: str,
+            solver: str = "ECOS",
+            lower_bound: int = 0,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure]:
         """METHOD TO COMPUTE THE BACKTEST"""
 
@@ -508,11 +529,11 @@ class TradeBot:
         whole_dataset = self.weeklyReturns[
             (self.weeklyReturns.index >= start_train_date)
             & (self.weeklyReturns.index <= end_test_date)
-        ].copy()
+            ].copy()
         test_dataset = self.weeklyReturns[
             (self.weeklyReturns.index > start_test_date)
             & (self.weeklyReturns.index <= end_test_date)
-        ].copy()
+            ].copy()
 
         # SCENARIO GENERATION
         # ---------------------------------------------------------------------------------------------------
@@ -609,15 +630,15 @@ class TradeBot:
         return optimal_portfolio_stat, benchmark_stat, fig_performance, fig_composition
 
     def scenario_analysis(
-        self,
-        subset_of_assets: list,
-        scenarios_type: str,
-        n_simulations: int,
-        end_year: int,
-        risk_test: str,
-        risk_class: list,
-        compare_with_naive: bool = True,
-    ) -> Tuple[dict, pd.DataFrame, go.Figure]:
+            self,
+            subset_of_assets: list,
+            scenarios_type: str,
+            n_simulations: int,
+            end_year: int,
+            risk_test: str,
+            risk_class: list,
+            compare_with_naive: bool = False,
+    ) -> Tuple[dict, pd.DataFrame, go.Figure, go.Figure]:
         """METHOD TO COMPUTE THE LIFECYCLE SCENARIO ANALYSIS"""
 
         # ------------------------------- SCENARIO GENERATION -------------------------------
@@ -636,13 +657,8 @@ class TradeBot:
                 n_simulations=n_simulations,
                 n_years=n_periods,
             )
-
-        elif scenarios_type == "FHS":
-            scenarios = sg.FHS(
-                data=self.weeklyReturns[subset_of_assets],
-                n_simulations=n_simulations,
-                n_years=n_periods,
-            )
+        else:
+            logger.debug(f'We are currently only able to make scenario analysis based on Monte Carlo simulation.')
 
         # ------------------------------- Risk Target Generation -------------------------------
         if risk_test == "simpleLinear":
@@ -664,19 +680,18 @@ class TradeBot:
                 },
             )
 
-            targets_risk = generator.generate_curves()
-            targets_risk = generator.filter_columns_by_risk_class(
-                targets_risk, risk_class
+            glide_paths_df, fig_glidepaths = generator.generate_curves()
+            glide_paths_df = generator.filter_columns_by_risk_class(
+                glide_paths_df, risk_class
             )
 
         # ------------------------------- Allocation Target Generation -------------------------------
-        # TODO: this will work only with monte carlo! for FHS we need to change the function, missing mu and sigma
         allocation_targets = {}
-        for r in targets_risk.columns:
+        for r in glide_paths_df.columns:
             targets = get_port_allocations(
                 mu_lst=mu,
                 sigma_lst=sigma,
-                targets=targets_risk[r],
+                targets=glide_paths_df[r],
                 max_weight=1 / 3,
                 solver="ECOS_BB",
             )
@@ -707,7 +722,6 @@ class TradeBot:
                 trans_cost=0.002,
                 withdrawal_lst=self.withdrawal_lst,
                 interest_rate=0.04,
-                solver="ECOS_BB",
             )
 
             # Add the analysis_metrics DataFrame as a new column in the storage DataFrame
@@ -724,7 +738,7 @@ class TradeBot:
         )
 
         # ------------------------------- RETURN STATISTICS -------------------------------
-        return terminal_wealth_dict, exhibition_summary, fig_performance
+        return terminal_wealth_dict, exhibition_summary, fig_performance, fig_glidepaths
 
 
 if __name__ == "__main__":
@@ -736,7 +750,7 @@ if __name__ == "__main__":
 
     # RUN THE MINIMUM SPANNING TREE METHOD
     _, mst_subset_of_assets = algo.mst(
-        start_date="2000-01-01", end_date="2024-01-01", n_mst_runs=4, plot=False
+        start_date="2000-01-01", end_date="2024-01-01", n_mst_runs=5, plot=False
     )
 
     # RUN THE CLUSTERING METHOD

@@ -39,6 +39,42 @@ class RiskCurveGenerator:
             curve[floor_start - 1 :] = self.risk_floor
         return curve
 
+
+    def plot_curves(self):
+        if self.df is not None:
+            colors = [
+                "#4099da",  # blue
+                "#b7ada5",  # secondary
+                "#8ecdc8",  # aqua
+                "#e85757",  # coral
+                "#fdd779",  # sun
+                "#644c76",  # eggplant
+                "#3b4956",  # dark
+                "#99A4AE",  # gray50
+                "#3B4956",  # gray100
+                "#D8D1CA",  # warmGray50
+                "#B7ADA5",  # warmGray100
+                "#FFFFFF",  # white
+            ]
+
+            fig = px.line(
+                self.df,
+                labels={"value": "Annual Standard Deviation", "index": "Period"},
+                title="Concave risk budget glide paths for each Risk Class in the Investment Funnel",
+                color_discrete_sequence=colors,  # Use custom colors
+            )
+            fig.update_layout(
+                yaxis_title="Annual Standard Deviation",
+                xaxis_title="Period",
+                legend_title="Risk Class",
+                template="plotly_white",
+            )
+            fig.show()
+
+            return fig
+        else:
+            print("No curves generated. Please run generate_curves() first.")
+
     def generate_curves(self):
         self.df = pd.DataFrame(index=range(self.periods))
         for risk_class, avg_std in self.std_devs.items():
@@ -48,24 +84,11 @@ class RiskCurveGenerator:
             f"We have created 5 different concave gliding paths from the Investment Funnel risk classes. "
             f"The average annual Standard Deviation for the gliding paths are: \n {self.df.mean()}"
         )
-        return self.df
 
-    def plot_curves(self):
-        if self.df is not None:
-            fig = px.line(
-                self.df,
-                labels={"value": "Annual Standard Deviation", "index": "Period"},
-                title="Concave risk budget glide paths for each Risk Class in the Investment Funnel",
-            )
-            fig.update_layout(
-                yaxis_title="Annual Standard Deviation",
-                xaxis_title="Period",
-                legend_title="Risk Class",
-                template="plotly_white",
-            )
-            fig.show()
-        else:
-            print("No curves generated. Please run generate_curves() first.")
+        glide_path_fig = RiskCurveGenerator.plot_curves(self)
+
+        return self.df, glide_path_fig
+
 
     @staticmethod
     def filter_columns_by_risk_class(df, risk_class):
@@ -85,4 +108,3 @@ class RiskCurveGenerator:
         return filtered_df
 
 
-# generator.plot_curves()

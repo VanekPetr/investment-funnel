@@ -4,6 +4,13 @@ import pandas as pd
 from loguru import logger
 
 
+# -----------------------------------------------------------------------------------------------------------
+
+# This code is still under development, and is not to be a part of the investment funnel set-up yet.
+
+# -----------------------------------------------------------------------------------------------------------
+
+
 def create_asset_class_df(tickers: List[str]) -> pd.DataFrame:
     """
     Create an asset classification DataFrame with an optional "Cash" entry.
@@ -106,7 +113,7 @@ def calculate_target_allocation(
             "If we still see an error, there might have been changes to the ETF data. Please go to the "
             "benchmark module and choose the tickers as the subset of data."
         )
-        return  # Stops the function and exits early
+        return None  # Stops the function and exits early
     logger.debug(
         "Adding allocation targets from the naive 1/N bond/stock allocation strategy, "
         "that starts with 100% invested in stocks and glides towards 0% invested in stocks."

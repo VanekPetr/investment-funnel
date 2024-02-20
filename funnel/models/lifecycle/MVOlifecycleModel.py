@@ -7,11 +7,6 @@ from loguru import logger
 
 from funnel.models.MVOmodel import cholesky_psd
 
-"""'
-Hvad med at vi splitter dataet f.eks. 70/30 og så sampler på de 70% og estimerer parametrer på de 30%
-"""
-
-
 def calculate_risk_metrics(yearly_returns, risk_free_rate=0.02):
     annual_return = yearly_returns.mean()
     annual_std_dev = yearly_returns.std()
@@ -74,39 +69,64 @@ def calculate_analysis_metrics(terminal_values):
 def lifecycle_rebalance_model(
     mu, sigma, vol_target, max_weight, solver, inaccurate: bool = True, lower_bound=0
 ):
+    """
+    Optimizes asset allocations within a portfolio to maximize expected returns
+    while adhering to a risk budget glide path.
+
+    Parameters:
+    - mu (pd.Series): Expected returns for each asset.
+    - sigma (pd.DataFrame): Covariance matrix of asset returns.
+    - vol_target (float): Target portfolio volatility for period.
+    - max_weight (float): Maximum weight allowed for any single asset (excluding cash).
+    - solver (str): Solver to be used by CVXPY for optimization.
+    - inaccurate (bool): If True, accepts 'optimal_inaccurate' as a successful solve status.
+
+    Returns:
+    - port_nom (pd.Series): Nominal allocations for each asset in the optimized portfolio.
+    - port_val (float): Total value of the portfolio based on the allocations.
+
+    This function uses convex optimization to find the asset weights that maximize
+    expected returns subject to constraints on total weight, individual asset weights,
+    and portfolio volatility. It optionally includes binary selection variables to enforce
+    a minimum allocation to any selected asset.
+    """
+
+    # Prepare basic variables and indices
     N = len(mu)  # Number of assets
     cash_index = mu.index.get_loc("Cash")  # Identify the index of the 'Cash' asset
     non_cash_indices = np.array([i for i in range(len(mu)) if i != cash_index])
 
-    x = cp.Variable(
-        N, name="x", nonneg=True
-    )  # The weights of the assets (to be optimized)
+    # Optimization variables
+    x = cp.Variable(N, name="x", nonneg=True)  # Asset weights
 
+    # Prepare matrix for volatility constraint
     G = cholesky_psd(sigma)  # Transform to standard deviation matrix
 
+    # Define the optimization problem
     objective = cp.Maximize(x @ mu)
 
     constraints = [
-        cp.sum(x) == 1,
-        cp.norm(G @ x, 2) <= vol_target,
-        # x <= max_weight * cp.sum(x)
-        x[non_cash_indices] <= max_weight * cp.sum(x[non_cash_indices]),
+        cp.sum(x) == 1, # Weights sum to 1
+        cp.norm(G @ x, 2) <= vol_target,    # Portfolio volatility constraint
+        x[non_cash_indices] <= max_weight * cp.sum(x[non_cash_indices]),    # Max weight constraint for non-cash assets
     ]
 
+    # Optional lower bound constraint
     if lower_bound != 0:
-        z = cp.Variable(
-            N, boolean=True
-        )  # Binary variable indicates if asset is selected
-        upper_bound = 100
+        z = cp.Variable(N, boolean=True)  # Binary variable indicates if asset is selected
+        upper_bound = 100   # Arbitrary upper bound for asset weights
 
-        constraints.append(lower_bound * z <= x)
-        constraints.append(x <= upper_bound * z)
-        constraints.append(cp.sum(z) >= 1)
+        constraints += [
+            lower_bound * z <= x,   # Lower bound constraint
+            x <= upper_bound * z,   # Upper bound enables asset deselection
+            cp.sum(z) >= 1          # At least one asset must be selected
+        ]
 
+    # Solve the optimization problem
     model = cp.Problem(objective, constraints)
     model.solve(solver=solver, qcp=True)
 
-    # Get positions
+    # Process optimization results
     accepted_statuses = ["optimal"]
     if inaccurate:
         accepted_statuses.append("optimal_inaccurate")
@@ -114,26 +134,28 @@ def lifecycle_rebalance_model(
         port_nom = pd.Series(
             x.value, index=mu.index
         )  # Nominal allocations in each asset
-        port_val = np.sum(port_nom)  # Portfolio value
-        port_nom[np.abs(port_nom) < 0.000001] = 0  # Remove excessive noise.
+        port_val = np.sum(port_nom)  # Total portfolio value
+        port_nom[np.abs(port_nom) < 0.00001] = 0  # Eliminate numerical noise by zeroing very small weights
         return port_nom, port_val
 
     else:
-        # Print an error if the model is not optimal
+        # Handle non-optimal solve status
         logger.exception(f"It's not looking good lad. Status code is {model.status}")
         port_nom = pd.Series(
-            x.value, index=mu.index
-        )  # Nominal allocations in each asset
+            np.nan, index=mu.index
+        )  # Use NaNs to indicate failure
         port_val = np.sum(port_nom)
         return port_nom, port_val
 
 
 def get_port_allocations(mu_lst, sigma_lst, targets, max_weight, solver):
     """
+    Calculates optimal portfolio allocations for the glide paths.
+
     Parameters:
     - scen: Market scenarios
     - mu_lst, sigma_lst: Expected returns and standard deviations for each year
-    - targets: Target volatilities
+    - targets: Target volatilities from the risk budget glide paths
     - budget: Initial budget
     - trans_cost: Transaction costs
     - max_weight: Maximum weight for any asset
@@ -142,10 +164,11 @@ def get_port_allocations(mu_lst, sigma_lst, targets, max_weight, solver):
     - interest_rate: Interest rate for borrowing
 
     Returns:
-    - ptf_df: DataFrame with portfolio values and other metrics for each year
-    - allocation_df: DataFrame with asset allocations for each year
-    """
+    - allocation_df (pd.DataFrame): DataFrame showing the optimal asset allocations for each year.
 
+    This function iterates through each year, using the provided expected returns, covariance matrices,
+    and risk budget glide path to determine the optimal asset allocations.
+    """
     # Initial setup
     num_years = len(targets)
     years = [str(i + 2023) for i in range(num_years)]
@@ -155,8 +178,6 @@ def get_port_allocations(mu_lst, sigma_lst, targets, max_weight, solver):
     allocation_df = pd.DataFrame(index=years, columns=assets)
 
     for year in range(num_years):
-        # logger.info(f'Rebalancing portfolio in the beginning of year {year + 2023}')
-
         port_weights, _ = lifecycle_rebalance_model(
             mu=mu_lst,
             sigma=sigma_lst,
@@ -168,201 +189,158 @@ def get_port_allocations(mu_lst, sigma_lst, targets, max_weight, solver):
         allocation_df.loc[allocation_df.index[year], :] = port_weights
 
     logger.info(
-        f"The optimal portfolio allocations has been obtained for the {num_years+1} years."
+        f"The optimal portfolio allocations has been obtained for the {num_years + 1} years."
     )
     return allocation_df
 
 
-def lifecycle_model(
-    alloc_targets, trans_cost, x_old, cash, solver, inaccurate: bool = True
-):
-    assets = alloc_targets.index
-    N = len(assets)
-
-    c = trans_cost  # Variable transaction costs
-    x = cp.Variable(
-        N, name="x", nonneg=True
-    )  # The weights of the assets (to be optimized)
-    absdiff = cp.Variable(N, name="absdiff", nonneg=True)  # - |x - x_old|
-    cost = cp.Variable(name="cost", nonneg=True)  # - cost
-
-    objective = cp.Minimize(cp.sum(absdiff))
-
-    constraints = [
-        x - x_old <= absdiff,
-        x - x_old >= -absdiff,
-        c * cp.sum(absdiff) == cost,
-        x_old.sum() + cash - cp.sum(x) - cost == 0,
-    ]
-
-    for i in range(N):
-        constraints.append(x[i] <= alloc_targets.loc[assets[i]])
-
-    model = cp.Problem(objective, constraints)
-    model.solve(solver=solver, qcp=True)
-
-    # Get positions
-    accepted_statuses = ["optimal"]
-    if inaccurate:
-        accepted_statuses.append("optimal_inaccurate")
-    if model.status in accepted_statuses:
-        port_nom = pd.Series(
-            x.value, index=alloc_targets.index
-        )  # Nominal allocations in each asset
-        port_val = np.sum(port_nom)  # Portfolio value
-        opt_port = (
-            port_nom / port_val
-            if port_val > 0
-            else pd.Series(0, index=alloc_targets.columns)
-        )  # Percentage allocation in each asset
-        cash = cash - (
-            port_val + cost.value - x_old.sum()
-        )  # Update cash accordingly in each period
-        opt_port[np.abs(opt_port) < 0.00001] = 0  # Remove excessive noise.
-        return (
-            opt_port,
-            port_val,
-            cost.value,
-            cash,
-            absdiff.value,
-            absdiff.value.sum(),
-            "optimal",
-        )
-
-    else:
-        # Print an error if the model is not optimal
-        logger.exception(f"It's not looking good lad. Status code is {model.status}")
-
-        return None, None, None, cash, None, None, "infeasible"
-
-
-def rebalancing_model_risk(
-    scen, targets, budget, trans_cost, withdrawal_lst, interest_rate, solver
-):
+def portfolio_rebalancing(budget, targets, withdrawal_lst, transaction_cost, scenarios, interest_rate):
     """
+    Simulates portfolio rebalancing over multiple years, accounting for withdrawals,
+    transaction costs, returns based on scenarios, and handling defaults when withdrawals exceed portfolio value.
+
     Parameters:
-    - scen: Market scenarios
-    - mu_lst, sigma_lst: Expected returns and standard deviations for each year
-    - targets: Target volatilities
-    - budget: Initial budget
-    - trans_cost: Transaction costs
-    - max_weight: Maximum weight for any asset
-    - withdrawal_lst: List of withdrawals for each year
-    - solver: Optimization solver to use
-    - interest_rate: Interest rate for borrowing
+    - budget: Initial budget available for investment.
+    - targets: DataFrame containing target asset allocations for each year.
+    - withdrawal_lst: List of annual withdrawal amounts.
+    - transaction_cost: Transaction cost rate applied to rebalancing and withdrawals.
+    - scenarios: DataFrame containing asset return scenarios for each year.
+    - interest_rate: Interest rate applied to borrowed amounts in case of default.
 
     Returns:
-    - ptf_df: DataFrame with portfolio values and other metrics for each year
-    - allocation_df: DataFrame with asset allocations for each year
+    - ptf_performance: DataFrame for portfolio performance for each year.
+    - allocation_df: DataFrame showing asset allocations for each year.
     """
 
-    # Initial setup
-    num_years = scen.shape[0]
-    years = [str(i + 2023) for i in range(num_years)]
-    assets = targets.columns  # [0].index
+    # Initialize the number of years and assets from the targets DataFrame
+    n_years, n_assets = targets.shape
+    years = [i + 2023 for i in range(n_years)]
+    assets = targets.columns
 
-    # Initialize DataFrames
-    ptf_columns = [
-        "Portfolio_Value",
-        "Costs",
-        "Withdrawal",
-        "Absolute DKK rebalanced",
-        "Return",
-        "Borrowed_Amount",
-        "Yearly Returns",
+    # Prepare DataFrame to store portfolio performance
+    ptf_performance_columns = [
+        'Portfolio Value Primo',
+        'Portfolio Value Ultimo',
+        'Withdrawal',
+        'Returns in DKK',
+        'Yearly Returns',
+        'Transaction Costs',
+        'Absolute DKK Rebalanced',
+        'Borrowed Amount'
     ]
-    ptf_df = pd.DataFrame(index=years, columns=ptf_columns)
-    allocation_df = pd.DataFrame(index=years, columns=assets)
-    yearly_returns = []
+    ptf_performance = pd.DataFrame(index=years, columns=ptf_performance_columns)
 
-    infeasible_period, borrowed_amount, interest_for_the_year = 0, 0, 0
-    x_old, portfolio_value, cash = pd.Series(0, index=assets), budget, budget
+    # DataFrame for tracking asset allocations each year
+    allocation_df = pd.DataFrame(0, index=years, columns=assets, dtype=float)
 
-    for year in range(num_years):
-        # logger.info(f'Rebalancing portfolio in the beginning of year {year + 2023}')
+    # Initialize portfolio values
+    default_year, borrowed_amount, interest_for_the_year = 0, 0, 0
+    x_old, portfolio_value_ultimo_aw = pd.Series(0, index=targets.columns), budget
 
-        if infeasible_period > 0:
+    for year in range(n_years):
+        # Handle scenario where the portfolio is in default
+        if default_year > 0:
             withdrawal_amount = withdrawal_lst[year]
             borrowed_amount += withdrawal_amount
             interest_for_the_year = borrowed_amount * interest_rate
             borrowed_amount += interest_for_the_year  # Accumulate interest
-            # Update DataFrame for infeasible period
-            ptf_df.loc[ptf_df.index[year]] = {
-                "Portfolio_Value": -borrowed_amount,
-                "Costs": 0,
-                "Standard Deviation": 0,
-                "Withdrawal": withdrawal_amount,
-                "Absolute DKK rebalanced": 0,
-                "Return": -interest_for_the_year,
-                "Borrowed_Amount": borrowed_amount - interest_for_the_year,
+
+            # Update performance DataFrame for periods in default
+            ptf_performance.loc[ptf_performance.index[year]] = {
+                'Portfolio Value Primo': ptf_performance['Portfolio Value Ultimo'][ptf_performance.index[year - 1]],
+                'Portfolio Value Ultimo': - borrowed_amount,
+                'Withdrawal': withdrawal_lst[year],
+                'Returns in DKK': -interest_for_the_year,
+                'Yearly Returns': -interest_rate,
+                'Transaction Costs': 0,
+                'Absolute DKK Rebalanced': 0,
+                'Borrowed Amount': borrowed_amount - interest_for_the_year
             }
-            ptf_df["infeasible_period"] = infeasible_period
+            ptf_performance["Default Year"] = default_year
             continue
 
-        if withdrawal_lst[year] >= portfolio_value * (1 + trans_cost):
-            withdrawal_amount = portfolio_value
+        # Normal operation: calculate returns, rebalancing, and manage withdrawals
+        port_weights = targets.iloc[year]
+        absolute_rebalance = (port_weights - x_old).abs().sum() * portfolio_value_ultimo_aw
+        costs_rebalance = absolute_rebalance * transaction_cost
+
+        portfolio_value_primo = portfolio_value_ultimo_aw - costs_rebalance
+        year_return = np.dot(scenarios.loc[year], port_weights)
+        year_return_nom = portfolio_value_primo * year_return
+        portfolio_value_ultimo_bw = portfolio_value_primo + year_return_nom
+
+        # Check if withdrawals exceed the portfolio value, leading to default
+        if withdrawal_lst[year] >= portfolio_value_ultimo_bw * (1 + transaction_cost):
+            withdrawal_amount = portfolio_value_ultimo_bw * (1 - transaction_cost)
+            default_year = year + 2023
+            borrowed_amount = withdrawal_lst[year] - withdrawal_amount
+            interest_for_the_year = borrowed_amount * interest_rate
+            borrowed_amount += interest_for_the_year
+
         else:
             withdrawal_amount = withdrawal_lst[year]
-        cash -= math.floor(withdrawal_amount * (1 - trans_cost))
 
-        (
-            port_weights,
-            port_val,
-            port_costs,
-            cash,
-            absdiff_alloc,
-            absdiff_total,
-            status,
-        ) = lifecycle_model(
-            alloc_targets=targets.loc[f"{2023 + year}"] * portfolio_value,
-            trans_cost=trans_cost,
-            x_old=x_old,
-            cash=cash,
-            solver=solver,
-        )
+        costs_withdraw = withdrawal_amount * transaction_cost
+        costs_total = costs_rebalance + costs_withdraw
+        portfolio_value_ultimo_aw = portfolio_value_ultimo_bw - (withdrawal_amount + costs_withdraw)
 
-        if withdrawal_amount == portfolio_value:
-            infeasible_period = year + 2023
-            borrowed_amount = withdrawal_lst[year] - portfolio_value
-            interest_for_the_year = borrowed_amount * interest_rate
-            borrowed_amount += interest_for_the_year  # Accumulate interest
+        x_old = port_weights
 
-        year_return = np.dot(scen.loc[year], port_weights)
-        yearly_returns.append(year_return)
-
-        portfolio_value = port_val * (1 + year_return)
-        x_old = port_weights * portfolio_value
-
+        # Update allocation DataFrame for the year
         allocation_df.loc[allocation_df.index[year], :] = port_weights
 
-        ptf_df.loc[allocation_df.index[year]] = {
-            "Portfolio_Value": portfolio_value - borrowed_amount,
-            "Costs": port_costs,
-            "Withdrawal": withdrawal_lst[year],
-            "Absolute DKK rebalanced": absdiff_total,
-            "Return": port_val * year_return - interest_for_the_year,
-            "Borrowed_Amount": borrowed_amount - interest_for_the_year,
-            "Yearly Returns": year_return,
+        # Update summary DataFrame for normal operation
+        ptf_performance.loc[ptf_performance.index[year]] = {
+            'Portfolio Value Primo': portfolio_value_primo,
+            'Portfolio Value Ultimo': portfolio_value_ultimo_aw - borrowed_amount,
+            'Withdrawal': withdrawal_lst[year],
+            'Returns in DKK': year_return_nom,
+            'Yearly Returns': year_return,
+            'Transaction Costs': costs_total,
+            'Absolute DKK Rebalanced': absolute_rebalance,
+            'Borrowed Amount': borrowed_amount
         }
+        ptf_performance["Default Year"] = default_year
 
-        ptf_df["infeasible_period"] = infeasible_period
-
-    return ptf_df, allocation_df
+    return ptf_performance, allocation_df
 
 
 def riskadjust_model_scen(
-    scen, targets, budget, trans_cost, withdrawal_lst, interest_rate, solver
+        scen, targets, budget, trans_cost, withdrawal_lst, interest_rate
 ):
-    s_points, p_points, a_points = scen.shape
-    assets = targets.columns
-    # Initialize DataFrame
+    """
+    Simulates portfolio performance across different scenarios, adjusting for risk and calculating
+    various financial metrics based on the portfolio's rebalancing strategy.
+
+    Parameters:
+    - scen: 3D numpy array containing return scenarios (scenarios, periods, assets).
+    - targets: DataFrame specifying target asset allocations for each period.
+    - budget: Initial budget for investment.
+    - trans_cost: Transaction costs as a fraction of the trade amount.
+    - withdrawal_lst: List of annual withdrawal amounts.
+    - interest_rate: Interest rate applied to borrowed amounts in case of default.
+
+    Returns:
+    - portfolio_df: DataFrame summarizing the performance metrics for each scenario.
+    - mean_allocations_df: DataFrame showing the average asset allocations across all scenarios for each period.
+    - analysis_metrics: Dictionary containing overall analysis metrics calculated from portfolio_df.
+
+    The function iterates through each scenario, rebalances the portfolio according to the targets,
+    and calculates performance metrics such as total returns, costs, withdrawals, and risk-adjusted measures.
+    It also tracks the occurrence of default events and calculates average allocations and other analysis metrics.
+    """
+
+    s_points, p_points, a_points = scen.shape   # Scenario, periods, and assets dimensions
+    assets = targets.columns    # Asset names from the targets DataFrame
+
+    # Initialize DataFrame to hold portfolio performance metrics for each scenario
     portfolio_df = pd.DataFrame(
         columns=[
             "Terminal Wealth",
             "Total Returns",
             "Total Costs",
             "Total Withdrawals",
-            "Infeasible Period",
+            "Default Year",
             "Average Cash Hold",
             "Annual StDev",
             "Annual StDev_dd",
@@ -373,64 +351,64 @@ def riskadjust_model_scen(
         ],
         index=range(s_points),
     )
+    # Initialize array to hold asset allocations for all scenarios
     all_allocations = np.zeros((s_points, p_points, a_points))
 
     for scenario in range(s_points):
-        # logger.info(f"Optimizing for scenario {scenario}")
+        # Convert scenario data to DataFrame for processing
         scenarios_df = pd.DataFrame(scen[scenario, :, :], columns=assets)
 
-        res, res_alloc = rebalancing_model_risk(
-            scen=scenarios_df,
-            targets=targets,
+        # Perform portfolio rebalancing for the scenario
+        res, res_alloc = portfolio_rebalancing(
             budget=budget,
-            trans_cost=trans_cost,
+            targets=targets,
             withdrawal_lst=withdrawal_lst,
-            interest_rate=interest_rate,
-            solver=solver,
+            transaction_cost=trans_cost,
+            scenarios=scenarios_df,
+            interest_rate=interest_rate
         )
 
         # Store the allocation results for this scenario
         all_allocations[scenario] = res_alloc.to_numpy()
+
+        # Calculate risk metrics for the scenario
         annual_return, annual_std_dev, sr, downside_std_dev, sortino_ratio = (
             calculate_risk_metrics(res["Yearly Returns"])
         )
 
+        # Update the portfolio DataFrame with calculated metrics for the scenario
         portfolio_df.loc[scenario] = {
-            "Terminal Wealth": res["Portfolio_Value"].iloc[-1],
-            "Total Returns": res["Return"].sum(),
-            "Total Costs": res["Costs"].sum(),
+            "Terminal Wealth": res["Portfolio Value Ultimo"].iloc[-1],
+            "Total Returns": res["Returns in DKK"].sum(),
+            "Total Costs": res["Transaction Costs"].sum(),
             "Total Withdrawals": res["Withdrawal"].sum(),
-            "Infeasible Period": res["infeasible_period"].max(),
+            "Default Year": res["Default Year"].max(),
             "Average Cash Hold": res_alloc["Cash"].mean(),
             "Annual StDev": annual_std_dev,
             "Annual StDev_dd": downside_std_dev,
             "Average Annual Return": annual_return,
             "Sharpe Ratio": sr,
             "Sortino Ratio": sortino_ratio,
-            "Total borrowed": res["Borrowed_Amount"].sum(),
+            "Total borrowed": res["Borrowed Amount"].sum(),
         }
 
         if scenario % (s_points // 2) == 0 and scenario != 0:
             logger.info(f"{scenario} out of {s_points} scenarios finished")
-    non_zero_count = (portfolio_df["Infeasible Period"] != 0).sum()
 
-    # Create a MultiIndex representing each scenario-period combination
-    index = pd.MultiIndex.from_product(
-        [range(s_points), range(p_points)], names=["scenario", "period"]
-    )
-    # Reshape the allocations data to a long format
-    allocations_long = all_allocations.reshape(
-        -1, a_points
-    )  # a_points is the number of assets
-    # Create the DataFrame with the MultiIndex
+    # Log progress and calculate default count
+    default_count = (portfolio_df["Default Year"] != 0).sum()
+
+    # Reshape and aggregate allocation data for analysis
+    index = pd.MultiIndex.from_product([range(s_points), range(p_points)], names=["scenario", "period"])
+    allocations_long = all_allocations.reshape(-1, a_points)   # Reshape to long format
     allocations_df = pd.DataFrame(allocations_long, index=index, columns=assets)
+    mean_allocations_df = allocations_df.groupby("period").mean()   # Mean allocations by period
 
-    # Group by the 'period' level of the index and calculate mean
-    mean_allocations_df = allocations_df.groupby("period").mean()
+    # Calculate overall analysis metrics from portfolio performance
     analysis_metrics = calculate_analysis_metrics(portfolio_df["Terminal Wealth"])
 
     logger.info(
-        f"{s_points} out of {s_points} scenarios has now been made. We saw a total of {non_zero_count} "
-        f"incidents where the model is infeasible."
+        f"{s_points} out of {s_points} scenarios has now been made. We saw a total of {default_count} "
+        f"scenarios where the risk budget glide path strategy defaulted over the period of {p_points} years."
     )
     return portfolio_df, mean_allocations_df, analysis_metrics
