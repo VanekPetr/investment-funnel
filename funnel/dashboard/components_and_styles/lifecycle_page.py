@@ -33,6 +33,25 @@ options_lifecycle = html.Div(
             end_date=algo.max_date,
             style=OPTION_ELEMENT,
         ),
+        html.P("Final year for lifecycle investments", style=SUB_TITLE),
+        dcc.Slider(
+            2030,
+            2070,
+            id="slider-final-year-lifecycle",
+            step=None,
+            marks={
+                2030: "2030",
+                2035: "2035",
+                2040: "2040",
+                2045: "2045",
+                2050: "2050",
+                2055: "2055",
+                2060: "2060",
+                2065: "2065",
+                2070: "2070",
+            },
+            value=2040,
+        ),
         html.P("Feature Selection", style=SUB_TITLE),
         dcc.Dropdown(
             id="select-ml-lifecycle",
@@ -91,6 +110,17 @@ options_lifecycle = html.Div(
                 2000: "2k",
             },
             value=1000,
+        ),
+        html.P("Risk preference", style=SUB_TITLE),
+        dcc.Dropdown(
+            id="select-risk-preference",
+            options=[
+                {"label": f"Risk class {value}", "value": value}
+                for value in range(1, 7)
+            ],
+            placeholder="Select your one or more preference",
+            multi=True,
+            style=OPTION_ELEMENT,
         ),
         dbc.Button(
             "Run Simulations",

@@ -33,6 +33,7 @@ pydantic = "2.6.1"
 pydantic-settings = "2.1.0"
 arch = "6.3.0"
 tqdm = "4.66.2"
+pre-commit = "3.6.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "*"
