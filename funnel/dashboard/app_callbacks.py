@@ -35,6 +35,7 @@ def get_callbacks(app):
     @app.callback(
         [
             Output("lifecycle-output-fig", "children"),
+            Output("glidepaths-output-fig", "children"),
             Output("select-ml-lifecycle", "value"),
             Output("slider-lifecycle-ml", "value"),
             Output("slider-lifecycle", "value"),
@@ -48,6 +49,7 @@ def get_callbacks(app):
             Output("saved_risk_preference", "data"),
             Output("saved_end_year", "data"),
             Output("saved-lifecycle-figure-page-3", "data"),
+            Output("saved-glidepaths-figure-page-3", "data"),
             Output("loading-output-lifecycle", "children"),
         ],
         Input("lifecycle-run", "n_clicks"),
@@ -69,6 +71,7 @@ def get_callbacks(app):
             State("saved_risk_preference", "data"),
             State("saved_end_year", "data"),
             State("saved-lifecycle-figure-page-3", "data"),
+            State("saved-glidepaths-figure-page-3", "data"),
         ],
     )
     def plot_lifecycle(
@@ -90,6 +93,7 @@ def get_callbacks(app):
         saved_risk_preference,
         saved_end_year,
         saved_lifecycle_figure,
+        saved_glidepaths_figure,
     ):
         # Lifecycle analysis
         if click:
@@ -105,8 +109,8 @@ def get_callbacks(app):
                     n_clusters=model_spec,
                     n_assets=pick_top,
                 )
-            # RUN THE BACKTEST
-            _, _, fig_composition = algo.scenario_analysis(
+            # RUN THE LIFECYCLE FUNCTION
+            _, _, fig_composition, fig_glidepaths = algo.scenario_analysis(
                 subset_of_assets=subset_of_assets,
                 scenarios_type=scen_model,
                 n_simulations=scen_spec,
@@ -119,9 +123,13 @@ def get_callbacks(app):
             lifecycle_figure = dcc.Graph(
                 figure=fig_composition, style={"margin": "0%", "height": "800px"}
             )
+            glidepaths_figure = dcc.Graph(
+                figure=fig_glidepaths, style={"margin": "0%", "height": "800px"}
+            )
 
             return (
                 lifecycle_figure,
+                glidepaths_figure,
                 model,
                 model_spec,
                 pick_top,
@@ -135,11 +143,13 @@ def get_callbacks(app):
                 end_year,
                 risk_preference,
                 lifecycle_figure,
+                glidepaths_figure,
                 True,
             )
         else:
             return (
                 saved_lifecycle_figure,
+                saved_glidepaths_figure,
                 saved_model,
                 saved_model_spec,
                 saved_pick_top,
@@ -153,6 +163,7 @@ def get_callbacks(app):
                 saved_risk_preference,
                 saved_end_year,
                 saved_lifecycle_figure,
+                saved_glidepaths_figure,
                 True,
             )
 
