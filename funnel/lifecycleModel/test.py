@@ -1,6 +1,5 @@
 from funnel.models.main import TradeBot
 
-
 if __name__ == "__main__":
     # INITIALIZATION OF THE CLASS
     algo = TradeBot()

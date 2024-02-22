@@ -77,7 +77,8 @@ withdrawal_lst = [
     110800,
     111700,
     112600,
-    113500]
+    113500,
+]
 
 pio.renderers.default = "browser"
 ROOT_DIR = Path(__file__).parent.parent
@@ -107,11 +108,11 @@ class TradeBot:
 
     @staticmethod
     def __plot_backtest(
-            performance: pd.DataFrame,
-            performance_benchmark: pd.DataFrame,
-            composition: pd.DataFrame,
-            names: list,
-            tickers: list,
+        performance: pd.DataFrame,
+        performance_benchmark: pd.DataFrame,
+        composition: pd.DataFrame,
+        names: list,
+        tickers: list,
     ) -> Tuple[px.line, go.Figure]:
         """METHOD TO PLOT THE BACKTEST RESULTS"""
 
@@ -152,15 +153,15 @@ class TradeBot:
         data = []
         idx_color = 0
         composition_color = (
-                px.colors.sequential.turbid
-                + px.colors.sequential.Brwnyl
-                + px.colors.sequential.YlOrBr
-                + px.colors.sequential.gray
-                + px.colors.sequential.Mint
-                + px.colors.sequential.dense
-                + px.colors.sequential.Plasma
-                + px.colors.sequential.Viridis
-                + px.colors.sequential.Cividis
+            px.colors.sequential.turbid
+            + px.colors.sequential.Brwnyl
+            + px.colors.sequential.YlOrBr
+            + px.colors.sequential.gray
+            + px.colors.sequential.Mint
+            + px.colors.sequential.dense
+            + px.colors.sequential.Plasma
+            + px.colors.sequential.Viridis
+            + px.colors.sequential.Cividis
         )
         for isin in composition.columns:
             trace = go.Bar(
@@ -190,7 +191,7 @@ class TradeBot:
 
     @staticmethod
     def __plot_portfolio_densities(
-            portfolio_performance_dict: dict,
+        portfolio_performance_dict: dict,
     ) -> Tuple[go.Figure]:
         """METHOD TO PLOT THE LIFECYCLE SIMULATION RESULTS"""
 
@@ -290,7 +291,7 @@ class TradeBot:
         weekly_data = self.weeklyReturns[
             (self.weeklyReturns.index >= start_date)
             & (self.weeklyReturns.index <= end_date)
-            ].copy()
+        ].copy()
 
         # Create table with summary statistics
         mu_ga = mean_an_returns(weekly_data)  # Annualised geometric mean of returns
@@ -321,14 +322,14 @@ class TradeBot:
         return stat_df
 
     def plot_dots(
-            self,
-            start_date: str,
-            end_date: str,
-            ml: str = "",
-            ml_subset: Union[list, pd.DataFrame] = None,
-            fund_set: list = [],
-            optimal_portfolio: list = [],
-            benchmark: list = [],
+        self,
+        start_date: str,
+        end_date: str,
+        ml: str = "",
+        ml_subset: Union[list, pd.DataFrame] = None,
+        fund_set: list = [],
+        optimal_portfolio: list = [],
+        benchmark: list = [],
     ) -> px.scatter:
         """METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS"""
 
@@ -379,9 +380,9 @@ class TradeBot:
             hover_data={"Sharpe Ratio": True, "ISIN": True, "Size": False},
             color_discrete_map=color_discrete_map,
             title="Annual Returns and Standard Deviation of Returns from "
-                  + start_date[:10]
-                  + " to "
-                  + end_date[:10],
+            + start_date[:10]
+            + " to "
+            + end_date[:10],
         )
 
         # AXIS IN PERCENTAGES
@@ -440,7 +441,7 @@ class TradeBot:
         return fig
 
     def mst(
-            self, start_date: str, end_date: str, n_mst_runs: int, plot: bool = False
+        self, start_date: str, end_date: str, n_mst_runs: int, plot: bool = False
     ) -> Tuple[Union[None, px.scatter], list]:
         """METHOD TO RUN MST METHOD AND PRINT RESULTS"""
         fig, subset_mst = None, []
@@ -449,7 +450,7 @@ class TradeBot:
         subset_mst_df = self.weeklyReturns[
             (self.weeklyReturns.index >= start_date)
             & (self.weeklyReturns.index <= end_date)
-            ].copy()
+        ].copy()
 
         for i in range(n_mst_runs):
             subset_mst, subset_mst_df, corr_mst_avg, pdi_mst = minimum_spanning_tree(
@@ -469,12 +470,12 @@ class TradeBot:
         return fig, subset_mst
 
     def clustering(
-            self,
-            start_date: str,
-            end_date: str,
-            n_clusters: int,
-            n_assets: int,
-            plot: bool = False,
+        self,
+        start_date: str,
+        end_date: str,
+        n_clusters: int,
+        n_assets: int,
+        plot: bool = False,
     ) -> Tuple[Union[None, px.scatter], list]:
         """
         METHOD TO RUN MST METHOD AND PRINT RESULTS
@@ -483,7 +484,7 @@ class TradeBot:
         dataset = self.weeklyReturns[
             (self.weeklyReturns.index >= start_date)
             & (self.weeklyReturns.index <= end_date)
-            ].copy()
+        ].copy()
         # CLUSTER DATA
         clusters = cluster(dataset, n_clusters)
 
@@ -506,17 +507,17 @@ class TradeBot:
         return fig, subset_clustering
 
     def backtest(
-            self,
-            start_train_date: str,
-            start_test_date: str,
-            end_test_date: str,
-            subset_of_assets: list,
-            benchmarks: list,
-            scenarios_type: str,
-            n_simulations: int,
-            model: str,
-            solver: str = "ECOS",
-            lower_bound: int = 0,
+        self,
+        start_train_date: str,
+        start_test_date: str,
+        end_test_date: str,
+        subset_of_assets: list,
+        benchmarks: list,
+        scenarios_type: str,
+        n_simulations: int,
+        model: str,
+        solver: str = "ECOS",
+        lower_bound: int = 0,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure]:
         """METHOD TO COMPUTE THE BACKTEST"""
 
@@ -529,11 +530,11 @@ class TradeBot:
         whole_dataset = self.weeklyReturns[
             (self.weeklyReturns.index >= start_train_date)
             & (self.weeklyReturns.index <= end_test_date)
-            ].copy()
+        ].copy()
         test_dataset = self.weeklyReturns[
             (self.weeklyReturns.index > start_test_date)
             & (self.weeklyReturns.index <= end_test_date)
-            ].copy()
+        ].copy()
 
         # SCENARIO GENERATION
         # ---------------------------------------------------------------------------------------------------
@@ -630,14 +631,14 @@ class TradeBot:
         return optimal_portfolio_stat, benchmark_stat, fig_performance, fig_composition
 
     def scenario_analysis(
-            self,
-            subset_of_assets: list,
-            scenarios_type: str,
-            n_simulations: int,
-            end_year: int,
-            risk_test: str,
-            risk_class: list,
-            compare_with_naive: bool = False,
+        self,
+        subset_of_assets: list,
+        scenarios_type: str,
+        n_simulations: int,
+        end_year: int,
+        risk_test: str,
+        risk_class: list,
+        compare_with_naive: bool = False,
     ) -> Tuple[dict, pd.DataFrame, go.Figure, go.Figure]:
         """METHOD TO COMPUTE THE LIFECYCLE SCENARIO ANALYSIS"""
 
@@ -658,15 +659,18 @@ class TradeBot:
                 n_years=n_periods,
             )
         else:
-            logger.debug(f'We are currently only able to make scenario analysis based on Monte Carlo simulation.')
-
-        # ------------------------------- Risk Target Generation -------------------------------
-        if risk_test == "simpleLinear":
-            targets_risk = pd.DataFrame(
-                np.linspace(0.2, 0.05, n_periods), columns=["Linear Glide Path"]
+            logger.debug(
+                "We are currently only able to make scenario analysis based on Monte Carlo simulation."
             )
 
-        elif risk_test == "investmentFunnel":
+        # ------------------------------- Risk Target Generation -------------------------------
+        # TODO this is not in use and should be removed
+        # if risk_test == "simpleLinear":
+        #     targets_risk = pd.DataFrame(
+        #         np.linspace(0.2, 0.05, n_periods), columns=["Linear Glide Path"]
+        #     )
+
+        if risk_test == "investmentFunnel":
             # Configuration and usage
             generator = RiskCurveGenerator(
                 periods=n_periods,

@@ -3,7 +3,6 @@ from typing import List
 import pandas as pd
 from loguru import logger
 
-
 # -----------------------------------------------------------------------------------------------------------
 
 # This code is still under development, and is not to be a part of the investment funnel set-up yet.

@@ -39,7 +39,6 @@ class RiskCurveGenerator:
             curve[floor_start - 1 :] = self.risk_floor
         return curve
 
-
     def plot_curves(self):
         if self.df is not None:
             colors = [
@@ -89,7 +88,6 @@ class RiskCurveGenerator:
 
         return self.df, glide_path_fig
 
-
     @staticmethod
     def filter_columns_by_risk_class(df, risk_class):
         # Convert risk_class numbers to strings for matching in column names
@@ -106,5 +104,3 @@ class RiskCurveGenerator:
             f"Qua the chosen risk classes, we only optimize portfolios for {selected_columns}"
         )
         return filtered_df
-
-
