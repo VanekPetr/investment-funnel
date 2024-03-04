@@ -1,106 +1,106 @@
-import numpy as np
 import pandas as pd
+import numpy as np
 import plotly.express as px
-from loguru import logger
 
 
-class RiskCurveGenerator:
-    def __init__(self, periods, risk_floor, std_devs):
-        self.periods = periods
-        self.risk_floor = risk_floor
-        self.std_devs = std_devs
-        # Ensure floor_starts values are integers
-        self.floor_starts = {
-            k: int(v)
-            for k, v in {
-                "Risk Class 3": periods // 2,
-                "Risk Class 4": periods // 1.8,
-                "Risk Class 5": periods // 1.6,
-                "Risk Class 6": periods // 1.3,
-                "Risk Class 7": periods // 1.1,
-            }.items()
-        }
-        self.df = pd.DataFrame  # None
+def generate_risk_profiles(n_periods, initial_risk, minimum_risk):
+    # Create a dataframe with index as range of periods
+    df = pd.DataFrame(index=range(n_periods))
+    x_values = np.linspace(0, 1, n_periods)
+    x_values_early = np.linspace(0, 1, int(np.floor(n_periods*0.8)))
 
-    def find_start_value(self, avg_std, floor_start):
-        required_area = avg_std * self.periods
-        floor_area = self.risk_floor * (self.periods - floor_start)
-        curve_area_needed = required_area - floor_area
-        start_value = 1.565 * curve_area_needed / floor_start
-        return max(start_value, self.risk_floor)
+    lower_limit_narrow = minimum_risk + (initial_risk * 0.2)
 
-    def generate_curve(self, avg_std, floor_start):
-        start_value = self.find_start_value(avg_std, floor_start)
-        x = np.arange(1, self.periods + 1)
-        curve = np.maximum(start_value * (1 - (x / floor_start) ** 2), self.risk_floor)
-        # Explicitly convert floor_start to an integer for slicing
-        floor_start = int(floor_start)
-        if floor_start < self.periods:
-            curve[floor_start - 1 :] = self.risk_floor
-        return curve
+    '''
+    
+    upper_limit_narrow = initial_risk * 0.8
+    lower_limit_half = minimum_risk + (initial_risk * 0.5)
 
-    def plot_curves(self):
-        if self.df is not None:
-            colors = [
-                "#4099da",  # blue
-                "#b7ada5",  # secondary
-                "#8ecdc8",  # aqua
-                "#e85757",  # coral
-                "#fdd779",  # sun
-                "#644c76",  # eggplant
-                "#3b4956",  # dark
-                "#99A4AE",  # gray50
-                "#3B4956",  # gray100
-                "#D8D1CA",  # warmGray50
-                "#B7ADA5",  # warmGray100
-                "#FFFFFF",  # white
-            ]
+    
+    # Original curves
+    df['Concave risk reduction'] = initial_risk - (initial_risk - minimum_risk) * (x_values ** 2)
+    #df['Concave risk reduction narrow'] = initial_risk - (initial_risk - lower_limit_narrow) * (x_values ** 2)
+    #df['Convex risk early'] = np.concatenate((df['Convex risk reduction'][:n_periods-5], np.full(5, minimum_risk)))
 
-            fig = px.line(
-                self.df,
-                labels={"value": "Annual Standard Deviation", "index": "Period"},
-                title="Concave risk budget glide paths for each Risk Class in the Investment Funnel",
-                color_discrete_sequence=colors,  # Use custom colors
-            )
-            fig.update_layout(
-                yaxis_title="Annual Standard Deviation",
-                xaxis_title="Period",
-                legend_title="Risk Class",
-                template="plotly_white",
-            )
-            fig.show()
+    # Narrow range curve
+    df['Concave risk reduction narrow'] = upper_limit_narrow - (upper_limit_narrow - lower_limit_narrow) * (
+                x_values ** 2)
 
-            return fig
-        else:
-            print("No curves generated. Please run generate_curves() first.")
+    # Constant risk
+    df['Constant_100'] = np.full(n_periods, initial_risk)
+    df['Constant_75'] = np.concatenate(
+        (np.full(round(n_periods * 0.75), initial_risk), np.full(n_periods - round(n_periods * 0.75), lower_limit_half)))
+    df['Constant_50'] = np.concatenate(
+        (np.full(round(n_periods * 0.5), initial_risk), np.full(n_periods - round(n_periods * 0.5), lower_limit_half)))
+    df['Constant_100_half'] = np.full(n_periods, initial_risk * 0.5)
 
-    def generate_curves(self):
-        self.df = pd.DataFrame(index=range(self.periods))
-        for risk_class, avg_std in self.std_devs.items():
-            floor_start = self.floor_starts[risk_class]
-            self.df[risk_class] = self.generate_curve(avg_std, floor_start)
-        logger.debug(
-            f"We have created 5 different concave gliding paths from the Investment Funnel risk classes. "
-            f"The average annual Standard Deviation for the gliding paths are: \n {self.df.mean()}"
-        )
+    # Reversed curves
+    df['Concave risk reduction reverse'] = df['Concave risk reduction'][::-1].values
+    df['Concave risk reduction narrow reverse'] = df['Concave risk reduction narrow'][::-1].values
+    df['Constant_75 reversed'] = df['Constant_75'][::-1].values
+    df['Constant_50 reversed'] = df['Constant_50'][::-1].values
 
-        glide_path_fig = RiskCurveGenerator.plot_curves(self)
+    # Adjusted for early completion and constant thereafter
+    early_stop = n_periods - 5
+    df['Concave risk early'] = np.concatenate(
+        (df['Concave risk reduction'][:early_stop], np.full(5, df['Concave risk reduction'][early_stop - 1])))
+    '''
+    # Other
+    df['Constant risk low'] = np.full(n_periods, initial_risk * 1/2)
+    #df['Constant risk high'] = np.full(n_periods, initial_risk * 2/3)
 
-        return self.df, glide_path_fig
+    df['Linear risk reduction'] = np.linspace(initial_risk, minimum_risk, n_periods)
 
-    @staticmethod
-    def filter_columns_by_risk_class(df, risk_class):
-        # Convert risk_class numbers to strings for matching in column names
-        risk_class_str = [str(rc) for rc in risk_class]
+    df['Concave risk reduction'] = initial_risk - (initial_risk - minimum_risk) * (x_values ** 2)
+    df['Concave risk early'] = np.concatenate((initial_risk - (initial_risk - minimum_risk) * (x_values_early ** 2),
+                                               np.full(n_periods-len(x_values_early), minimum_risk)))
 
-        # Identify columns that contain any of the specified risk class numbers
-        selected_columns = [
-            col for col in df.columns if any(rc in col for rc in risk_class_str)
-        ]
+    df['Convex risk reduction'] = initial_risk - (initial_risk - minimum_risk) * np.sqrt(x_values)
+    df['Convex risk reduction narrow'] = initial_risk - (initial_risk - lower_limit_narrow) * np.sqrt(x_values)
 
-        # Filter the DataFrame to keep only the selected columns
-        filtered_df = df[selected_columns]
-        logger.debug(
-            f"Qua the chosen risk classes, we only optimize portfolios for {selected_columns}"
-        )
-        return filtered_df
+
+    fig = px.line(
+        df,
+        labels={"value": "Risk", "index": "Period"},
+        title="Risk Budget Glide Paths",
+    ).update_traces(mode='lines')
+    fig.update_layout(
+        yaxis_title="Annual Standard Deviation",
+        xaxis_title="Period",
+        legend_title="Risk Budget Glide Paths",
+        height=900,
+        width=1500,
+        template="plotly_white",
+    )
+
+    # Update y-axis properties
+    fig.update_yaxes(showgrid=True, showline=True, gridcolor='rgba(211, 211, 211, 0.5)',
+                     tickformat=".0%", title_font=dict(size=15),
+                     range=[0, initial_risk * 1.1])
+    # Update x-axis properties, setting it to reverse
+    fig.update_xaxes(showgrid=False, showline=True, title_font=dict(size=15),
+                     gridcolor='rgba(211, 211, 211, 0.5)')
+
+    # Colors and line width
+    colors = [
+        "#99A4AE",  # gray50
+        "#3b4956",  # dark
+        "#b7ada5",  # secondary
+        "#4099da",  # blue
+        "#8ecdc8",  # aqua
+        "#e85757",  # coral
+        "#fdd779",  # sun
+        "#644c76",  # eggplant
+        "#D8D1CA",  # warmGray50
+        # Additional colors if needed
+    ]
+
+    for i, trace in enumerate(fig.data):
+        trace.line.color = colors[i % len(colors)]
+        trace.line.width = 2.0
+
+    fig.layout.yaxis.tickformat = ",.1%"
+
+    fig.show()
+    return df, fig
+

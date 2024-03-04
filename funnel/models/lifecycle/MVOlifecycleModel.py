@@ -66,7 +66,7 @@ def calculate_analysis_metrics(terminal_values):
 
 
 def lifecycle_rebalance_model(
-    mu, sigma, vol_target, max_weight, solver, inaccurate: bool = True, lower_bound=0
+        mu, sigma, vol_target, max_weight, solver, inaccurate: bool = True, lower_bound=0
 ):
     """
     Optimizes asset allocations within a portfolio to maximize expected returns
@@ -102,14 +102,15 @@ def lifecycle_rebalance_model(
     G = cholesky_psd(sigma)  # Transform to standard deviation matrix
 
     # Define the optimization problem
-    objective = cp.Maximize(x @ mu)
+    objective = cp.Maximize(x.T @ mu)
 
     constraints = [
         cp.sum(x) == 1,  # Weights sum to 1
         cp.norm(G @ x, 2) <= vol_target,  # Portfolio volatility constraint
-        x[non_cash_indices]
-        <= max_weight
-        * cp.sum(x[non_cash_indices]),  # Max weight constraint for non-cash assets
+        # cp.quad_form(x, sigma) <= vol_target ** 2,
+
+        x[non_cash_indices] <= max_weight * cp.sum(x[non_cash_indices]),  # Max weight constraint for non-cash assets
+
     ]
 
     # Optional lower bound constraint
@@ -145,7 +146,8 @@ def lifecycle_rebalance_model(
 
     else:
         # Handle non-optimal solve status
-        logger.exception(f"It's not looking good lad. Status code is {model.status}")
+        logger.exception(
+            f"The model is {model.status}. Look into the constraints. It might be an issue of too low risk targets.")
         port_nom = pd.Series(np.nan, index=mu.index)  # Use NaNs to indicate failure
         port_val = np.sum(port_nom)
         return port_nom, port_val
@@ -198,7 +200,7 @@ def get_port_allocations(mu_lst, sigma_lst, targets, max_weight, solver):
 
 
 def portfolio_rebalancing(
-    budget, targets, withdrawal_lst, transaction_cost, scenarios, interest_rate
+        budget, targets, withdrawal_lst, transaction_cost, scenarios, interest_rate
 ):
     """
     Simulates portfolio rebalancing over multiple years, accounting for withdrawals,
@@ -269,14 +271,14 @@ def portfolio_rebalancing(
         # Normal operation: calculate returns, rebalancing, and manage withdrawals
         port_weights = targets.iloc[year]
         absolute_rebalance = (
-            port_weights - x_old
-        ).abs().sum() * portfolio_value_ultimo_aw
+                                     port_weights - x_old
+                             ).abs().sum() * portfolio_value_ultimo_aw
         costs_rebalance = absolute_rebalance * transaction_cost
 
         portfolio_value_primo = portfolio_value_ultimo_aw - costs_rebalance
+
         year_return = np.dot(scenarios.loc[year], port_weights)
-        year_return_nom = portfolio_value_primo * year_return
-        portfolio_value_ultimo_bw = portfolio_value_primo + year_return_nom
+        portfolio_value_ultimo_bw = portfolio_value_primo * (1 + year_return)
 
         # Check if withdrawals exceed the portfolio value, leading to default
         if withdrawal_lst[year] >= portfolio_value_ultimo_bw * (1 + transaction_cost):
@@ -292,7 +294,7 @@ def portfolio_rebalancing(
         costs_withdraw = withdrawal_amount * transaction_cost
         costs_total = costs_rebalance + costs_withdraw
         portfolio_value_ultimo_aw = portfolio_value_ultimo_bw - (
-            withdrawal_amount + costs_withdraw
+                withdrawal_amount + costs_withdraw
         )
 
         x_old = port_weights
@@ -305,7 +307,7 @@ def portfolio_rebalancing(
             "Portfolio Value Primo": portfolio_value_primo,
             "Portfolio Value Ultimo": portfolio_value_ultimo_aw - borrowed_amount,
             "Withdrawal": withdrawal_lst[year],
-            "Returns in DKK": year_return_nom,
+            "Returns in DKK": portfolio_value_primo * year_return,
             "Yearly Returns": year_return,
             "Transaction Costs": costs_total,
             "Absolute DKK Rebalanced": absolute_rebalance,
@@ -317,7 +319,7 @@ def portfolio_rebalancing(
 
 
 def riskadjust_model_scen(
-    scen, targets, budget, trans_cost, withdrawal_lst, interest_rate
+        scen, targets, budget, trans_cost, withdrawal_lst, interest_rate
 ):
     """
     Simulates portfolio performance across different scenarios, adjusting for risk and calculating

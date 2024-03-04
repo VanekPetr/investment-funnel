@@ -4,6 +4,7 @@ from typing import List, Tuple
 import numpy as np
 import pandas as pd
 from loguru import logger
+from sklearn.covariance import MinCovDet
 
 
 class MomentGenerator:
@@ -50,6 +51,27 @@ class MomentGenerator:
         return shrunk
 
     @staticmethod
+    def compute_annualized_covariance(X):
+        """
+        Computes the annualized covariance matrix from weekly return data,
+        incorporating robust estimation (MCD), Ledoit-Wolf shrinkage.
+
+        :param X: A pandas DataFrame with weekly returns for each asset.
+        :return: Annualized covariance matrix as a pandas DataFrame.
+        """
+        # Step 1: Compute Robust Covariance Matrix using MCD
+        mcd = MinCovDet().fit(X)
+        robust_cov_matrix = mcd.covariance_
+
+        # Convert to DataFrame for compatibility with Ledoit-Wolf function
+        robust_cov_df = pd.DataFrame(robust_cov_matrix, index=X.columns, columns=X.columns)
+
+        # Step 2: Apply Ledoit-Wolf Shrinkage
+        shrunk_cov_df = MomentGenerator._ledoit_wolf_shrinkage(X, robust_cov_df)
+
+        return shrunk_cov_df
+
+    @staticmethod
     def generate_sigma_mu_for_test_periods(
         data: pd.DataFrame, n_test: int
     ) -> Tuple[List, List]:
@@ -93,6 +115,33 @@ class MomentGenerator:
         return sigma_lst, mu_lst
 
     @staticmethod
+    def split_dataset(data: pd.DataFrame, sampling_ratio: float = 0.6):
+        """
+        Splits the dataset into a sampling (training) set and an estimating (testing) set.
+
+        Parameters:
+        - data: The dataset to be split, provided as a pandas DataFrame.
+        - sampling_ratio: The ratio of the dataset to be used for sampling (training),
+                          with the remainder used for estimating (testing).
+
+        Returns:
+        - A tuple containing two DataFrames: (sampling_set, estimating_set).
+        """
+
+        # Ensure the sampling ratio is between 0 and 1
+        if not (0 < sampling_ratio < 1):
+            raise ValueError("Sampling ratio must be between 0 and 1.")
+
+        # Calculate the split index
+        split_index = int(len(data) * sampling_ratio)
+
+        # Split the dataset
+        sampling_set = data.iloc[:split_index]
+        estimating_set = data.iloc[split_index:]
+
+        return sampling_set, estimating_set
+
+    @staticmethod
     def generate_annual_sigma_mu_with_risk_free(
         data: pd.DataFrame, risk_free_rate_annual: float = 0.02
     ) -> Tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
@@ -115,12 +164,14 @@ class MomentGenerator:
             "⏳ Generating annual Sigma and Mu parameter estimations for the optimization model."
         )
         # Compute the sample covariance matrix for the entire dataset
+
         sigma_weekly_np = np.atleast_2d(
             np.cov(data, rowvar=False, bias=True)
+            # MomentGenerator.compute_annualized_covariance(data)
         )  # The sample covariance matrix
 
         # Add a shrinkage term (Ledoit--Wolf multiple of identity)
-        sigma_weekly_np = MomentGenerator._ledoit_wolf_shrinkage(data, sigma_weekly_np)
+        #sigma_weekly_np = MomentGenerator._ledoit_wolf_shrinkage(data, sigma_weekly_np)
 
         # Compute the mean return array for the entire dataset
         mu_weekly_np = np.mean(data, axis=0)
@@ -244,8 +295,8 @@ class ScenarioGenerator:
         weekly_sigma: pd.DataFrame,
         n_simulations: int,
         n_years: int,
-        cash_return_annual: float = 0.02,
-    ) -> np.ndarray:
+        cash_return_annual: float = 0.015,
+    ):
         """
         Generates Monte Carlo simulations for annual returns based on provided weekly mu and sigma.
         Assumes 'Cash' or risk-free asset is already included and sets its annual return to a constant value.
@@ -303,3 +354,44 @@ class ScenarioGenerator:
                         )
 
         return annual_simulations
+
+    def bootstrap_simulation_annual_from_weekly(
+            self,
+            historical_weekly_returns: pd.DataFrame,
+            n_simulations: int,
+            n_years: int,
+            cash_return_annual: float = 0.015,
+    ) -> np.ndarray:
+        """
+        Generates bootstrap simulations for annual returns based on historical weekly returns,
+        correctly handling weekly data to compound into annual returns.
+
+        Parameters:
+        - historical_weekly_returns: DataFrame containing historical weekly returns for each asset.
+        - n_simulations: Number of simulations to generate.
+        - n_years: Number of years to simulate.
+
+        Returns:
+        - annual_simulations: An array of simulated annual returns (n_simulations, n_years, n_assets).
+        """
+        weeks_per_year = 52
+        n_assets = historical_weekly_returns.shape[1]  # Number of assets
+        # Initialize the array for annual simulations
+        annual_simulations = np.zeros((n_simulations, n_years, n_assets + 1), dtype=float)
+
+        for simulation in range(n_simulations):
+            for year in range(n_years):
+                # For each year in each simulation, sample weeks and compound
+                annual_return = np.ones(n_assets)  # Start with a base of 1 for compounding
+                for week in range(weeks_per_year):
+                    # Sample a random week
+                    random_week_index = self.rng.integers(0, len(historical_weekly_returns))
+                    weekly_return = historical_weekly_returns.iloc[random_week_index].values
+                    # Compound the returns
+                    annual_return *= (1 + weekly_return)
+                # Calculate the annual return for this year, subtract 1 to account for the base
+                annual_simulations[simulation, year, :-1] = annual_return - 1
+                annual_simulations[simulation, year, -1] = cash_return_annual
+
+        return annual_simulations
+

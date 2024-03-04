@@ -1,3 +1,6 @@
+import plotly.graph_objects as go
+import pandas as pd
+from typing import Dict
 from funnel.models.main import TradeBot
 
 if __name__ == "__main__":
@@ -12,9 +15,12 @@ if __name__ == "__main__":
     # RUN THE LIFECYCLE
     lifecycle = algo.scenario_analysis(
         subset_of_assets=mst_subset_of_assets,
-        scenarios_type="MonteCarlo",
-        n_simulations=1000,
+        scenarios_type="MonteCarlo",  # Bootstrap,
+        n_simulations=20,
         end_year=2050,
-        risk_test="investmentFunnel",
-        risk_class=[3, 4, 5, 6, 7],
+        withdrawals=41000,
+        initial_risk_appetite=0.2,
+        initial_budget=1000000,
+        rng_seed=1,
+        test_split=False
     )
