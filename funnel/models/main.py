@@ -140,7 +140,8 @@ class TradeBot:
     def __plot_portfolio_densities(
             portfolio_performance_dict: dict,
             compositions: Dict[str, pd.DataFrame],
-            tickers: list
+            tickers: list,
+            names: list,
     ) -> Tuple[go.Figure, Dict[str, go.Figure], go.Figure]:
         """METHOD TO PLOT THE LIFECYCLE SIMULATION RESULTS"""
 
@@ -234,17 +235,17 @@ class TradeBot:
         fig.show(renderer="browser")
 
 
-        composition_figures = {}
-        tickers_tmp = tickers.copy()
-        if 'Cash' not in tickers_tmp:
-            tickers_tmp.append('Cash')
 
-        num_portfolios = len(compositions)
+
+
+        composition_figures = {}
+        filtered_compositions = {name: comp for name, comp in compositions.items() if "reverse" not in name}
+        num_portfolios = len(filtered_compositions)
         cols = 2 if num_portfolios > 1 else 1
         rows = ceil(
             num_portfolios / cols)  # Calculate the number of rows needed based on the total number of compositions
 
-        subplot_titles = [f"Portfolio Composition: {name}" for name in compositions.keys()]
+        subplot_titles = [f"Portfolio Composition: {name}" for name in filtered_compositions.keys()]
         fig_subplots = make_subplots(rows=rows,
                                      cols=cols,
                                      subplot_titles=subplot_titles,
@@ -253,8 +254,16 @@ class TradeBot:
 
         tickers_in_legend = set()
         current_plot = 1  # Keep track of the current plot index to correctly calculate row and col
-        for portfolio_name, composition in compositions.items():
-            composition_names = [ticker if ticker in tickers_tmp else ticker for ticker in composition.columns]
+
+
+
+        for portfolio_name, composition in filtered_compositions.items():
+            composition_names = []
+            for ticker in composition.columns[:-1]:
+                ticker_index = list(tickers).index(ticker)
+                composition_names.append(list(names)[ticker_index])
+            if 'Cash' not in composition_names:
+                composition_names.append('Cash')
             composition.columns = composition_names
             composition = composition.loc[:, (composition != 0).any(axis=0)]
 
@@ -541,6 +550,8 @@ class TradeBot:
                 ml_subset=clusters,
             )
 
+            #fig.show()
+
         return fig, subset_clustering
 
     def backtest(
@@ -741,7 +752,7 @@ class TradeBot:
         glide_paths_df, fig_glidepaths = generate_risk_profiles(
             n_periods=n_periods,
             initial_risk=initial_risk_appetite,
-            minimum_risk=0.02
+            minimum_risk=0.01
         )
 
         allocation_targets = {}
@@ -750,7 +761,7 @@ class TradeBot:
                 mu_lst=mu,
                 sigma_lst=sigma,
                 targets=glide_paths_df[r],
-                max_weight=1 / 3,
+                max_weight=1 / 4,
                 solver="ECOS_BB",
             )
             allocation_targets[f"{r}"] = targets
@@ -785,7 +796,9 @@ class TradeBot:
         fig_performance, fig_compositions, fig_compositions_all = self.__plot_portfolio_densities(
             portfolio_performance_dict=terminal_wealth_dict,
             compositions=allocation_targets,
-            tickers=self.tickers
+            tickers=self.tickers,
+            names=self.names,
+
         )
 
         # ------------------------------- RETURN STATISTICS -------------------------------

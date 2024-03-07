@@ -51,6 +51,25 @@ class MomentGenerator:
         return shrunk
 
     @staticmethod
+    def _jorion_shrinkage(MU, MU_STAR, _lambda):
+        """
+        Applies shrinkage to the mean of weekly returns.
+
+        Parameters:
+        - weekly_returns: numpy array or a pandas series of weekly returns.
+        - target_mean: float, the target mean to shrink towards.
+        - lambda_shrinkage: float, the shrinkage intensity, between 0 and 1.
+
+        Returns:
+        - shrunk_mean: float, the shrunk mean of the weekly returns.
+        """
+
+        # Apply the shrinkage formula
+        shrunk_mean = _lambda * MU_STAR + (1 - _lambda) * MU
+
+        return shrunk_mean
+
+    @staticmethod
     def compute_annualized_covariance(X):
         """
         Computes the annualized covariance matrix from weekly return data,
@@ -166,8 +185,8 @@ class MomentGenerator:
         # Compute the sample covariance matrix for the entire dataset
 
         sigma_weekly_np = np.atleast_2d(
-            np.cov(data, rowvar=False, bias=True)
-            # MomentGenerator.compute_annualized_covariance(data)
+            #np.cov(data, rowvar=False, bias=True)
+            MomentGenerator.compute_annualized_covariance(data)
         )  # The sample covariance matrix
 
         # Add a shrinkage term (Ledoit--Wolf multiple of identity)
@@ -295,7 +314,7 @@ class ScenarioGenerator:
         weekly_sigma: pd.DataFrame,
         n_simulations: int,
         n_years: int,
-        cash_return_annual: float = 0.015,
+        cash_return_annual: float = 0.02,
     ):
         """
         Generates Monte Carlo simulations for annual returns based on provided weekly mu and sigma.

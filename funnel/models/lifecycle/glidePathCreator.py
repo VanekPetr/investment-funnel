@@ -9,7 +9,13 @@ def generate_risk_profiles(n_periods, initial_risk, minimum_risk):
     x_values = np.linspace(0, 1, n_periods)
     x_values_early = np.linspace(0, 1, int(np.floor(n_periods*0.8)))
 
-    lower_limit_narrow = minimum_risk + (initial_risk * 0.2)
+
+    upper_limit_80 = initial_risk - (minimum_risk * 2)
+    lower_limit_20 = minimum_risk * 2
+    upper_limit_60 = initial_risk - (minimum_risk * 4)
+    lower_limit_40 = minimum_risk * 4
+
+
 
     '''
     
@@ -46,18 +52,26 @@ def generate_risk_profiles(n_periods, initial_risk, minimum_risk):
         (df['Concave risk reduction'][:early_stop], np.full(5, df['Concave risk reduction'][early_stop - 1])))
     '''
     # Other
-    df['Constant risk low'] = np.full(n_periods, initial_risk * 1/2)
+    #df['Constant risk low'] = np.full(n_periods, initial_risk * 1/2)
     #df['Constant risk high'] = np.full(n_periods, initial_risk * 2/3)
 
-    df['Linear risk reduction'] = np.linspace(initial_risk, minimum_risk, n_periods)
+    df['100-0'] = np.linspace(initial_risk, minimum_risk, n_periods)
+    df['80-20'] = np.linspace(upper_limit_80, lower_limit_20, n_periods)
+    df['60-40'] = np.linspace(upper_limit_60, lower_limit_40, n_periods)
 
-    df['Concave risk reduction'] = initial_risk - (initial_risk - minimum_risk) * (x_values ** 2)
-    df['Concave risk early'] = np.concatenate((initial_risk - (initial_risk - minimum_risk) * (x_values_early ** 2),
-                                               np.full(n_periods-len(x_values_early), minimum_risk)))
+    #df['Concave risk reduction'] = initial_risk - (initial_risk - minimum_risk) * (x_values ** 2)
+    #df['Concave risk early'] = np.concatenate((initial_risk - (initial_risk - minimum_risk) * (x_values_early ** 2),np.full(n_periods-len(x_values_early), minimum_risk)))
 
-    df['Convex risk reduction'] = initial_risk - (initial_risk - minimum_risk) * np.sqrt(x_values)
-    df['Convex risk reduction narrow'] = initial_risk - (initial_risk - lower_limit_narrow) * np.sqrt(x_values)
-
+    #df['Convex risk reduction'] = initial_risk - (initial_risk - minimum_risk) * np.sqrt(x_values)
+    #df['Convex risk reduction narrow'] = initial_risk - (initial_risk - lower_limit_narrow) * np.sqrt(x_values)
+    #df['Constant_50'] = np.concatenate((np.full(round(n_periods * 0.5), initial_risk*3/4), np.full(n_periods - round(n_periods * 0.5), lower_limit_half)))
+    # Reversed curves
+    #df['Concave risk reduction reverse'] = df['Concave risk reduction'][::-1].values
+    #df['Constant_50 reversed'] = df['Constant_50'][::-1].values
+    #df['Convex risk reduction reverse'] = df['Convex risk reduction'][::-1].values
+    df['100-0 reverse'] = df['100-0'][::-1].values
+    df['80-20 reverse'] = df['80-20'][::-1].values
+    df['60-40 reverse'] = df['60-40'][::-1].values
 
     fig = px.line(
         df,
@@ -97,7 +111,7 @@ def generate_risk_profiles(n_periods, initial_risk, minimum_risk):
 
     for i, trace in enumerate(fig.data):
         trace.line.color = colors[i % len(colors)]
-        trace.line.width = 2.0
+        trace.line.width = 2.5
 
     fig.layout.yaxis.tickformat = ",.1%"
 

@@ -100,7 +100,7 @@ fig.update_layout(
         yanchor="top",  # Anchor the legend at its top to avoid overlapping with plot area
         font=dict(size=15),  # Adjust font size as needed
     ),
-    height=1000, width=850, plot_bgcolor='white', title=None
+    height=1200, width=850, plot_bgcolor='white', title=None
 )
 fig.show()
 
@@ -162,7 +162,7 @@ fig.update_layout(
         yanchor="top",
         font=dict(size=16),
     ),
-    height=600,
+    height=800,
     width=1200,
     plot_bgcolor='white',
 )
@@ -220,7 +220,7 @@ fig.update_layout(
         yanchor="top",
         font=dict(size=16),
     ),
-    height=600,
+    height=800,
     width=1200,
     plot_bgcolor='white',
 )
@@ -263,7 +263,7 @@ fig.update_layout(
         yanchor="top",
         font=dict(size=16),
     ),
-    height=600,
+    height=800,
     width=1200,
     plot_bgcolor='white',
 )
