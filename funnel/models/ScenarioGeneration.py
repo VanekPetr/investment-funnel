@@ -162,7 +162,7 @@ class MomentGenerator:
 
     @staticmethod
     def generate_annual_sigma_mu_with_risk_free(
-        data: pd.DataFrame, risk_free_rate_annual: float = 0.02
+        data: pd.DataFrame, risk_free_rate_annual: float = 0.015
     ) -> Tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
         """
         Computes the annualized and weekly covariance matrix (sigma) and mean return array (mu)
@@ -314,7 +314,7 @@ class ScenarioGenerator:
         weekly_sigma: pd.DataFrame,
         n_simulations: int,
         n_years: int,
-        cash_return_annual: float = 0.02,
+        cash_return_annual: float = 0.015,
     ):
         """
         Generates Monte Carlo simulations for annual returns based on provided weekly mu and sigma.

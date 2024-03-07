@@ -688,7 +688,7 @@ class TradeBot:
             initial_risk_appetite: float,
             initial_budget: int,
             rng_seed = 0,
-            test_split: bool = False,
+            test_split: float = False,
     ) -> Tuple[dict, pd.DataFrame, go.Figure, go.Figure, dict, dict, go.Figure]:
         """METHOD TO COMPUTE THE LIFECYCLE SCENARIO ANALYSIS"""
 
@@ -697,10 +697,10 @@ class TradeBot:
         withdrawal_lst = [withdrawals * (1 + 0.04) ** i for i in range(n_periods)]
 
         # ------------------------------- PARAMETER INITIALIZATION -------------------------------
-        if test_split:
+        if test_split != 0:
             sampling_set, estimating_set = MomentGenerator.split_dataset(
                 data=self.weeklyReturns[subset_of_assets],
-                sampling_ratio=0.6
+                sampling_ratio=test_split
             )
 
             _, _, sigma_weekly, mu_weekly = (

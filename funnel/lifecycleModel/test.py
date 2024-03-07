@@ -25,13 +25,13 @@ if __name__ == "__main__":
     lifecycle = algo.scenario_analysis(
         subset_of_assets=mst_subset_of_assets,
         scenarios_type= "MonteCarlo", #,  # Bootstrap,
-        n_simulations=100,
+        n_simulations=1000,
         end_year=2050,
         withdrawals=35000,
-        initial_risk_appetite=0.2,
+        initial_risk_appetite=0.16,
         initial_budget=1000000,
-        rng_seed=1,
-        test_split=True
+        rng_seed=19,
+        test_split=0
     )
 
 
