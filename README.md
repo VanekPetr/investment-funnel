@@ -152,6 +152,7 @@ To make the best of this project, you'll likely need access to up-to-date financ
 * **Kourosh Rasmussen** - *Co-founder* - [AlgoStrata](https://algostrata.com) & [Penly](https://penly.dk)
 * **Gábor Balló** - *Implementation of CVaR model with CVXPY and MOSEK* - [szelidvihar](https://github.com/szelidvihar) & [MOSEK](https://github.com/MOSEK)
 * **Thomas Schmelzer** - *Help with [Aging of the code](https://www.linkedin.com/pulse/aging-code-thomas-schmelzer-7o4jf/), GitOps and Maintainability of an OpenSource project* - [tschm](https://github.com/tschm) & [ADIA](https://www.adia.ae) & [cvxgrp/simulator](https://github.com/cvxgrp/simulator)
+* **Mikkel Bech Mogensen** - *Lifecycle investments page* - [mikkelbechmogensen](https://github.com/mikkelbechmogensen)
 * **Mariska Van de Sompele** - *Implementation of minimum asset portfolio weights constraint for CVaR and Markowitz models* - [MariskaVandeSompele](https://github.com/MariskaVandeSompele)
 * **Auður Anna Jónsdóttir** - *Initial work for MST and Hierarchical Clustering*
 * **Chanyu Yang** - *First contributor to our dash application* - [cicadaa](https://github.com/cicadaa)
