@@ -1,6 +1,3 @@
-import plotly.graph_objects as go
-import pandas as pd
-from typing import Dict
 from funnel.models.main import TradeBot
 
 if __name__ == "__main__":
@@ -11,7 +8,7 @@ if __name__ == "__main__":
     _, mst_subset_of_assets = algo.mst(
         start_date="2000-01-01", end_date="2024-01-01", n_mst_runs=4, plot=False
     )
-    '''    
+    """
     # RUN THE CLUSTERING METHOD
     _, clustering_subset_of_assets = algo.clustering(
         start_date="2000-01-01",
@@ -20,20 +17,16 @@ if __name__ == "__main__":
         n_assets=15,
         plot=True,
     )
-    '''
+    """
     # RUN THE LIFECYCLE
     lifecycle = algo.scenario_analysis(
         subset_of_assets=mst_subset_of_assets,
-        scenarios_type= "MonteCarlo", #,  # Bootstrap,
+        scenarios_type="MonteCarlo",  # ,  # Bootstrap,
         n_simulations=1000,
         end_year=2050,
         withdrawals=35000,
         initial_risk_appetite=0.16,
         initial_budget=1000000,
         rng_seed=19,
-        test_split=0
+        test_split=0,
     )
-
-
-
-

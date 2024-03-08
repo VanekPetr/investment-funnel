@@ -1,7 +1,8 @@
 import os
 from itertools import cycle
+from math import ceil
 from pathlib import Path
-from typing import Tuple, Union, Dict
+from typing import Dict, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -9,6 +10,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
 from loguru import logger
+from plotly.subplots import make_subplots
 from scipy.stats import gaussian_kde
 
 from funnel.financial_data.etf_isins import ETFlist
@@ -25,8 +27,6 @@ from funnel.models.MST import minimum_spanning_tree
 from funnel.models.MVOmodel import mvo_model
 from funnel.models.MVOtargets import get_mvo_targets
 from funnel.models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
-from plotly.subplots import make_subplots
-from math import ceil
 
 pio.renderers.default = "browser"
 ROOT_DIR = Path(__file__).parent.parent
@@ -55,11 +55,11 @@ class TradeBot:
 
     @staticmethod
     def __plot_backtest(
-            performance: pd.DataFrame,
-            performance_benchmark: pd.DataFrame,
-            composition: pd.DataFrame,
-            names: list,
-            tickers: list,
+        performance: pd.DataFrame,
+        performance_benchmark: pd.DataFrame,
+        composition: pd.DataFrame,
+        names: list,
+        tickers: list,
     ) -> Tuple[px.line, go.Figure]:
         """METHOD TO PLOT THE BACKTEST RESULTS"""
 
@@ -100,15 +100,15 @@ class TradeBot:
         data = []
         idx_color = 0
         composition_color = (
-                px.colors.sequential.turbid
-                + px.colors.sequential.Brwnyl
-                + px.colors.sequential.YlOrBr
-                + px.colors.sequential.gray
-                + px.colors.sequential.Mint
-                + px.colors.sequential.dense
-                + px.colors.sequential.Plasma
-                + px.colors.sequential.Viridis
-                + px.colors.sequential.Cividis
+            px.colors.sequential.turbid
+            + px.colors.sequential.Brwnyl
+            + px.colors.sequential.YlOrBr
+            + px.colors.sequential.gray
+            + px.colors.sequential.Mint
+            + px.colors.sequential.dense
+            + px.colors.sequential.Plasma
+            + px.colors.sequential.Viridis
+            + px.colors.sequential.Cividis
         )
         for isin in composition.columns:
             trace = go.Bar(
@@ -138,10 +138,10 @@ class TradeBot:
 
     @staticmethod
     def __plot_portfolio_densities(
-            portfolio_performance_dict: dict,
-            compositions: Dict[str, pd.DataFrame],
-            tickers: list,
-            names: list,
+        portfolio_performance_dict: dict,
+        compositions: Dict[str, pd.DataFrame],
+        tickers: list,
+        names: list,
     ) -> Tuple[go.Figure, Dict[str, go.Figure], go.Figure]:
         """METHOD TO PLOT THE LIFECYCLE SIMULATION RESULTS"""
 
@@ -176,7 +176,9 @@ class TradeBot:
             density = kde(x)
 
             # Update max density if current density peak is higher
-            max_density_across_all_datasets = max(max_density_across_all_datasets, max(density))
+            max_density_across_all_datasets = max(
+                max_density_across_all_datasets, max(density)
+            )
 
             # Create line plot trace for this dataset
             fig.add_trace(
@@ -186,8 +188,7 @@ class TradeBot:
                     mode="lines",
                     name=label,  # Use the dictionary key as the label
                     line=dict(
-                        width=2.5,
-                        color=next(color_cycle)
+                        width=2.5, color=next(color_cycle)
                     ),  # Assign color from Orsted-Colors
                 )
             )
@@ -234,50 +235,53 @@ class TradeBot:
         # Show the figure in a browser
         fig.show(renderer="browser")
 
-
-
-
-
         composition_figures = {}
-        filtered_compositions = {name: comp for name, comp in compositions.items() if "reverse" not in name}
+        filtered_compositions = {
+            name: comp for name, comp in compositions.items() if "reverse" not in name
+        }
         num_portfolios = len(filtered_compositions)
         cols = 2 if num_portfolios > 1 else 1
         rows = ceil(
-            num_portfolios / cols)  # Calculate the number of rows needed based on the total number of compositions
+            num_portfolios / cols
+        )  # Calculate the number of rows needed based on the total number of compositions
 
-        subplot_titles = [f"Portfolio Composition: {name}" for name in filtered_compositions.keys()]
-        fig_subplots = make_subplots(rows=rows,
-                                     cols=cols,
-                                     subplot_titles=subplot_titles,
-                                     vertical_spacing=0.1,
-                                     horizontal_spacing=0.05)
+        subplot_titles = [
+            f"Portfolio Composition: {name}" for name in filtered_compositions.keys()
+        ]
+        fig_subplots = make_subplots(
+            rows=rows,
+            cols=cols,
+            subplot_titles=subplot_titles,
+            vertical_spacing=0.1,
+            horizontal_spacing=0.05,
+        )
 
         tickers_in_legend = set()
-        current_plot = 1  # Keep track of the current plot index to correctly calculate row and col
-
-
+        current_plot = (
+            1  # Keep track of the current plot index to correctly calculate row and col
+        )
 
         for portfolio_name, composition in filtered_compositions.items():
             composition_names = []
             for ticker in composition.columns[:-1]:
                 ticker_index = list(tickers).index(ticker)
                 composition_names.append(list(names)[ticker_index])
-            if 'Cash' not in composition_names:
-                composition_names.append('Cash')
+            if "Cash" not in composition_names:
+                composition_names.append("Cash")
             composition.columns = composition_names
             composition = composition.loc[:, (composition != 0).any(axis=0)]
 
             idx_color = 0
             composition_color = (
-                    px.colors.sequential.turbid
-                    + px.colors.sequential.Brwnyl
-                    + px.colors.sequential.YlOrBr
-                    + px.colors.sequential.gray
-                    + px.colors.sequential.Mint
-                    + px.colors.sequential.dense
-                    + px.colors.sequential.Plasma
-                    + px.colors.sequential.Viridis
-                    + px.colors.sequential.Cividis
+                px.colors.sequential.turbid
+                + px.colors.sequential.Brwnyl
+                + px.colors.sequential.YlOrBr
+                + px.colors.sequential.gray
+                + px.colors.sequential.Mint
+                + px.colors.sequential.dense
+                + px.colors.sequential.Plasma
+                + px.colors.sequential.Viridis
+                + px.colors.sequential.Cividis
             )
 
             # Create an individual figure for the current portfolio
@@ -305,10 +309,10 @@ class TradeBot:
             # Configure the individual figure layout
             individual_fig.update_layout(
                 title=f"Portfolio Composition: {portfolio_name}",
-                plot_bgcolor='white',
-                barmode='stack'
+                plot_bgcolor="white",
+                barmode="stack",
             )
-            individual_fig['layout']['yaxis'].tickformat = ',.1%'
+            individual_fig["layout"]["yaxis"].tickformat = ",.1%"
 
             # Store the individual figure in the dictionary
             composition_figures[portfolio_name] = individual_fig
@@ -319,12 +323,12 @@ class TradeBot:
             title="Portfolio Compositions",
             height=500 * rows,
             width=1000 * cols,
-            plot_bgcolor='white',
-            barmode='stack'
+            plot_bgcolor="white",
+            barmode="stack",
         )
         # Update y-axis tick format for all subplots
         for i in range(1, cols * rows + 1):
-            fig_subplots['layout'][f'yaxis{i}'].tickformat = ',.1%'
+            fig_subplots["layout"][f"yaxis{i}"].tickformat = ",.1%"
 
         fig_subplots.show()
 
@@ -337,7 +341,7 @@ class TradeBot:
         weekly_data = self.weeklyReturns[
             (self.weeklyReturns.index >= start_date)
             & (self.weeklyReturns.index <= end_date)
-            ].copy()
+        ].copy()
 
         # Create table with summary statistics
         mu_ga = mean_an_returns(weekly_data)  # Annualised geometric mean of returns
@@ -368,14 +372,14 @@ class TradeBot:
         return stat_df
 
     def plot_dots(
-            self,
-            start_date: str,
-            end_date: str,
-            ml: str = "",
-            ml_subset: Union[list, pd.DataFrame] = None,
-            fund_set: list = [],
-            optimal_portfolio: list = [],
-            benchmark: list = [],
+        self,
+        start_date: str,
+        end_date: str,
+        ml: str = "",
+        ml_subset: Union[list, pd.DataFrame] = None,
+        fund_set: list = [],
+        optimal_portfolio: list = [],
+        benchmark: list = [],
     ) -> px.scatter:
         """METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS"""
 
@@ -426,9 +430,9 @@ class TradeBot:
             hover_data={"Sharpe Ratio": True, "ISIN": True, "Size": False},
             color_discrete_map=color_discrete_map,
             title="Annual Returns and Standard Deviation of Returns from "
-                  + start_date[:10]
-                  + " to "
-                  + end_date[:10],
+            + start_date[:10]
+            + " to "
+            + end_date[:10],
         )
 
         # AXIS IN PERCENTAGES
@@ -487,7 +491,7 @@ class TradeBot:
         return fig
 
     def mst(
-            self, start_date: str, end_date: str, n_mst_runs: int, plot: bool = False
+        self, start_date: str, end_date: str, n_mst_runs: int, plot: bool = False
     ) -> Tuple[Union[None, px.scatter], list]:
         """METHOD TO RUN MST METHOD AND PRINT RESULTS"""
         fig, subset_mst = None, []
@@ -496,7 +500,7 @@ class TradeBot:
         subset_mst_df = self.weeklyReturns[
             (self.weeklyReturns.index >= start_date)
             & (self.weeklyReturns.index <= end_date)
-            ].copy()
+        ].copy()
 
         for i in range(n_mst_runs):
             subset_mst, subset_mst_df, corr_mst_avg, pdi_mst = minimum_spanning_tree(
@@ -516,12 +520,12 @@ class TradeBot:
         return fig, subset_mst
 
     def clustering(
-            self,
-            start_date: str,
-            end_date: str,
-            n_clusters: int,
-            n_assets: int,
-            plot: bool = False,
+        self,
+        start_date: str,
+        end_date: str,
+        n_clusters: int,
+        n_assets: int,
+        plot: bool = False,
     ) -> Tuple[Union[None, px.scatter], list]:
         """
         METHOD TO RUN MST METHOD AND PRINT RESULTS
@@ -530,7 +534,7 @@ class TradeBot:
         dataset = self.weeklyReturns[
             (self.weeklyReturns.index >= start_date)
             & (self.weeklyReturns.index <= end_date)
-            ].copy()
+        ].copy()
         # CLUSTER DATA
         clusters = cluster(dataset, n_clusters)
 
@@ -550,22 +554,22 @@ class TradeBot:
                 ml_subset=clusters,
             )
 
-            #fig.show()
+            # fig.show()
 
         return fig, subset_clustering
 
     def backtest(
-            self,
-            start_train_date: str,
-            start_test_date: str,
-            end_test_date: str,
-            subset_of_assets: list,
-            benchmarks: list,
-            scenarios_type: str,
-            n_simulations: int,
-            model: str,
-            solver: str = "ECOS",
-            lower_bound: int = 0,
+        self,
+        start_train_date: str,
+        start_test_date: str,
+        end_test_date: str,
+        subset_of_assets: list,
+        benchmarks: list,
+        scenarios_type: str,
+        n_simulations: int,
+        model: str,
+        solver: str = "ECOS",
+        lower_bound: int = 0,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure, dict]:
         """METHOD TO COMPUTE THE BACKTEST"""
 
@@ -578,11 +582,11 @@ class TradeBot:
         whole_dataset = self.weeklyReturns[
             (self.weeklyReturns.index >= start_train_date)
             & (self.weeklyReturns.index <= end_test_date)
-            ].copy()
+        ].copy()
         test_dataset = self.weeklyReturns[
             (self.weeklyReturns.index > start_test_date)
             & (self.weeklyReturns.index <= end_test_date)
-            ].copy()
+        ].copy()
 
         # SCENARIO GENERATION
         # ---------------------------------------------------------------------------------------------------
@@ -679,16 +683,16 @@ class TradeBot:
         return optimal_portfolio_stat, benchmark_stat, fig_performance, fig_composition
 
     def scenario_analysis(
-            self,
-            subset_of_assets: list,
-            scenarios_type: str,
-            n_simulations: int,
-            end_year: int,
-            withdrawals: int,
-            initial_risk_appetite: float,
-            initial_budget: int,
-            rng_seed = 0,
-            test_split: float = False,
+        self,
+        subset_of_assets: list,
+        scenarios_type: str,
+        n_simulations: int,
+        end_year: int,
+        withdrawals: int,
+        initial_risk_appetite: float,
+        initial_budget: int,
+        rng_seed=0,
+        test_split: float = False,
     ) -> Tuple[dict, pd.DataFrame, go.Figure, go.Figure, dict, dict, go.Figure]:
         """METHOD TO COMPUTE THE LIFECYCLE SCENARIO ANALYSIS"""
 
@@ -699,8 +703,7 @@ class TradeBot:
         # ------------------------------- PARAMETER INITIALIZATION -------------------------------
         if test_split != 0:
             sampling_set, estimating_set = MomentGenerator.split_dataset(
-                data=self.weeklyReturns[subset_of_assets],
-                sampling_ratio=test_split
+                data=self.weeklyReturns[subset_of_assets], sampling_ratio=test_split
             )
 
             _, _, sigma_weekly, mu_weekly = (
@@ -709,10 +712,8 @@ class TradeBot:
                 )
             )
 
-            sigma, mu, _, _ = (
-                MomentGenerator.generate_annual_sigma_mu_with_risk_free(
-                    data=estimating_set
-                )
+            sigma, mu, _, _ = MomentGenerator.generate_annual_sigma_mu_with_risk_free(
+                data=estimating_set
             )
         else:
             sigma, mu, sigma_weekly, mu_weekly = (
@@ -735,7 +736,7 @@ class TradeBot:
                 n_years=n_periods,
             )
 
-        elif scenarios_type == 'Bootstrap':
+        elif scenarios_type == "Bootstrap":
             scenarios = sg.bootstrap_simulation_annual_from_weekly(
                 historical_weekly_returns=self.weeklyReturns[subset_of_assets],
                 n_simulations=n_simulations,
@@ -744,15 +745,13 @@ class TradeBot:
 
         else:
             logger.debug(
-                "It appears that a scenario method other than MC or Bootstrapping has been chosen. Please check for spelling mistakes."
+                "It appears that a scenario method other than MC or Bootstrapping has been chosen. "
+                "Please check for spelling mistakes."
             )
-
 
         # ------------------------------- Allocation Target Generation -------------------------------
         glide_paths_df, fig_glidepaths = generate_risk_profiles(
-            n_periods=n_periods,
-            initial_risk=initial_risk_appetite,
-            minimum_risk=0.01
+            n_periods=n_periods, initial_risk=initial_risk_appetite, minimum_risk=0.01
         )
 
         allocation_targets = {}
@@ -793,17 +792,25 @@ class TradeBot:
             terminal_wealth_dict[f"{key}"] = portfolio_df
 
         # ------------------------------- PLOTTING -------------------------------
-        fig_performance, fig_compositions, fig_compositions_all = self.__plot_portfolio_densities(
-            portfolio_performance_dict=terminal_wealth_dict,
-            compositions=allocation_targets,
-            tickers=self.tickers,
-            names=self.names,
-
+        fig_performance, fig_compositions, fig_compositions_all = (
+            self.__plot_portfolio_densities(
+                portfolio_performance_dict=terminal_wealth_dict,
+                compositions=allocation_targets,
+                tickers=self.tickers,
+                names=self.names,
+            )
         )
 
         # ------------------------------- RETURN STATISTICS -------------------------------
-        return terminal_wealth_dict, exhibition_summary, fig_performance, fig_glidepaths, \
-               allocation_targets, fig_compositions, fig_compositions_all
+        return (
+            terminal_wealth_dict,
+            exhibition_summary,
+            fig_performance,
+            fig_glidepaths,
+            allocation_targets,
+            fig_compositions,
+            fig_compositions_all,
+        )
 
 
 if __name__ == "__main__":

@@ -83,7 +83,9 @@ class MomentGenerator:
         robust_cov_matrix = mcd.covariance_
 
         # Convert to DataFrame for compatibility with Ledoit-Wolf function
-        robust_cov_df = pd.DataFrame(robust_cov_matrix, index=X.columns, columns=X.columns)
+        robust_cov_df = pd.DataFrame(
+            robust_cov_matrix, index=X.columns, columns=X.columns
+        )
 
         # Step 2: Apply Ledoit-Wolf Shrinkage
         shrunk_cov_df = MomentGenerator._ledoit_wolf_shrinkage(X, robust_cov_df)
@@ -185,12 +187,12 @@ class MomentGenerator:
         # Compute the sample covariance matrix for the entire dataset
 
         sigma_weekly_np = np.atleast_2d(
-            #np.cov(data, rowvar=False, bias=True)
+            # np.cov(data, rowvar=False, bias=True)
             MomentGenerator.compute_annualized_covariance(data)
         )  # The sample covariance matrix
 
         # Add a shrinkage term (Ledoit--Wolf multiple of identity)
-        #sigma_weekly_np = MomentGenerator._ledoit_wolf_shrinkage(data, sigma_weekly_np)
+        # sigma_weekly_np = MomentGenerator._ledoit_wolf_shrinkage(data, sigma_weekly_np)
 
         # Compute the mean return array for the entire dataset
         mu_weekly_np = np.mean(data, axis=0)
@@ -375,11 +377,11 @@ class ScenarioGenerator:
         return annual_simulations
 
     def bootstrap_simulation_annual_from_weekly(
-            self,
-            historical_weekly_returns: pd.DataFrame,
-            n_simulations: int,
-            n_years: int,
-            cash_return_annual: float = 0.015,
+        self,
+        historical_weekly_returns: pd.DataFrame,
+        n_simulations: int,
+        n_years: int,
+        cash_return_annual: float = 0.015,
     ) -> np.ndarray:
         """
         Generates bootstrap simulations for annual returns based on historical weekly returns,
@@ -396,21 +398,28 @@ class ScenarioGenerator:
         weeks_per_year = 52
         n_assets = historical_weekly_returns.shape[1]  # Number of assets
         # Initialize the array for annual simulations
-        annual_simulations = np.zeros((n_simulations, n_years, n_assets + 1), dtype=float)
+        annual_simulations = np.zeros(
+            (n_simulations, n_years, n_assets + 1), dtype=float
+        )
 
         for simulation in range(n_simulations):
             for year in range(n_years):
                 # For each year in each simulation, sample weeks and compound
-                annual_return = np.ones(n_assets)  # Start with a base of 1 for compounding
+                annual_return = np.ones(
+                    n_assets
+                )  # Start with a base of 1 for compounding
                 for week in range(weeks_per_year):
                     # Sample a random week
-                    random_week_index = self.rng.integers(0, len(historical_weekly_returns))
-                    weekly_return = historical_weekly_returns.iloc[random_week_index].values
+                    random_week_index = self.rng.integers(
+                        0, len(historical_weekly_returns)
+                    )
+                    weekly_return = historical_weekly_returns.iloc[
+                        random_week_index
+                    ].values
                     # Compound the returns
-                    annual_return *= (1 + weekly_return)
+                    annual_return *= 1 + weekly_return
                 # Calculate the annual return for this year, subtract 1 to account for the base
                 annual_simulations[simulation, year, :-1] = annual_return - 1
                 annual_simulations[simulation, year, -1] = cash_return_annual
 
         return annual_simulations
-

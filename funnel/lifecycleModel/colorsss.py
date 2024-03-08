@@ -1,14 +1,4 @@
-import pandas as pd
-import numpy as np
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-
-
-
-
-
-
-
 
 # Colors for each category
 colors = [
@@ -27,21 +17,38 @@ colors = [
 ]
 
 # Categories for the x-axis
-categories = ["Blue", "Secondary", "Aqua", "Coral", "Sun", "Eggplant", "Dark", "Gray50", "Gray100", "WarmGray50", "WarmGray100", "White"]
+categories = [
+    "Blue",
+    "Secondary",
+    "Aqua",
+    "Coral",
+    "Sun",
+    "Eggplant",
+    "Dark",
+    "Gray50",
+    "Gray100",
+    "WarmGray50",
+    "WarmGray100",
+    "White",
+]
 
 # Create the bar chart
-fig = go.Figure(data=[go.Bar(
-    x=categories,
-    y=[1] * len(categories),  # Dummy values; replace with your actual data
-    marker_color=colors  # Set the bar colors
-)])
+fig = go.Figure(
+    data=[
+        go.Bar(
+            x=categories,
+            y=[1] * len(categories),  # Dummy values; replace with your actual data
+            marker_color=colors,  # Set the bar colors
+        )
+    ]
+)
 
 # Update layout for a cleaner look
 fig.update_layout(
     title="Bar Chart with Custom Colors",
     xaxis_title="Category",
     yaxis_title="Value",
-    plot_bgcolor='white',
+    plot_bgcolor="white",
     yaxis=dict(showgrid=False),  # Hide the y-axis grid lines
 )
 

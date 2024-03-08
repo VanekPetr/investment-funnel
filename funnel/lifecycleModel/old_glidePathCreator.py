@@ -2,9 +2,6 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 from loguru import logger
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 class RiskCurveGenerator:
@@ -32,14 +29,16 @@ class RiskCurveGenerator:
         start_value = 1.565 * curve_area_needed / floor_start
         return max(start_value, self.risk_floor)
 
-    def find_start_value_dual(self, avg_std, floor_start, curve_type='concave'):
+    def find_start_value_dual(self, avg_std, floor_start, curve_type="concave"):
         required_area = avg_std * self.periods
         floor_area = self.risk_floor * (self.periods - floor_start)
         curve_area_needed = required_area - floor_area
-        if curve_type == 'concave':
+        if curve_type == "concave":
             start_value = 1.565 * curve_area_needed / floor_start
         else:  # convex
-            start_value = (curve_area_needed / (self.periods - floor_start)) * 2  # Example adjustment for convex
+            start_value = (
+                curve_area_needed / (self.periods - floor_start)
+            ) * 2  # Example adjustment for convex
         return max(start_value, self.risk_floor)
 
     def generate_concave_curve(self, avg_std, floor_start):
@@ -53,7 +52,7 @@ class RiskCurveGenerator:
         return curve
 
     def generate_convex_curve(self, avg_std, floor_start):
-        start_value = self.find_start_value_dual(avg_std, floor_start, 'convex')
+        start_value = self.find_start_value_dual(avg_std, floor_start, "convex")
         x = np.arange(1, self.periods + 1)
         # This is a simplistic example; adjust the function as needed for your convex shape
         curve = np.minimum(start_value * (1 + (x / floor_start) ** 2), self.risk_floor)
@@ -90,7 +89,7 @@ class RiskCurveGenerator:
                 legend_title="Risk Class",
                 template="plotly_white",
             )
-            #fig.show()
+            # fig.show()
 
             return fig
         else:
@@ -110,7 +109,7 @@ class RiskCurveGenerator:
 
         return self.df, glide_path_fig
 
-    def generate_curves_dual(self, curve_type='concave'):
+    def generate_curves_dual(self, curve_type="concave"):
         """
         Generates and stores curves for each risk class in the DataFrame.
 
@@ -125,12 +124,14 @@ class RiskCurveGenerator:
             floor_start = self.floor_starts[risk_class]
 
             # Generate curve based on specified type
-            if curve_type == 'concave':
+            if curve_type == "concave":
                 curve = self.generate_concave_curve(avg_std, floor_start)
-            elif curve_type == 'convex':
+            elif curve_type == "convex":
                 curve = self.generate_convex_curve(avg_std, floor_start)
             else:
-                raise ValueError("Invalid curve type specified. Choose 'concave' or 'convex'.")
+                raise ValueError(
+                    "Invalid curve type specified. Choose 'concave' or 'convex'."
+                )
 
             # Store the generated curve in the DataFrame
             self.df[risk_class] = curve
@@ -166,4 +167,3 @@ class RiskCurveGenerator:
             f"Qua the chosen risk classes, we only optimize portfolios for {selected_columns}"
         )
         return filtered_df
-
