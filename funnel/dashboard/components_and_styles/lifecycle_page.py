@@ -111,15 +111,27 @@ options_lifecycle = html.Div(
             },
             value=1000,
         ),
-        html.P("Risk preference", style=SUB_TITLE),
-        dcc.Dropdown(
-            id="select-risk-preference",
-            options=[
-                {"label": f"Risk class {value}", "value": value}
-                for value in range(1, 7)
-            ],
-            placeholder="Select your one or more preference",
-            multi=True,
+        html.P("Initial portfolio value", style=SUB_TITLE),
+        dcc.Input(
+            id="initial-portfolio-value",
+            type="number",
+            value=100000,
+            style=OPTION_ELEMENT,
+        ),
+        html.P("Yearly withdraws", style=SUB_TITLE),
+        dcc.Input(
+            id="yearly-withdraws",
+            type="number",
+            value=1000,
+            style=OPTION_ELEMENT,
+        ),
+        html.P(
+            "Initial risk appetite in terms of standard deviation in %", style=SUB_TITLE
+        ),
+        dcc.Input(
+            id="initial_risk_appetite",
+            type="number",
+            value=15,
             style=OPTION_ELEMENT,
         ),
         dbc.Button(
