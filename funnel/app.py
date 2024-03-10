@@ -70,8 +70,9 @@ def load_page():
             dcc.Store(id="saved-pick-num-lifecycle", data=5),
             dcc.Store(id="saved-scen-model-lifecycle", data=""),
             dcc.Store(id="saved-scen-spec-lifecycle", data=1000),
-            dcc.Store(id="saved-lifecycle-figure-page-3", data=None),
             dcc.Store(id="saved-glidepaths-figure-page-3", data=None),
+            dcc.Store(id="saved-performance-figure-page-3", data=None),
+            dcc.Store(id="saved-lifecycle-all-figure-page-3", data=None),
             dcc.Store(id="saved_risk_preference", data=[]),
             dcc.Store(id="saved_end_year", data=2040),
         ]

@@ -233,7 +233,7 @@ class TradeBot:
         )
 
         # Show the figure in a browser
-        fig.show(renderer="browser")
+        # fig.show(renderer="browser")
 
         composition_figures = {}
         filtered_compositions = {
@@ -330,7 +330,7 @@ class TradeBot:
         for i in range(1, cols * rows + 1):
             fig_subplots["layout"][f"yaxis{i}"].tickformat = ",.1%"
 
-        fig_subplots.show()
+        # fig_subplots.show()
 
         return fig, composition_figures, fig_subplots
 

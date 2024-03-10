@@ -134,8 +134,9 @@ options_lifecycle = html.Div(
 
 results_lifecycle = html.Div(
     [
-        html.Div(id="lifecycle-output-fig", style=OPTION_ELEMENT),
         html.Div(id="glidepaths-output-fig", style=OPTION_ELEMENT),
+        html.Div(id="performance-output-fig", style=OPTION_ELEMENT),
+        html.Div(id="lifecycle-all-output-fig", style=OPTION_ELEMENT),
     ],
     style=GRAPH_RIGHT,
 )
