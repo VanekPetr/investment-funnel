@@ -62,6 +62,10 @@ options_lifecycle = html.Div(
             placeholder="Select ML method",
             style=OPTION_ELEMENT,
         ),
+        html.P(
+            "Number of Clusters or MST runs",
+            style=DESCRIP_INFO,
+        ),
         html.Div(id="slider-output-container-lifecycle-ml", style=DESCRIP_INFO),
         # part2
         dcc.Slider(id="slider-lifecycle-ml", min=1, max=5, step=1, value=2),
@@ -69,7 +73,7 @@ options_lifecycle = html.Div(
             id="slider-output-container-lifecycle",
             children=[
                 html.P(
-                    "# of the best performing assets selected from each cluster",
+                    "Number of the best performing assets selected from each cluster",
                     style=DESCRIP_INFO,
                 ),
                 dcc.Slider(
@@ -86,7 +90,7 @@ options_lifecycle = html.Div(
         dcc.Dropdown(
             id="select-scenarios-lifecycle",
             options=[
-                {"label": "FHS", "value": "FHS"},
+                {"label": "Bootstrapping", "value": "Bootstrap"},
                 {"label": "Monte Carlo", "value": "MonteCarlo"},
             ],
             placeholder="Select scenario generation method",
@@ -113,14 +117,14 @@ options_lifecycle = html.Div(
         ),
         html.P("Initial portfolio value", style=SUB_TITLE),
         dcc.Input(
-            id="initial-portfolio-value",
+            id="initial-portfolio-value-lifecycle",
             type="number",
             value=100000,
             style=OPTION_ELEMENT,
         ),
         html.P("Yearly withdraws", style=SUB_TITLE),
         dcc.Input(
-            id="yearly-withdraws",
+            id="yearly-withdraws-lifecycle",
             type="number",
             value=1000,
             style=OPTION_ELEMENT,
@@ -129,7 +133,7 @@ options_lifecycle = html.Div(
             "Initial risk appetite in terms of standard deviation in %", style=SUB_TITLE
         ),
         dcc.Input(
-            id="initial_risk_appetite",
+            id="initial-risk-appetite-lifecycle",
             type="number",
             value=15,
             style=OPTION_ELEMENT,
