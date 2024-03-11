@@ -570,7 +570,7 @@ class TradeBot:
         model: str,
         solver: str = "ECOS",
         lower_bound: int = 0,
-    ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure, dict]:
+    ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure]:
         """METHOD TO COMPUTE THE BACKTEST"""
 
         # Find Benchmarks' ISIN codes
