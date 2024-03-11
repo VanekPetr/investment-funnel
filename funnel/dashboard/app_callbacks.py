@@ -47,6 +47,8 @@ def get_callbacks(app):
             Output("saved-pick-num-lifecycle", "data"),
             Output("saved-scen-model-lifecycle", "data"),
             Output("saved-scen-spec-lifecycle", "data"),
+            Output("saved_portfolio_value", "data"),
+            Output("saved_yearly_withdraws", "data"),
             Output("saved_risk_preference", "data"),
             Output("saved_end_year", "data"),
             Output("saved-glidepaths-figure-page-3", "data"),
@@ -141,7 +143,7 @@ def get_callbacks(app):
                 figure=fig_glidepaths, style={"margin": "0%", "height": "800px"}
             )
             lifecycle_all_figure = dcc.Graph(
-                figure=fig_composition_all, style={"margin": "0%", "height": "800px"}
+                figure=fig_composition_all, style={"margin": "0%", "height": "1300px"}
             )
 
             return (
