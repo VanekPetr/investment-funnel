@@ -130,5 +130,5 @@ def generate_risk_profiles(n_periods, initial_risk, minimum_risk):
 
     fig.layout.yaxis.tickformat = ",.1%"
 
-    fig.show()
+    # fig.show()
     return df, fig
