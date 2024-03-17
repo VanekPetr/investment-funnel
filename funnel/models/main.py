@@ -411,7 +411,7 @@ class TradeBot:
                     data["Risk Class"] == risk_class,
                     "Top Performer",
                 ] = data.loc[
-                    data["Risk Class"] == risk_class, "Average Annual Returns"
+                    data["Risk Class"] == risk_class, "Sharpe Ratio"
                 ].rank(pct=True) > (1 - top_percent)
         # for each period, save the pandas dataframe into excel files
         # for index, data in enumerate(stats_for_periods.values()):
@@ -439,11 +439,13 @@ class TradeBot:
         ml: str = "",
         ml_subset: Union[list, pd.DataFrame] = None,
         fund_set: Union[list, None] = None,
+        top_performers: Union[list, None] = None,
         optimal_portfolio: Union[list, None] = None,
         benchmark: Union[list, None] = None,
     ) -> px.scatter:
         """METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS"""
         fund_set = fund_set if fund_set else []
+        top_performers = top_performers if top_performers else []
 
         # Get statistics for a given time period
         data = self.get_stat(start_date, end_date)
@@ -470,12 +472,18 @@ class TradeBot:
             )
             data.loc[self.tickers[isin_idx], "Size"] = 3
 
+        for fund in top_performers:
+            isin_idx = list(self.names).index(fund)
+            data.loc[self.tickers[isin_idx], "Type"] = "Top Performer"
+            data.loc[self.tickers[isin_idx], "Size"] = 3
+
         # PLOTTING Data
         color_discrete_map = {
             "ETF": "#21304f",
             "Mutual Fund": "#f58f02",
             "Funds": "#21304f",
             "MST subset": "#f58f02",
+            "Top Performer": "#f58f02",
             "Cluster 1": "#21304f",
             "Cluster 2": "#f58f02",
             "Benchmark Portfolio": "#f58f02",
@@ -880,7 +888,7 @@ if __name__ == "__main__":
     algo = TradeBot()
 
     # Get top performing assets for given periods and measure
-    top_performers = algo.get_top_performing_assets(
+    top_assets = algo.get_top_performing_assets(
         time_periods=[
             (algo.min_date, "2017-01-01"),
             ("2017-01-02", "2020-01-01"),
@@ -891,7 +899,7 @@ if __name__ == "__main__":
 
     # PLOT INTERACTIVE GRAPH
     algo.plot_dots(
-        start_date=algo.min_date, end_date=algo.max_date, fund_set=top_performers
+        start_date=algo.min_date, end_date=algo.max_date, top_performers=top_assets
     )
 
     # RUN THE MINIMUM SPANNING TREE METHOD

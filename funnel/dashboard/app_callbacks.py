@@ -430,6 +430,16 @@ def get_callbacks(app):
             return {"display": "none"}
 
     @app.callback(
+        Output(component_id="if-top-performers", component_property="style"),
+        Input(component_id="top-performers", component_property="value"),
+    )
+    def update_output_top_performers(value):
+        if value == "yes":
+            return {"display": "block"}
+        else:
+            return {"display": "none"}
+
+    @app.callback(
         Output("slider-output-container-lifecycle-ml", "children"),
         [Input("slider-lifecycle-ml", "value")],
     )
@@ -614,6 +624,13 @@ def get_callbacks(app):
             Output("saved-find-fund", "data"),
             Output("saved-figure-page-0", "data"),
             Output("loading-output-dots", "children"),
+            Output("saved-top-performers-names", "data"),
+            Output("top-performers", "value"),
+            Output("combine-top-performers", "value"),
+            Output("top-performers-pct", "value"),
+            Output("saved-top-performers", "data"),
+            Output("saved-combine-top-performers", "data"),
+            Output("saved-top-performers-pct", "data"),
         ],
         [Input("page-content", "children"), Input("show", "n_clicks")],
         [
@@ -624,6 +641,13 @@ def get_callbacks(app):
             State("saved-end-date-page-0", "data"),
             State("saved-find-fund", "data"),
             State("saved-figure-page-0", "data"),
+            State("top-performers", "value"),
+            State("combine-top-performers", "value"),
+            State("top-performers-pct", "value"),
+            State("saved-top-performers-names", "data"),
+            State("saved-top-performers", "data"),
+            State("saved-combine-top-performers", "data"),
+            State("saved-top-performers-pct", "data"),
         ],
     )
     def plot_dots(
@@ -636,13 +660,39 @@ def get_callbacks(app):
         saved_end,
         saved_find_fund,
         saved_figure,
+        top_performers,
+        combine_top_performers,
+        top_performers_pct,
+        saved_top_performers_names,
+        saved_top_performers,
+        saved_combine_top_performers,
+        saved_top_performers_pct,
     ):
         if click:
             selected_start = str(start)
             selected_end = str(end)
 
+            if top_performers == "yes":
+                top_assets = algo.get_top_performing_assets(
+                    time_periods=[(selected_start, selected_end)],
+                    top_percent=top_performers_pct / 100,
+                )
+                if combine_top_performers == "yes":
+                    top_assets = [
+                        asset
+                        for asset in top_assets
+                        if asset in saved_top_performers_names
+                    ]
+                saved_top_performers_names = top_assets
+            else:
+                top_assets = []
+                saved_top_performers_names = []
+
             fig = algo.plot_dots(
-                start_date=selected_start, end_date=selected_end, fund_set=search
+                start_date=selected_start,
+                end_date=selected_end,
+                fund_set=search,
+                top_performers=top_assets,
             )
             generated_figure = dcc.Graph(
                 figure=fig,
@@ -664,6 +714,13 @@ def get_callbacks(app):
                 search,
                 generated_figure,
                 True,
+                saved_top_performers_names,
+                top_performers,
+                combine_top_performers,
+                top_performers_pct,
+                top_performers,
+                combine_top_performers,
+                top_performers_pct,
             )
         else:
             return (
@@ -676,4 +733,11 @@ def get_callbacks(app):
                 saved_find_fund,
                 saved_figure,
                 True,
+                saved_top_performers_names,
+                saved_top_performers,
+                saved_combine_top_performers,
+                saved_top_performers_pct,
+                saved_top_performers,
+                saved_combine_top_performers,
+                saved_top_performers_pct,
             )
