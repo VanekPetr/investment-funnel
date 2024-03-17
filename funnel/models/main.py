@@ -371,25 +371,32 @@ class TradeBot:
 
         return stat_df
 
+    def get_top_performing_assets(self):
+        data_a = self.get_stat(self.max_date, "2017-01-01")
+        data_b = self.get_stat("2017-01-02", "2020-01-01")
+        data_c = self.get_stat("2020-01-02", self.min_date)
+        print(data_a, data_b, data_c)
+
     def plot_dots(
         self,
         start_date: str,
         end_date: str,
         ml: str = "",
         ml_subset: Union[list, pd.DataFrame] = None,
-        fund_set: list = [],
-        optimal_portfolio: list = [],
-        benchmark: list = [],
+        fund_set: Union[list, None] = None,
+        optimal_portfolio: Union[list, None] = None,
+        benchmark: Union[list, None] = None,
     ) -> px.scatter:
         """METHOD TO PLOT THE OVERVIEW OF THE FINANCIAL PRODUCTS IN TERMS OF RISK AND RETURNS"""
+        fund_set = fund_set if fund_set else []
 
         # Get statistics for a given time period
         data = self.get_stat(start_date, end_date)
 
         # Add data about the optimal portfolio and benchmark for plotting
-        if len(optimal_portfolio) > 0:
+        if optimal_portfolio:
             data.loc[optimal_portfolio[4]] = optimal_portfolio
-        if len(benchmark) > 0:
+        if benchmark:
             data.loc[benchmark[4]] = benchmark
 
         # IF WE WANT TO HIGHLIGHT THE SUBSET OF ASSETS BASED ON ML
@@ -816,6 +823,9 @@ class TradeBot:
 if __name__ == "__main__":
     # INITIALIZATION OF THE CLASS
     algo = TradeBot()
+
+    # Get top performing assets for given periods and measure
+    algo.get_top_performing_assets()
 
     # PLOT INTERACTIVE GRAPH
     algo.plot_dots(start_date="2018-09-24", end_date="2019-09-01")
