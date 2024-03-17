@@ -2,7 +2,7 @@ import os
 from itertools import cycle
 from math import ceil
 from pathlib import Path
-from typing import Dict, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -371,11 +371,66 @@ class TradeBot:
 
         return stat_df
 
-    def get_top_performing_assets(self):
-        data_a = self.get_stat(self.max_date, "2017-01-01")
-        data_b = self.get_stat("2017-01-02", "2020-01-01")
-        data_c = self.get_stat("2020-01-02", self.min_date)
-        print(data_a, data_b, data_c)
+    def get_top_performing_assets(
+        self, time_periods: List[Tuple[str, str]]
+    ) -> List[str]:
+        stats_for_periods = {
+            f"period_{i}": self.get_stat(*period)
+            for i, period in enumerate(time_periods, 1)
+        }
+
+        # Create 'Risk class' column where the value is
+        # 'Risk Class 1' if Standard Deviation of Returns <= 0.005
+        # 'Risk Class 2' if > 0.005 and < 0.02
+        # 'Risk Class 3' if > 0.02 and < 0.05
+        # 'Risk Class 4' if > 0.05 and < 0.1
+        # 'Risk Class 5' if > 0.1 and < 0.15
+        # 'Risk Class 6' if > 0.15 and < 0.25 then
+        # 'Risk Class 7' if > 0.25
+        risk_level = {
+            "Risk Class 1": 0.005,
+            "Risk Class 2": 0.02,
+            "Risk Class 3": 0.05,
+            "Risk Class 4": 0.10,
+            "Risk Class 5": 0.15,
+            "Risk Class 6": 0.25,
+            "Risk Class 7": 1,
+        }
+        for data in stats_for_periods.values():
+            data["Risk Class"] = pd.cut(
+                data["Standard Deviation of Returns"],
+                bins=[-1] + list(risk_level.values()),
+                labels=list(risk_level.keys()),
+                right=True,
+            )
+        # For each data_period and each risk class, find the top 20% best performing assets
+        # mark them as True in column 'Top Performer'
+        for data in stats_for_periods.values():
+            for risk_class in risk_level.keys():
+                data.loc[
+                    data["Risk Class"] == risk_class,
+                    "Top Performer",
+                ] = (
+                    data.loc[
+                        data["Risk Class"] == risk_class, "Average Annual Returns"
+                    ].rank(pct=True)
+                    > 0.8
+                )
+
+        # ISIN codes for assets which were top performers in all n periods
+        top_isins = (
+            stats_for_periods["period_1"]
+            .loc[stats_for_periods["period_1"]["Top Performer"], "ISIN"]
+            .values
+        )
+        for data in stats_for_periods.values():
+            top_isins = np.intersect1d(
+                top_isins, data.loc[data["Top Performer"], "ISIN"].values
+            )
+
+        top_names = [self.names[self.tickers.index(isin)] for isin in top_isins]
+
+        return top_names
 
     def plot_dots(
         self,
@@ -494,7 +549,7 @@ class TradeBot:
         )
         # Position of legend
         fig.update_layout(legend=dict(yanchor="bottom", y=0.01, xanchor="left", x=0.01))
-
+        fig.show()
         return fig
 
     def mst(
@@ -825,10 +880,21 @@ if __name__ == "__main__":
     algo = TradeBot()
 
     # Get top performing assets for given periods and measure
-    algo.get_top_performing_assets()
+    # top_performers = algo.get_top_performing_assets(
+    #     time_periods=[
+    #         (algo.min_date, "2017-01-01"),
+    #         ("2017-01-02", "2020-01-01"),
+    #         ("2020-01-02", algo.max_date)
+    #     ]
+    # )
+    top_performers = algo.get_top_performing_assets(
+        time_periods=[(algo.min_date, algo.max_date)]
+    )
 
     # PLOT INTERACTIVE GRAPH
-    algo.plot_dots(start_date="2018-09-24", end_date="2019-09-01")
+    algo.plot_dots(
+        start_date=algo.min_date, end_date=algo.max_date, fund_set=top_performers
+    )
 
     # RUN THE MINIMUM SPANNING TREE METHOD
     _, mst_subset_of_assets = algo.mst(
