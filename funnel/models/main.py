@@ -682,7 +682,7 @@ class TradeBot:
 
         return optimal_portfolio_stat, benchmark_stat, fig_performance, fig_composition
 
-    def scenario_analysis(
+    def lifecycle_scenario_analysis(
         self,
         subset_of_assets: list,
         scenarios_type: str,
@@ -744,8 +744,8 @@ class TradeBot:
             )
 
         else:
-            logger.debug(
-                "It appears that a scenario method other than MC or Bootstrapping has been chosen. "
+            raise ValueError(
+                "It appears that a scenario method other than MonteCarlo or Bootstrap has been chosen. "
                 "Please check for spelling mistakes."
             )
 
@@ -835,7 +835,7 @@ if __name__ == "__main__":
     )
 
     # RUN THE LIFECYCLE
-    lifecycle = algo.scenario_analysis(
+    lifecycle = algo.lifecycle_scenario_analysis(
         subset_of_assets=mst_subset_of_assets,
         scenarios_type="MonteCarlo",
         n_simulations=1000,

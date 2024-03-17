@@ -125,7 +125,7 @@ def get_callbacks(app):
                 )
             # RUN THE LIFECYCLE FUNCTION
             _, _, fig_performance, fig_glidepaths, _, _, fig_composition_all = (
-                algo.scenario_analysis(
+                algo.lifecycle_scenario_analysis(
                     subset_of_assets=subset_of_assets,
                     scenarios_type=scen_model,
                     n_simulations=scen_spec,

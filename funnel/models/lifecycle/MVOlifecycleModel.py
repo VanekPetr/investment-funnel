@@ -1,3 +1,5 @@
+from typing import List
+
 import cvxpy as cp
 import numpy as np
 import pandas as pd
@@ -6,7 +8,10 @@ from loguru import logger
 from funnel.models.MVOmodel import cholesky_psd
 
 
-def calculate_risk_metrics(yearly_returns, risk_free_rate=0.02):
+def calculate_risk_metrics(
+    yearly_returns: pd.Series, risk_free_rate: float = 0.02
+) -> (float, float, float, float, float):
+    """Calculate risk metrics for a given set of yearly returns."""
     annual_return = yearly_returns.mean()
     annual_std_dev = yearly_returns.std()
 
@@ -30,7 +35,8 @@ def calculate_risk_metrics(yearly_returns, risk_free_rate=0.02):
     return annual_return, annual_std_dev, sharpe_ratio, downside_std_dev, sortino_ratio
 
 
-def calculate_analysis_metrics(terminal_values):
+def calculate_analysis_metrics(terminal_values: pd.Series) -> pd.DataFrame:
+    """Calculate various metrics from the terminal values of the portfolio."""
     mean_terminal_value = np.mean(terminal_values)
     stdev_terminal_value = np.std(terminal_values)
     max_terminal_value = np.max(terminal_values)
@@ -66,23 +72,29 @@ def calculate_analysis_metrics(terminal_values):
 
 
 def lifecycle_rebalance_model(
-    mu, sigma, vol_target, max_weight, solver, inaccurate: bool = True, lower_bound=0
-):
+    mu: pd.DataFrame,
+    sigma: pd.DataFrame,
+    vol_target: float,
+    max_weight: float,
+    solver: str,
+    inaccurate: bool = True,
+    lower_bound: float = 0,
+) -> (pd.Series, float):
     """
     Optimizes asset allocations within a portfolio to maximize expected returns
     while adhering to a risk budget glide path.
 
     Parameters:
-    - mu (pd.Series): Expected returns for each asset.
-    - sigma (pd.DataFrame): Covariance matrix of asset returns.
-    - vol_target (float): Target portfolio volatility for period.
-    - max_weight (float): Maximum weight allowed for any single asset (excluding cash).
-    - solver (str): Solver to be used by CVXPY for optimization.
-    - inaccurate (bool): If True, accepts 'optimal_inaccurate' as a successful solve status.
+    - mu: Expected returns for each asset.
+    - sigma: Covariance matrix of asset returns.
+    - vol_target: Target portfolio volatility for period.
+    - max_weight: Maximum weight allowed for any single asset (excluding cash).
+    - solver: Solver to be used by CVXPY for optimization.
+    - inaccurate: If True, accepts 'optimal_inaccurate' as a successful solve status.
 
     Returns:
-    - port_nom (pd.Series): Nominal allocations for each asset in the optimized portfolio.
-    - port_val (float): Total value of the portfolio based on the allocations.
+    - port_nom: Nominal allocations for each asset in the optimized portfolio.
+    - port_val: Total value of the portfolio based on the allocations.
 
     This function uses convex optimization to find the asset weights that maximize
     expected returns subject to constraints on total weight, individual asset weights,
@@ -154,12 +166,17 @@ def lifecycle_rebalance_model(
         return port_nom, port_val
 
 
-def get_port_allocations(mu_lst, sigma_lst, targets, max_weight, solver):
+def get_port_allocations(
+    mu_lst: pd.DataFrame,
+    sigma_lst: pd.DataFrame,
+    targets: pd.DataFrame,
+    max_weight: float,
+    solver: str,
+) -> pd.DataFrame:
     """
     Calculates optimal portfolio allocations for the glide paths.
 
     Parameters:
-    - scen: Market scenarios
     - mu_lst, sigma_lst: Expected returns and standard deviations for each year
     - targets: Target volatilities from the risk budget glide paths
     - budget: Initial budget
@@ -170,7 +187,7 @@ def get_port_allocations(mu_lst, sigma_lst, targets, max_weight, solver):
     - interest_rate: Interest rate for borrowing
 
     Returns:
-    - allocation_df (pd.DataFrame): DataFrame showing the optimal asset allocations for each year.
+    - allocation_df: DataFrame showing the optimal asset allocations for each year.
 
     This function iterates through each year, using the provided expected returns, covariance matrices,
     and risk budget glide path to determine the optimal asset allocations.
@@ -201,8 +218,13 @@ def get_port_allocations(mu_lst, sigma_lst, targets, max_weight, solver):
 
 
 def portfolio_rebalancing(
-    budget, targets, withdrawal_lst, transaction_cost, scenarios, interest_rate
-):
+    budget: float,
+    targets: pd.DataFrame,
+    withdrawal_lst: List[float],
+    transaction_cost: float,
+    scenarios: pd.DataFrame,
+    interest_rate: float,
+) -> (pd.DataFrame, pd.DataFrame):
     """
     Simulates portfolio rebalancing over multiple years, accounting for withdrawals,
     transaction costs, returns based on scenarios, and handling defaults when withdrawals exceed portfolio value.
@@ -320,8 +342,13 @@ def portfolio_rebalancing(
 
 
 def riskadjust_model_scen(
-    scen, targets, budget, trans_cost, withdrawal_lst, interest_rate
-):
+    scen: np.ndarray,
+    targets: pd.DataFrame,
+    budget: float,
+    trans_cost: float,
+    withdrawal_lst: List[float],
+    interest_rate: float,
+) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """
     Simulates portfolio performance across different scenarios, adjusting for risk and calculating
     various financial metrics based on the portfolio's rebalancing strategy.
