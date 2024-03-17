@@ -416,6 +416,9 @@ class TradeBot:
                     ].rank(pct=True)
                     > 0.8
                 )
+        # for each period, save the pandas dataframe into excel files
+        # for index, data in enumerate(stats_for_periods.values()):
+        #     data.to_excel(f"top_performers_{time_periods[index]}.xlsx")
 
         # ISIN codes for assets which were top performers in all n periods
         top_isins = (
@@ -549,7 +552,7 @@ class TradeBot:
         )
         # Position of legend
         fig.update_layout(legend=dict(yanchor="bottom", y=0.01, xanchor="left", x=0.01))
-        fig.show()
+        # fig.show()
         return fig
 
     def mst(
@@ -880,15 +883,12 @@ if __name__ == "__main__":
     algo = TradeBot()
 
     # Get top performing assets for given periods and measure
-    # top_performers = algo.get_top_performing_assets(
-    #     time_periods=[
-    #         (algo.min_date, "2017-01-01"),
-    #         ("2017-01-02", "2020-01-01"),
-    #         ("2020-01-02", algo.max_date)
-    #     ]
-    # )
     top_performers = algo.get_top_performing_assets(
-        time_periods=[(algo.min_date, algo.max_date)]
+        time_periods=[
+            (algo.min_date, "2017-01-01"),
+            ("2017-01-02", "2020-01-01"),
+            ("2020-01-02", algo.max_date),
+        ]
     )
 
     # PLOT INTERACTIVE GRAPH
