@@ -372,7 +372,7 @@ class TradeBot:
         return stat_df
 
     def get_top_performing_assets(
-        self, time_periods: List[Tuple[str, str]]
+        self, time_periods: List[Tuple[str, str]], top_percent: float = 0.2
     ) -> List[str]:
         stats_for_periods = {
             f"period_{i}": self.get_stat(*period)
@@ -410,12 +410,9 @@ class TradeBot:
                 data.loc[
                     data["Risk Class"] == risk_class,
                     "Top Performer",
-                ] = (
-                    data.loc[
-                        data["Risk Class"] == risk_class, "Average Annual Returns"
-                    ].rank(pct=True)
-                    > 0.8
-                )
+                ] = data.loc[
+                    data["Risk Class"] == risk_class, "Average Annual Returns"
+                ].rank(pct=True) > (1 - top_percent)
         # for each period, save the pandas dataframe into excel files
         # for index, data in enumerate(stats_for_periods.values()):
         #     data.to_excel(f"top_performers_{time_periods[index]}.xlsx")
@@ -888,7 +885,8 @@ if __name__ == "__main__":
             (algo.min_date, "2017-01-01"),
             ("2017-01-02", "2020-01-01"),
             ("2020-01-02", algo.max_date),
-        ]
+        ],
+        top_percent=0.2,
     )
 
     # PLOT INTERACTIVE GRAPH
