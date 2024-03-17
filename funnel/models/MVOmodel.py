@@ -13,7 +13,9 @@ def cholesky_psd(m):
     Computes the Cholesky decomposition of the given matrix, that is not positive definite, only semidefinite.
     """
     lu, d, perm = sp.linalg.ldl(m)
-    assert np.max(np.abs(d - np.diag(np.diag(d)))) < 1e-8, "Matrix 'd' is not diagonal!"
+    assert (
+        np.max(np.abs(d - np.diag(np.diag(d)))) < 1e-12
+    ), "Matrix 'd' is not diagonal!"
 
     # Do non-negativity fix
     min_eig = np.min(np.diag(d))

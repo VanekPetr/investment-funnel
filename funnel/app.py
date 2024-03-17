@@ -65,6 +65,18 @@ def load_page():
             dcc.Store(id="saved-universe-figure-page-2", data=None),
             dcc.Store(id="saved-solver", data=""),
             dcc.Store(id="saved-optimization-model", data=""),
+            dcc.Store(id="saved-ml-model-lifecycle", data=""),
+            dcc.Store(id="saved-ml-spec-lifecycle", data=2),
+            dcc.Store(id="saved-pick-num-lifecycle", data=5),
+            dcc.Store(id="saved-scen-model-lifecycle", data=""),
+            dcc.Store(id="saved-scen-spec-lifecycle", data=1000),
+            dcc.Store(id="saved-glidepaths-figure-page-3", data=None),
+            dcc.Store(id="saved-performance-figure-page-3", data=None),
+            dcc.Store(id="saved-lifecycle-all-figure-page-3", data=None),
+            dcc.Store(id="saved_portfolio_value", data=None),
+            dcc.Store(id="saved_yearly_withdraws", data=None),
+            dcc.Store(id="saved_risk_preference", data=None),
+            dcc.Store(id="saved_end_year", data=2040),
         ]
     )
 

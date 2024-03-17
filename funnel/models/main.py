@@ -1,6 +1,8 @@
 import os
+from itertools import cycle
+from math import ceil
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Dict, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -8,12 +10,19 @@ import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
 from loguru import logger
+from plotly.subplots import make_subplots
+from scipy.stats import gaussian_kde
 
 from funnel.financial_data.etf_isins import ETFlist
 from funnel.models.Clustering import cluster, pick_cluster
 from funnel.models.CVaRmodel import cvar_model
 from funnel.models.CVaRtargets import get_cvar_targets
 from funnel.models.dataAnalyser import final_stats, mean_an_returns
+from funnel.models.lifecycle.glidePathCreator import generate_risk_profiles
+from funnel.models.lifecycle.MVOlifecycleModel import (
+    get_port_allocations,
+    riskadjust_model_scen,
+)
 from funnel.models.MST import minimum_spanning_tree
 from funnel.models.MVOmodel import mvo_model
 from funnel.models.MVOtargets import get_mvo_targets
@@ -90,7 +99,6 @@ class TradeBot:
         composition = composition.loc[:, (composition != 0).any(axis=0)]
         data = []
         idx_color = 0
-        # TODO add color
         composition_color = (
             px.colors.sequential.turbid
             + px.colors.sequential.Brwnyl
@@ -127,6 +135,204 @@ class TradeBot:
         # fig.show()
 
         return fig_performance, fig_composition
+
+    @staticmethod
+    def __plot_portfolio_densities(
+        portfolio_performance_dict: dict,
+        compositions: Dict[str, pd.DataFrame],
+        tickers: list,
+        names: list,
+    ) -> Tuple[go.Figure, Dict[str, go.Figure], go.Figure]:
+        """METHOD TO PLOT THE LIFECYCLE SIMULATION RESULTS"""
+
+        # Define colors
+        colors = [
+            "#99A4AE",  # gray50
+            "#3b4956",  # dark
+            "#b7ada5",  # secondary
+            "#4099da",  # blue
+            "#8ecdc8",  # aqua
+            "#e85757",  # coral
+            "#fdd779",  # sun
+            "#644c76",  # eggplant
+            "#D8D1CA",  # warmGray50
+        ]
+
+        color_cycle = cycle(colors)  # To cycle through colors
+        fig = go.Figure()
+
+        max_density_across_all_datasets = 0  # Initialize max density tracker
+
+        for label, df in portfolio_performance_dict.items():
+            # Kernel Density Estimation for each dataset
+            kde = gaussian_kde(df["Terminal Wealth"])
+
+            # Generating a range of values to evaluate the KDE
+            x_min = df["Terminal Wealth"].min()
+            x_max = df["Terminal Wealth"].max()
+            x = np.linspace(x_min, x_max, 1000)
+
+            # Evaluate the KDE
+            density = kde(x)
+
+            # Update max density if current density peak is higher
+            max_density_across_all_datasets = max(
+                max_density_across_all_datasets, max(density)
+            )
+
+            # Create line plot trace for this dataset
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=density,
+                    mode="lines",
+                    name=label,  # Use the dictionary key as the label
+                    line=dict(
+                        width=2.5, color=next(color_cycle)
+                    ),  # Assign color from Orsted-Colors
+                )
+            )
+
+        # Add a dashed vertical line at x=0
+        fig.add_shape(
+            type="line",
+            x0=0,
+            y0=0,
+            x1=0,
+            y1=max_density_across_all_datasets,  # Use the max density across all datasets
+            line=dict(
+                color="Black",
+                width=3,
+                dash="dash",  # Define dash pattern
+            ),
+        )
+        """
+        # Update the layout
+        fig.update_layout(
+            title_text='Density function(s) of terminal wealth for risk classes in 1000 different scenarios.',
+            xaxis_title='Terminal Wealth',
+            yaxis_title='Density',
+            legend_title='Risk Class',
+            template='plotly_white'
+        )
+        """
+        # Update the layout with larger fonts
+        fig.update_layout(
+            title_text="Density function(s) of the end portfolio value for various glide paths.",
+            title_font=dict(size=24),  # Increase title font size
+            xaxis_title="Target date portfolio value",
+            xaxis_title_font=dict(size=18),  # Increase x-axis title font size
+            xaxis_tickfont=dict(size=16),  # Increase x-axis tick label font size
+            yaxis_title="Density",
+            yaxis_title_font=dict(size=18),  # Increase y-axis title font size
+            yaxis_tickfont=dict(size=16),  # Increase y-axis tick label font size
+            legend_title="Risb Budget glide path",
+            legend_title_font=dict(size=18),  # Increase legend title font size
+            legend_font=dict(size=16),  # Increase legend text font size
+            template="plotly_white",
+        )
+
+        # Show the figure in a browser
+        # fig.show(renderer="browser")
+
+        composition_figures = {}
+        filtered_compositions = {
+            name: comp for name, comp in compositions.items() if "reverse" not in name
+        }
+        num_portfolios = len(filtered_compositions)
+        cols = 2 if num_portfolios > 1 else 1
+        rows = ceil(
+            num_portfolios / cols
+        )  # Calculate the number of rows needed based on the total number of compositions
+
+        subplot_titles = [
+            f"Portfolio Composition: {name}" for name in filtered_compositions.keys()
+        ]
+        fig_subplots = make_subplots(
+            rows=rows,
+            cols=cols,
+            subplot_titles=subplot_titles,
+            vertical_spacing=0.1,
+            horizontal_spacing=0.05,
+        )
+
+        tickers_in_legend = set()
+        current_plot = (
+            1  # Keep track of the current plot index to correctly calculate row and col
+        )
+
+        for portfolio_name, composition in filtered_compositions.items():
+            composition_names = []
+            for ticker in composition.columns[:-1]:
+                ticker_index = list(tickers).index(ticker)
+                composition_names.append(list(names)[ticker_index])
+            if "Cash" not in composition_names:
+                composition_names.append("Cash")
+            composition.columns = composition_names
+            composition = composition.loc[:, (composition != 0).any(axis=0)]
+
+            idx_color = 0
+            composition_color = (
+                px.colors.sequential.turbid
+                + px.colors.sequential.Brwnyl
+                + px.colors.sequential.YlOrBr
+                + px.colors.sequential.gray
+                + px.colors.sequential.Mint
+                + px.colors.sequential.dense
+                + px.colors.sequential.Plasma
+                + px.colors.sequential.Viridis
+                + px.colors.sequential.Cividis
+            )
+
+            # Create an individual figure for the current portfolio
+            individual_fig = go.Figure()
+
+            for isin in composition.columns:
+                show_legend = isin not in tickers_in_legend
+                tickers_in_legend.add(isin)
+
+                trace = go.Bar(
+                    x=composition.index,
+                    y=composition[isin],
+                    name=str(isin),
+                    marker_color=composition_color[idx_color % len(composition_color)],
+                    showlegend=show_legend,
+                )
+
+                # Add trace to both the subplot and the individual figure
+                row, col = divmod(current_plot - 1, cols)
+                fig_subplots.add_trace(trace, row=row + 1, col=col + 1)
+                individual_fig.add_trace(trace)
+
+                idx_color += 1
+
+            # Configure the individual figure layout
+            individual_fig.update_layout(
+                title=f"Portfolio Composition: {portfolio_name}",
+                plot_bgcolor="white",
+                barmode="stack",
+            )
+            individual_fig["layout"]["yaxis"].tickformat = ",.1%"
+
+            # Store the individual figure in the dictionary
+            composition_figures[portfolio_name] = individual_fig
+
+            current_plot += 1
+
+        fig_subplots.update_layout(
+            title="Portfolio Compositions",
+            height=500 * rows,
+            width=1000 * cols,
+            plot_bgcolor="white",
+            barmode="stack",
+        )
+        # Update y-axis tick format for all subplots
+        for i in range(1, cols * rows + 1):
+            fig_subplots["layout"][f"yaxis{i}"].tickformat = ",.1%"
+
+        # fig_subplots.show()
+
+        return fig, composition_figures, fig_subplots
 
     def get_stat(self, start_date: str, end_date: str) -> pd.DataFrame:
         """METHOD COMPUTING ANNUAL RETURNS, ANNUAL STD. DEV. & SHARPE RATIO OF ASSETS"""
@@ -348,6 +554,8 @@ class TradeBot:
                 ml_subset=clusters,
             )
 
+            # fig.show()
+
         return fig, subset_clustering
 
     def backtest(
@@ -474,6 +682,136 @@ class TradeBot:
 
         return optimal_portfolio_stat, benchmark_stat, fig_performance, fig_composition
 
+    def lifecycle_scenario_analysis(
+        self,
+        subset_of_assets: list,
+        scenarios_type: str,
+        n_simulations: int,
+        end_year: int,
+        withdrawals: int,
+        initial_risk_appetite: float,
+        initial_budget: int,
+        rng_seed=0,
+        test_split: float = False,
+    ) -> Tuple[dict, pd.DataFrame, go.Figure, go.Figure, dict, dict, go.Figure]:
+        """METHOD TO COMPUTE THE LIFECYCLE SCENARIO ANALYSIS"""
+
+        # ------------------------------- INITIALIZE FUNCTION -------------------------------
+        n_periods = end_year - 2023
+        withdrawal_lst = [withdrawals * (1 + 0.04) ** i for i in range(n_periods)]
+
+        # ------------------------------- PARAMETER INITIALIZATION -------------------------------
+        if test_split != 0:
+            sampling_set, estimating_set = MomentGenerator.split_dataset(
+                data=self.weeklyReturns[subset_of_assets], sampling_ratio=test_split
+            )
+
+            _, _, sigma_weekly, mu_weekly = (
+                MomentGenerator.generate_annual_sigma_mu_with_risk_free(
+                    data=sampling_set
+                )
+            )
+
+            sigma, mu, _, _ = MomentGenerator.generate_annual_sigma_mu_with_risk_free(
+                data=estimating_set
+            )
+        else:
+            sigma, mu, sigma_weekly, mu_weekly = (
+                MomentGenerator.generate_annual_sigma_mu_with_risk_free(
+                    data=self.weeklyReturns[subset_of_assets]
+                )
+            )
+
+        # ------------------------------- SCENARIO GENERATION -------------------------------
+        if rng_seed == 0:
+            sg = ScenarioGenerator(np.random.default_rng())
+        else:
+            sg = ScenarioGenerator(np.random.default_rng(rng_seed))
+
+        if scenarios_type == "MonteCarlo":
+            scenarios = sg.MC_simulation_annual_from_weekly(
+                weekly_mu=mu_weekly,
+                weekly_sigma=sigma_weekly,
+                n_simulations=n_simulations,
+                n_years=n_periods,
+            )
+
+        elif scenarios_type == "Bootstrap":
+            scenarios = sg.bootstrap_simulation_annual_from_weekly(
+                historical_weekly_returns=self.weeklyReturns[subset_of_assets],
+                n_simulations=n_simulations,
+                n_years=n_periods,
+            )
+
+        else:
+            raise ValueError(
+                "It appears that a scenario method other than MonteCarlo or Bootstrap has been chosen. "
+                "Please check for spelling mistakes."
+            )
+
+        # ------------------------------- Allocation Target Generation -------------------------------
+        glide_paths_df, fig_glidepaths = generate_risk_profiles(
+            n_periods=n_periods, initial_risk=initial_risk_appetite, minimum_risk=0.01
+        )
+
+        allocation_targets = {}
+        for r in glide_paths_df.columns:
+            targets = get_port_allocations(
+                mu_lst=mu,
+                sigma_lst=sigma,
+                targets=glide_paths_df[r],
+                max_weight=1 / 4,
+                solver="ECOS_BB",
+            )
+            allocation_targets[f"{r}"] = targets
+
+        # ------------------------------- MATHEMATICAL MODELING -------------------------------
+        exhibition_summary = pd.DataFrame()
+        terminal_wealth_dict = {}
+
+        for key, df in allocation_targets.items():
+            logger.info(
+                f"Optimizing portfolio for {key} over {n_simulations} scenarios. An info message will "
+                f"appear, when we are halfway through the scenarios for the current strategy."
+            )
+            portfolio_df, mean_allocations_df, analysis_metrics = riskadjust_model_scen(
+                scen=scenarios[:, :, :],
+                targets=df,
+                budget=initial_budget,
+                trans_cost=0.002,
+                withdrawal_lst=withdrawal_lst,
+                interest_rate=0.04,
+            )
+
+            # Add the analysis_metrics DataFrame as a new column in the storage DataFrame
+            exhibition_summary[key] = analysis_metrics.squeeze()
+
+            portfolio_df["Terminal Wealth"] = pd.to_numeric(
+                portfolio_df["Terminal Wealth"], errors="coerce"
+            )
+            terminal_wealth_dict[f"{key}"] = portfolio_df
+
+        # ------------------------------- PLOTTING -------------------------------
+        fig_performance, fig_compositions, fig_compositions_all = (
+            self.__plot_portfolio_densities(
+                portfolio_performance_dict=terminal_wealth_dict,
+                compositions=allocation_targets,
+                tickers=self.tickers,
+                names=self.names,
+            )
+        )
+
+        # ------------------------------- RETURN STATISTICS -------------------------------
+        return (
+            terminal_wealth_dict,
+            exhibition_summary,
+            fig_performance,
+            fig_glidepaths,
+            allocation_targets,
+            fig_compositions,
+            fig_compositions_all,
+        )
+
 
 if __name__ == "__main__":
     # INITIALIZATION OF THE CLASS
@@ -484,7 +822,7 @@ if __name__ == "__main__":
 
     # RUN THE MINIMUM SPANNING TREE METHOD
     _, mst_subset_of_assets = algo.mst(
-        start_date="2015-12-23", end_date="2017-07-01", n_mst_runs=3, plot=True
+        start_date="2000-01-01", end_date="2024-01-01", n_mst_runs=5, plot=False
     )
 
     # RUN THE CLUSTERING METHOD
@@ -496,8 +834,19 @@ if __name__ == "__main__":
         plot=True,
     )
 
+    # RUN THE LIFECYCLE
+    lifecycle = algo.lifecycle_scenario_analysis(
+        subset_of_assets=mst_subset_of_assets,
+        scenarios_type="MonteCarlo",
+        n_simulations=1000,
+        end_year=2050,
+        withdrawals=51000,
+        initial_risk_appetite=0.15,
+        initial_budget=137000,
+    )
+
     # RUN THE BACKTEST
-    results = algo.backtest(
+    backtest = algo.backtest(
         start_train_date="2015-12-23",
         start_test_date="2018-09-24",
         end_test_date="2019-09-01",
