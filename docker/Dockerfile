@@ -12,6 +12,8 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/etc/poetry python
     ln -s /etc/poetry/bin/poetry && \
     poetry config virtualenvs.create false
 
+RUN apt-get update && apt-get install -y cmake libopenblas-dev
+
 WORKDIR /app
 
 # Copy files necessary for installing dependencies
