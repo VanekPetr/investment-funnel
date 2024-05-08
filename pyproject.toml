@@ -8,7 +8,7 @@ repository = "https://github.com/VanekPetr/investment-funnel"
 homepage = "https://investment-funnel.algostrata.com"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"
+python = ">=3.10,<3.13"
 pandas = "2.2.2"
 pandas-datareader = "0.10.0"
 dash = "2.17.0"
@@ -41,7 +41,7 @@ pytest-cov = "*"
 pre-commit = "*"
 
 [build-system]
-requires = ["poetry>=1.6.0"]
+requires = ["poetry>=1.7.1"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
