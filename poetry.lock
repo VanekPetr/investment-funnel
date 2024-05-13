@@ -393,37 +393,37 @@ toml = ["tomli"]
 
 [[package]]
 name = "cvxpy"
-version = "1.4.3"
+version = "1.5.1"
 description = "A domain-specific language for modeling convex optimization problems in Python."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "cvxpy-1.4.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:f4dc744a6f38328b0511cd57cfd81a517c0568d3b6e994d6dda3f309a1ce47cf"},
-    {file = "cvxpy-1.4.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:8c32199a26d889e74d70bc39f0369680cb7d2625e7c47c42483ca166d37122c2"},
-    {file = "cvxpy-1.4.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4a4fed75c1714409fd5125269935a68bc3f57c522623a5d7eab68623a19f3a6f"},
-    {file = "cvxpy-1.4.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8198e390490a0543caad428fc0d8a5c0914052c22630277d00bfdc7a770c4b11"},
-    {file = "cvxpy-1.4.3-cp310-cp310-win_amd64.whl", hash = "sha256:bea83a4a829d7197c307badbbe2f05d6e7aed85ed63badd800b89534b33b38de"},
-    {file = "cvxpy-1.4.3-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:443313eca702750a7a2878e841de23cc5111085f4069e842d027ebc5c98c10ac"},
-    {file = "cvxpy-1.4.3-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:9ae3d4ec202dc446206d8c6eae83353827842dc0e232f4e4f0d588fb2d59705a"},
-    {file = "cvxpy-1.4.3-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0f8ee4d0d1ecb2e09e41a31192ea103c7c1f626204925fb7f6590d11471cb357"},
-    {file = "cvxpy-1.4.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:aeb6f60608d4716ced43105cbeb0df2a787583f51bfbf9465fea5c435f8456ca"},
-    {file = "cvxpy-1.4.3-cp311-cp311-win_amd64.whl", hash = "sha256:243d0315140a7572cd4ec2e9bf13c1e407627d78dc5f9491abfa9adc64569268"},
-    {file = "cvxpy-1.4.3-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:69ee039b43e425ffc0cb5581c2befee571bee2b007d5a119fa17695f908d861e"},
-    {file = "cvxpy-1.4.3-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:502c590099a4faeee28247a3d139d618a94ec6d2986dc7cc0db2ac614660ddc5"},
-    {file = "cvxpy-1.4.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:57a803bb786ab43da0c0a4fbbb0b2438fd13a4b38b68f8f16474a214a78b0823"},
-    {file = "cvxpy-1.4.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:331cc160e66b7271b734b8ad0b65456d32445e00c397c35b7f2b105091ecfa84"},
-    {file = "cvxpy-1.4.3-cp312-cp312-win_amd64.whl", hash = "sha256:4b4d46fd521b755a6abd57384b2355db28d7165a6d90118278ebd7553e4ba70b"},
-    {file = "cvxpy-1.4.3-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:80dde991c27d4e3b91597a00b85d460a9db03b484ba6a3b940647e324ad30110"},
-    {file = "cvxpy-1.4.3-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:06091d3278c65ef996306b5a85a7848055331ef390262f2cf354811f43ddea68"},
-    {file = "cvxpy-1.4.3-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e16bf04f75266c61ee469a0a3b1364c1e1e87d47dc47fedcdc43435c74dd97f3"},
-    {file = "cvxpy-1.4.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:14882db05fa36cab94262b7e9574c43f87301ab025daefdabaa7659f2623e731"},
-    {file = "cvxpy-1.4.3-cp38-cp38-win_amd64.whl", hash = "sha256:f094da24c46e6b0b936369463d483755eafbb13fd6a8d8d1ca962987d02eb014"},
-    {file = "cvxpy-1.4.3-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:b8d652877989ddc28099a367fb7a4bb771d54895e3e1167c835ee3f91606bd13"},
-    {file = "cvxpy-1.4.3-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:25d3ac5953effaa5c72ab8d261dbe94d8a1947de0324a7e30053ef3b0cee853e"},
-    {file = "cvxpy-1.4.3-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3d612c7bdff73a730c11d6094540705ca9c8312d9ebb6af75c09337123dd66b2"},
-    {file = "cvxpy-1.4.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1475fd4c4778067d5ec03b35fe714d6a4074e1e213262a8bddbd9b638e004419"},
-    {file = "cvxpy-1.4.3-cp39-cp39-win_amd64.whl", hash = "sha256:8d30081ef5e906cc6352fc6760f462a6dfcb5150a5a26e21da942b6ae0759293"},
-    {file = "cvxpy-1.4.3.tar.gz", hash = "sha256:b1b078c8c05923ad128e7d814b0be1c337ac05262a78b757a8e6f957648ad953"},
+    {file = "cvxpy-1.5.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:6dddec006aa1a52d6c3764bde5ae758ebbab9774be1b9581437bd47dc3f7ebe1"},
+    {file = "cvxpy-1.5.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:7dc7f13d8768c5aef1d84869028577be595b87cad0eb30552189c420de59cc54"},
+    {file = "cvxpy-1.5.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d4896083243e8d3a5edeb9ab2580982777cf52ca5f22c79707899a211fc8c6f6"},
+    {file = "cvxpy-1.5.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2fcd27482ae6f6672650cc0629335ee6da4ab1b9f524669527185a55338f906e"},
+    {file = "cvxpy-1.5.1-cp310-cp310-win_amd64.whl", hash = "sha256:6d9e5b72863ba50093bb7c8e3d5fd7066c623acbc3e5cd0c645e64e6a337a3ae"},
+    {file = "cvxpy-1.5.1-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:91c1d84d56553746b607f38ea2e15279f66dcc0cb1baeff607a28c1d2a4714f4"},
+    {file = "cvxpy-1.5.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:1cb757857ea1426646e71f6211b295d49077e111211820b2b49edcb7071d0e08"},
+    {file = "cvxpy-1.5.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2cb57357e420119ef5101267d245d16a1e04f8db62fd09a68bd10abb52caebdc"},
+    {file = "cvxpy-1.5.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ae3a32eb415280dc84b1164796433e0300ef31f9a7b83f668dff37ced1982f0f"},
+    {file = "cvxpy-1.5.1-cp311-cp311-win_amd64.whl", hash = "sha256:344f802046605244c5485d875475a848f450db39da6ac47fbaec137b2ea8c2e4"},
+    {file = "cvxpy-1.5.1-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:dbfaebfe33e15f1a6a51b7ac6289977e34d0944b777a99766983648f0ee59353"},
+    {file = "cvxpy-1.5.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:2f83212a00d5e4e0ab1c76eca93405e1a7c31d382fb3eaf0e9f6451bf56df20d"},
+    {file = "cvxpy-1.5.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cee602c6e882e4d65bac8b141c6a52c8df82e079b88c738aeeb0597ddc09a9f4"},
+    {file = "cvxpy-1.5.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c240df0c069a3df374a7a3da016d0152653ffd0c8f254576f71d4d21fb443599"},
+    {file = "cvxpy-1.5.1-cp312-cp312-win_amd64.whl", hash = "sha256:54512207b80fc49d2603f9988caa310d11a168d6a6975397fd0d871a0e359476"},
+    {file = "cvxpy-1.5.1-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:20f7a9231a0a1a23473d46d8fc37b81703404b7af6eba5ebdffe231faeeaacaf"},
+    {file = "cvxpy-1.5.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:8be18b3288d7d25e10d0ae8f8ee5bb6703fd63e5f1a5f168f2921fcd438d34b1"},
+    {file = "cvxpy-1.5.1-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:840e410d82b48ca526bf8cf67ed11c77dcaa4cca7e3c227826dcde934bf9fb10"},
+    {file = "cvxpy-1.5.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bcc2f8dc1eab118ee0df93a83d2b46dfb68ec15046bbf1d46a6bddbb705e45a6"},
+    {file = "cvxpy-1.5.1-cp38-cp38-win_amd64.whl", hash = "sha256:9d5c59f312e71bbfb9d2089843061897fb53fa146971833a156c133f5e8f77fd"},
+    {file = "cvxpy-1.5.1-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:1fa5f0a3dddbe89d14027271ab0e489613c23760e53450eeca1bdaa269fc6dc9"},
+    {file = "cvxpy-1.5.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:765a6eead577ef1e0842ccb41e8d76b95a10ff635deb6cf311e5784164ac254b"},
+    {file = "cvxpy-1.5.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d20e9ff4cd47b46fdb5a224a05f999c701995488820172a1b9ee3445a25f7386"},
+    {file = "cvxpy-1.5.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ee887cafbf5ca7ff455eec9a1c00d6140aef6e0af31d5389f5545d5674ce7403"},
+    {file = "cvxpy-1.5.1-cp39-cp39-win_amd64.whl", hash = "sha256:8cde26f0946cf2100e261f060e2b192dddc3417dd6ff8e6895cb172d16863d7c"},
+    {file = "cvxpy-1.5.1.tar.gz", hash = "sha256:225c90abe61a143dde2ff72d1acf9875b58d8c047ad589abc1b735640735dbfc"},
 ]
 
 [package.dependencies]
@@ -431,22 +431,21 @@ clarabel = ">=0.5.0"
 ecos = ">=2"
 numpy = ">=1.15"
 osqp = ">=0.6.2"
-pybind11 = "*"
 scipy = ">=1.1.0"
-scs = ">=3.0"
+scs = ">=3.2.4.post1"
 
 [package.extras]
 cbc = ["cylp (>=0.91.5)"]
-clarabel = ["clarabel"]
 cvxopt = ["cvxopt"]
+daqp = ["daqp"]
 diffcp = ["diffcp"]
-glop = ["ortools (>=9.5,<9.8)"]
+glop = ["ortools (>=9.7,<9.10)"]
 glpk = ["cvxopt"]
 glpk-mi = ["cvxopt"]
 gurobi = ["gurobipy"]
 highs = ["scipy (>=1.6.1)"]
 mosek = ["Mosek"]
-pdlp = ["ortools (>=9.5,<9.8)"]
+pdlp = ["ortools (>=9.7,<9.10)"]
 piqp = ["piqp"]
 proxqp = ["proxsuite"]
 scip = ["PySCIPOpt"]
@@ -1805,20 +1804,6 @@ files = [
 numpy = ">=1.16.6"
 
 [[package]]
-name = "pybind11"
-version = "2.12.0"
-description = "Seamless operability between C++11 and Python"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "pybind11-2.12.0-py3-none-any.whl", hash = "sha256:df8d60b94f9e714d81013db233393d430ebf9f3551642b82291cf1b14d1afdbd"},
-    {file = "pybind11-2.12.0.tar.gz", hash = "sha256:5e3c557a84b06b969247630407fc4d985bed157b4253b13153b8e8e165e0c3dc"},
-]
-
-[package.extras]
-global = ["pybind11-global (==2.12.0)"]
-
-[[package]]
 name = "pydantic"
 version = "2.7.1"
 description = "Data validation using Python type hints"
@@ -2574,4 +2559,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "f0d3daf2ab5e913714dc584328829b59487adf5ce6beebbf1da258dc4073237c"
+content-hash = "53d92e6b99cf09c6359f277490e759be52fe52cc1220ae50428512b0b1709f5a"
