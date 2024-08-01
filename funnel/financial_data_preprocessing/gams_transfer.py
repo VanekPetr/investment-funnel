@@ -1,6 +1,6 @@
 import os
 
-import gamstransfer as gt
+import gams.transfer as gt
 import pandas as pd
 from tqdm import tqdm
 
@@ -10,9 +10,10 @@ def save_into_gdx(monthly_returns_df):
     working_dir = os.getcwd()
 
     # *** CREATE GDX FILE ***
-    # Initialization
+    # Initialization for GAMS version v47
+    # Documentation: https://www.gams.com/latest/docs/API_PY_GAMSTRANSFER.html#PY_GAMSTRANSFER_INSTALLATION
     m = gt.Container(
-        system_directory="/Library/Frameworks/GAMS.framework/Versions/39/Resources/"
+        system_directory="/Library/Frameworks/GAMS.framework/Versions/47/Resources/"
     )
 
     # Sets
@@ -58,7 +59,8 @@ def save_into_gdx(monthly_returns_df):
 if __name__ == "__main__":
     monthly_returns = pd.read_parquet(
         os.path.join(
-            os.path.dirname(os.getcwd()), "financial_data/all_etfs_rets.parquet.gzip"
+            os.path.dirname(os.getcwd()),
+            "financial_data/all_etfs_rets_2024.parquet.gzip",
         )
     )
 

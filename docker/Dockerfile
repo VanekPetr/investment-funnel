@@ -1,5 +1,5 @@
 # https://github.com/tiangolo/uvicorn-gunicorn-machine-learning-docker
-FROM python:3.10
+FROM python:3.11
 
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
@@ -11,8 +11,6 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/etc/poetry python
     cd /usr/local/bin && \
     ln -s /etc/poetry/bin/poetry && \
     poetry config virtualenvs.create false
-
-RUN apt-get update && apt-get install -y cmake libopenblas-dev
 
 WORKDIR /app
 
@@ -27,3 +25,6 @@ COPY funnel ./funnel
 
 # If your funnel app.py is exposing the application as `server`, change as necessary
 ENTRYPOINT ["gunicorn", "-b", "0.0.0.0:8050", "-t", "1200", "funnel.app:server"]
+
+# TODO: To deploy on AWS App Runner, build the image with the following command
+# docker buildx build --platform linux/amd64 -t investment-funnel --load -f docker/Dockerfile .
