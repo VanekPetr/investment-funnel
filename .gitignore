@@ -140,5 +140,8 @@ notes
 rebalance_inputs.pkl
 *.ipynb
 funnel/financial_data/pfo_data_2023.gdx
+funnel/financial_data/pfo_data_2024.gdx
 funnel/financial_data/pfo_data_2023.xlsx
-funnel/financial_data/daily_price_algostrata.parquet
+funnel/financial_data/daily_price_algostrata_2023.parquet
+funnel/financial_data/daily_price_algostrata_2024.parquet
+funnel/financial_data/all_etfs_rets_2023.parquet.gzip
