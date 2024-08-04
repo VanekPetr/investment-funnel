@@ -31,13 +31,13 @@ def clean_data(data_raw):
                     else:
                         continue
 
-    # Delete tickers (outliers) with daily returns bigger that 15%
+    # Delete tickers (outliers) with daily returns bigger that 20%
     to_delete = []
     for asset in data.columns:
         column = list(data[asset])
         value_old = column[0]
         for value in column[1:]:
-            if abs((value / value_old) - 1) > 0.15:
+            if abs((value / value_old) - 1) > 0.20:
                 to_delete.append(asset)
                 print(asset, (value / value_old) - 1, len(to_delete))
                 break
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     # Select just some indices
     subset_data = daily_prices[
-        (daily_prices.index > "2013-01-01") & (daily_prices.index < "2023-12-04")
+        (daily_prices.index > "2013-01-01") & (daily_prices.index < "2024-07-28")
     ]
 
     # Clean data and save for the investment funnel app
