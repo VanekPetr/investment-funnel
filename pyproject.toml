@@ -33,7 +33,7 @@ ecos = "*"
 clarabel = "*"
 arch = "7.0.0"
 pydantic = "2.8.2"
-pydantic-settings = "2.3.4"
+pydantic-settings = "2.4.0"
 tqdm = "4.66.5"
 pre-commit = "3.8.0"
 
