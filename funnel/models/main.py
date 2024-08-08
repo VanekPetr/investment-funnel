@@ -49,7 +49,7 @@ class TradeBot:
         self.names = names
         self.weeklyReturns = weekly_returns
         self.min_date = str(weekly_returns.index[0])
-        self.max_date = str(weekly_returns.index[-2])
+        self.max_date = str(weekly_returns.index[-1])
 
         weekly_returns.columns = tickers
 
