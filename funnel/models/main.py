@@ -640,7 +640,7 @@ class TradeBot:
         scenarios_type: str,
         n_simulations: int,
         model: str,
-        solver: str = "ECOS",
+        solver: str = "CLARABEL",
         lower_bound: int = 0,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, px.line, go.Figure]:
         """METHOD TO COMPUTE THE BACKTEST"""
@@ -833,7 +833,7 @@ class TradeBot:
                 sigma_lst=sigma,
                 targets=glide_paths_df[r],
                 max_weight=1 / 4,
-                solver="ECOS_BB",
+                solver="CLARABEL",
             )
             allocation_targets[f"{r}"] = targets
 
