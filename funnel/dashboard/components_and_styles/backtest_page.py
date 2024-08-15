@@ -54,7 +54,7 @@ optionBacktest = html.Div(
         ),
         html.P("Solver", style=SUB_TITLE),
         html.P(
-            "MOSEK or ECOS are recommended for CVaR model, for Markowitz model we recommend MOSEK",
+            "MOSEK or CLARABEL are recommended",
             style=DESCRIP_INFO,
         ),
         dcc.Dropdown(
