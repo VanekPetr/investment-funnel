@@ -115,7 +115,9 @@ class TradeBot:
                 x=composition.index,
                 y=composition[isin],
                 name=str(isin),
-                marker_color=composition_color[idx_color],  # custom color
+                marker_color=composition_color[
+                    idx_color % len(composition_color)
+                ],  # custom color
             )
             data.append(trace)
             idx_color += 1
