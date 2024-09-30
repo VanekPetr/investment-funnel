@@ -9,7 +9,7 @@ homepage = "https://investment-funnel.algostrata.com"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-pandas = "2.2.2"
+pandas = "2.2.3"
 pandas-datareader = "0.10.0"
 dash = "2.18.1"
 dash-bootstrap-components = "1.6.0"
