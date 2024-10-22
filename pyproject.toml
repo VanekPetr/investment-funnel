@@ -34,7 +34,7 @@ arch = "7.1.0"
 pydantic = "2.9.2"
 pydantic-settings = "2.5.2"
 tqdm = "4.66.5"
-pre-commit = "4.0.0"
+pre-commit = "4.0.1"
 
 [tool.poetry.group.test.dependencies]
 ecos ="*"
