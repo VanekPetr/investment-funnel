@@ -2481,13 +2481,13 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 
 [[package]]
 name = "yfinance"
-version = "0.2.45"
+version = "0.2.48"
 description = "Download market data from Yahoo! Finance API"
 optional = false
 python-versions = "*"
 files = [
-    {file = "yfinance-0.2.45-py2.py3-none-any.whl", hash = "sha256:58c5b7e1eeaa66cf308eb431366183ec59aca513cf2a8333bd0e77ca10e43157"},
-    {file = "yfinance-0.2.45.tar.gz", hash = "sha256:3160c02a2fa889075ef1ef7acf85de3cdd7645c52a2309a1b84551fd2d0508ad"},
+    {file = "yfinance-0.2.48-py2.py3-none-any.whl", hash = "sha256:eda797145faa4536595eb629f869d3616e58ed7e71de36856b19f1abaef71a5b"},
+    {file = "yfinance-0.2.48.tar.gz", hash = "sha256:1434cd8bf22f345fa27ef1ed82bfdd291c1bb5b6fe3067118a94e256aa90c4eb"},
 ]
 
 [package.dependencies]
@@ -2525,4 +2525,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "83c9a93b1530b1219fa4000732ce5836a3f6b5ac06848265bc44e0a53460d599"
+content-hash = "90b72779adc934fbb0f66994e5a67aed834b48f4eee14b72ebebdc208850ee96"
