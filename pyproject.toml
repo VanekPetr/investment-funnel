@@ -8,7 +8,7 @@ repository = "https://github.com/VanekPetr/investment-funnel"
 homepage = "https://investment-funnel.algostrata.com"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.10,<3.14"
 pandas = "2.2.3"
 pandas-datareader = "0.10.0"
 dash = "2.18.2"
