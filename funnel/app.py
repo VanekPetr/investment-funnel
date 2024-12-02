@@ -90,9 +90,11 @@ def main():
     app = dash.Dash(
         __name__,
         external_stylesheets=[dbc.themes.BOOTSTRAP],
-        meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+        meta_tags=[
+            {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+        ],
     )
-    #server = app.server
+    # server = app.server
 
     # App layout
     app.layout = load_page()
@@ -100,6 +102,7 @@ def main():
     get_callbacks(app)
 
     app.run_server(debug=False, dev_tools_hot_reload=False)
+
 
 if __name__ == "__main__":
     main()
