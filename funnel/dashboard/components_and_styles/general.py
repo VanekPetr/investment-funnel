@@ -5,7 +5,7 @@ from pathlib import Path
 import dash_bootstrap_components as dbc
 from dash import html
 
-from funnel.dashboard.components_and_styles.styles import (
+from .styles import (
     MOBILE_PAGE,
     SIDEBAR_STYLE,
 )

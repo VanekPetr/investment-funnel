@@ -2,7 +2,7 @@ import cvxpy
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-from funnel.dashboard.components_and_styles.styles import (
+from .styles import (
     DESCRIP_INFO,
     GRAPH_LEFT,
     GRAPH_RIGHT,
@@ -12,7 +12,7 @@ from funnel.dashboard.components_and_styles.styles import (
     OPTION_ELEMENT,
     SUB_TITLE,
 )
-from funnel.models.main import TradeBot
+from ...models.main import TradeBot
 
 algo = TradeBot()
 
