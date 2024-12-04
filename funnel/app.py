@@ -85,19 +85,24 @@ def load_page():
     )
 
 
-# Initialize the app
-app = dash.Dash(
-    __name__,
-    external_stylesheets=[dbc.themes.BOOTSTRAP],
-    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
-)
-server = app.server
+def main():
+    # Initialize the app
+    app = dash.Dash(
+        __name__,
+        external_stylesheets=[dbc.themes.BOOTSTRAP],
+        meta_tags=[
+            {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+        ],
+    )
+    # server = app.server
 
-# App layout
-app.layout = load_page()
-# App callbacks
-get_callbacks(app)
+    # App layout
+    app.layout = load_page()
+    # App callbacks
+    get_callbacks(app)
+
+    app.run_server(debug=False, dev_tools_hot_reload=False)
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False, dev_tools_hot_reload=False)
+    main()

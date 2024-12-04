@@ -59,19 +59,16 @@ investment strategies
 
 To further enhance your knowledge on mathematical optimization in finance, we highly recommend the [MOSEK Portfolio Optimization Cookbook](https://github.com/MOSEK/PortfolioOptimization).
 # How to start in 3 steps
+STEP 0: Install [poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
+
 STEP 1: create and activate python virtual environment
 ``` bash
-python -m venv venv
-source venv/bin/activate
+make install
 ```
 
-STEP 2: install requirements with [poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
+STEP 2: run dash application
 ``` bash
-poetry install -vv
-```
-STEP 3: run dash application
-``` bash
-python -m funnel.app
+make funnel
 ```
 The app is running on http://127.0.0.1:8050
 

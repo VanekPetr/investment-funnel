@@ -6,6 +6,7 @@ authors = ["Petr Vanek"]
 readme = "README.md"
 repository = "https://github.com/VanekPetr/investment-funnel"
 homepage = "https://investment-funnel.algostrata.com"
+packages = [{include = "funnel"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.14"
@@ -53,3 +54,6 @@ target-version = "py310"
 exclude = [
     "*__init__.py"
 ]
+
+[tool.poetry.scripts]
+funnel = "funnel.app:main"
