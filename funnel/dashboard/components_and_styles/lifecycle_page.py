@@ -1,6 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
+from ...models.main import TradeBot
 from .styles import (
     DESCRIP_INFO,
     GRAPH_LEFT,
@@ -11,7 +12,6 @@ from .styles import (
     OPTION_ELEMENT,
     SUB_TITLE,
 )
-from ...models.main import TradeBot
 
 algo = TradeBot()
 
