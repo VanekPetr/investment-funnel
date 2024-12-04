@@ -2,6 +2,7 @@ import flask
 from dash import dcc
 from dash.dependencies import Input, Output, State
 
+from ..models.main import TradeBot
 from .app_layouts import (
     page_1_layout,
     page_2_layout,
@@ -9,7 +10,6 @@ from .app_layouts import (
     page_4_layout,
     page_mobile_layout,
 )
-from ..models.main import TradeBot
 
 algo = TradeBot()
 
