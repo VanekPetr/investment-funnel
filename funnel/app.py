@@ -4,10 +4,10 @@ import numpy as np
 import pandas as pd
 from dash import dcc, html
 
-from funnel.dashboard.app_callbacks import get_callbacks
-from funnel.dashboard.app_layouts import page_1_layout
-from funnel.dashboard.utils import logger
-from funnel.models.main import TradeBot
+from .dashboard.app_callbacks import get_callbacks
+from .dashboard.app_layouts import page_1_layout
+from .dashboard.utils import logger
+from .models.main import TradeBot
 
 logger.setup_logging()
 algo = TradeBot()

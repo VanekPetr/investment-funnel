@@ -2,14 +2,14 @@ import flask
 from dash import dcc
 from dash.dependencies import Input, Output, State
 
-from funnel.dashboard.app_layouts import (
+from .app_layouts import (
     page_1_layout,
     page_2_layout,
     page_3_layout,
     page_4_layout,
     page_mobile_layout,
 )
-from funnel.models.main import TradeBot
+from ..models.main import TradeBot
 
 algo = TradeBot()
 
