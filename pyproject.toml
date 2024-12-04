@@ -63,4 +63,4 @@ funnel = "funnel.app:main"
 
 [tool.deptry.per_rule_ignores]
 DEP001 = ["gams"]
-DEP002 = ["clarabel","pyarrow","cvxpy-base"]
+DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn"]
