@@ -1,23 +1,23 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-from funnel.dashboard.components_and_styles.ai_feature_selection_page import (
+from .components_and_styles.ai_feature_selection_page import (
     graphML,
     optionML,
     spinner_ml,
 )
-from funnel.dashboard.components_and_styles.backtest_page import (
+from .components_and_styles.backtest_page import (
     graphResults,
     optionBacktest,
     spinner_backtest,
 )
-from funnel.dashboard.components_and_styles.general import mobile_page, sideBar
-from funnel.dashboard.components_and_styles.lifecycle_page import (
+from .components_and_styles.general import mobile_page, sideBar
+from .components_and_styles.lifecycle_page import (
     options_lifecycle,
     results_lifecycle,
     spinner_lifecycle,
 )
-from funnel.dashboard.components_and_styles.market_overview_page import (
+from .components_and_styles.market_overview_page import (
     graphOverview,
     optionGraph,
     spinner_dots,
