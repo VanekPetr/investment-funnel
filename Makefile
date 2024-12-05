@@ -15,12 +15,14 @@ install:  ## Install a virtual environment
 
 .PHONY: fmt
 fmt:  ## Run autoformatting and linting
-	@poetry run pre-commit run --all-files
+	@uv pip install pre-commit
+	@uv run pre-commit install
+	@uv run pre-commit run --all-files
 
 
 .PHONY: test
 test: install ## Run tests
-	@poetry run pytest
+	@uv run pytest
 
 
 .PHONY: clean
