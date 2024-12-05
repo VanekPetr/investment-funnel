@@ -28,6 +28,7 @@ dependencies = [
     "tqdm>=4.67.1",
     "flask>=3.0.3",
     "requests>=2.32.3",
+    "pydantic-settings>=2.6.1",
 ]
 
 [dependency-groups]
