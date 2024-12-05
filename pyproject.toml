@@ -41,7 +41,7 @@ flask = "*"
 requests = "*"
 
 [tool.poetry.group.test.dependencies]
-ecos ="*"
+#ecos ="*"
 pytest = "*"
 pytest-cov = "*"
 pre-commit = "*"
