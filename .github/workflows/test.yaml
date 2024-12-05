@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: cvxgrp/.github/actions/uv/coverage@main
         with:
-          source-folder: funnel
+          source-folder: 'funnel'
 
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v2
