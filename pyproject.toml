@@ -1,66 +1,61 @@
-[tool.poetry]
+[project]
 name = "investment-funnel"
 version = "0.0.0"
 description = "Open-source testing and benchmarking plaform for asset allocation."
-authors = ["Petr Vanek"]
+authors = [{name="Petr Vanek", email="abc@gmail.com"}]
 readme = "README.md"
 repository = "https://github.com/VanekPetr/investment-funnel"
 homepage = "https://investment-funnel.algostrata.com"
-packages = [{include = "funnel"}]
+requires-python = ">=3.10"
+dependencies = [
+    "dash-bootstrap-components>=1.6.0",
+    "dash>=2.18.2",
+    "pandas>=2.2.3",
+    "plotly>=5.24.1",
+    "numpy>=2.1.3",
+    "networkx>=3.4.2",
+    "python-dateutil>=2.9.0.post0",
+    "scipy>=1.14.1",
+    "scikit-learn>=1.5.2",
+    "matplotlib>=3.9.3",
+    "pyarrow>=18.1.0",
+    "yfinance>=0.2.50",
+    "loguru>=0.7.2",
+    "gunicorn>=23.0.0",
+    "cvxpy-base>=1.6.0",
+    "clarabel>=0.9.0",
+    "python-dotenv>=1.0.1",
+    "tqdm>=4.67.1",
+    "flask>=3.0.3",
+    "requests>=2.32.3",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.14"
-pandas = "2.2.3"
-#pandas-datareader = "0.10.0"
-dash = "2.18.2"
-dash-bootstrap-components = "1.6.0"
-plotly = "5.24.1"
-#plotly-express = "0.4.1"
-python-dateutil = "2.9.0.post0"
-#pulp = "2.9.0"
-numpy = "2.2.1"
-networkx = "3.4.2"
-matplotlib = "3.10.0"
-scikit-learn = "1.6.0"
-scipy = "1.14.1"
-pyarrow = "18.1.0"
-yfinance = "0.2.51"
-loguru = "0.7.3"
-#joblib = "1.4.0"
-gunicorn = "23.0.0"
-python-dotenv = "1.0.1"
-cvxpy-base = "1.6.0"
-clarabel = "0.9.0"
-#arch = "7.2.0"
-#pydantic = "2.10.2"
-pydantic-settings = "2.7.0"
-tqdm = "4.67.1"
-#pre-commit = "4.0.1"
-flask = "*"
-#gams = "*"
-requests = "*"
-
-[tool.poetry.group.test.dependencies]
-#ecos ="*"
-pytest = "*"
-pytest-cov = "*"
-pre-commit = "*"
-
-[build-system]
-requires = ["poetry>=1.7.1"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "pytest-cov>=6.0.0",
+    "pytest>=8.3.3",
+    "pre-commit>=4.0.1"
+]
 
 [tool.ruff]
-lint.select = ["E", "F", "I"]
+select = ["E", "F", "I"]
 line-length = 120
 target-version = "py310"
 exclude = [
     "*__init__.py"
 ]
 
-[tool.poetry.scripts]
-funnel = "funnel.app:main"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.deptry.per_rule_ignores]
-DEP001 = ["gams"]
-DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn"]
+[tool.hatch.build.targets.wheel]
+packages = ["funnel"]
+
+
+#[tool.poetry.scripts]
+#funnel = "funnel.app:main"
+
+#[tool.deptry.per_rule_ignores]
+#DEP001 = ["gams"]
+#DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn"]
