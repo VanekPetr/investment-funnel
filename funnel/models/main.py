@@ -13,20 +13,20 @@ from loguru import logger
 from plotly.subplots import make_subplots
 from scipy.stats import gaussian_kde
 
-from funnel.financial_data.etf_isins import ETFlist
-from funnel.models.Clustering import cluster, pick_cluster
-from funnel.models.CVaRmodel import cvar_model
-from funnel.models.CVaRtargets import get_cvar_targets
-from funnel.models.dataAnalyser import final_stats, mean_an_returns
-from funnel.models.lifecycle.glidePathCreator import generate_risk_profiles
-from funnel.models.lifecycle.MVOlifecycleModel import (
+from ..financial_data.etf_isins import ETFlist
+from .Clustering import cluster, pick_cluster
+from .CVaRmodel import cvar_model
+from .CVaRtargets import get_cvar_targets
+from .dataAnalyser import final_stats, mean_an_returns
+from .lifecycle.glidePathCreator import generate_risk_profiles
+from .lifecycle.MVOlifecycleModel import (
     get_port_allocations,
     riskadjust_model_scen,
 )
-from funnel.models.MST import minimum_spanning_tree
-from funnel.models.MVOmodel import mvo_model
-from funnel.models.MVOtargets import get_mvo_targets
-from funnel.models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
+from .MST import minimum_spanning_tree
+from .MVOmodel import mvo_model
+from .MVOtargets import get_mvo_targets
+from .ScenarioGeneration import MomentGenerator, ScenarioGenerator
 
 pio.renderers.default = "browser"
 ROOT_DIR = Path(__file__).parent.parent

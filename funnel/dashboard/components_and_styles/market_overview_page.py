@@ -1,7 +1,8 @@
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-from funnel.dashboard.components_and_styles.styles import (
+from ...models.main import TradeBot
+from .styles import (
     GRAPH_LEFT,
     GRAPH_RIGHT,
     LOADING_STYLE,
@@ -10,7 +11,6 @@ from funnel.dashboard.components_and_styles.styles import (
     OPTION_ELEMENT,
     SUB_TITLE,
 )
-from funnel.models.main import TradeBot
 
 algo = TradeBot()
 

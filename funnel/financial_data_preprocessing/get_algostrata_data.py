@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import requests
 
-from funnel.settings import settings
+from ..settings import settings
 
 
 # BATCH FUNCTION
