@@ -4,8 +4,6 @@ version = "0.0.0"
 description = "Open-source testing and benchmarking plaform for asset allocation."
 authors = [{name="Petr Vanek", email="abc@gmail.com"}]
 readme = "README.md"
-repository = "https://github.com/VanekPetr/investment-funnel"
-homepage = "https://investment-funnel.algostrata.com"
 requires-python = ">=3.10"
 dependencies = [
     "dash-bootstrap-components>=1.6.0",
@@ -30,6 +28,10 @@ dependencies = [
     "requests>=2.32.3",
     "pydantic-settings>=2.6.1",
 ]
+
+[project.urls]
+repository = "https://github.com/VanekPetr/investment-funnel"
+homepage = "https://investment-funnel.algostrata.com"
 
 [dependency-groups]
 dev = [
