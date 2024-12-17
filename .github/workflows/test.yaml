@@ -1,4 +1,4 @@
-name: pre-commit
+name: test
 
 on:
   push:
@@ -8,9 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: cvxgrp/.github/actions/coverage@main
+      - uses: actions/checkout@v4
+
+      - uses: cvxgrp/.github/actions/uv/coverage@main
         with:
-          source-folder: funnel
+          source-folder: 'funnel'
 
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v2
