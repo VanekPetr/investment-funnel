@@ -58,19 +58,17 @@ investment strategies
 2. Bootstrap scenario simulation - [read more](https://en.wikipedia.org/wiki/Bootstrapping_(statistics))
 
 To further enhance your knowledge on mathematical optimization in finance, we highly recommend the [MOSEK Portfolio Optimization Cookbook](https://github.com/MOSEK/PortfolioOptimization).
-# How to start in 3 steps
-STEP 0: Install [poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
 
-STEP 1: create and activate python virtual environment
-``` bash
-make install
-```
+# How to start
 
-STEP 2: run dash application
-``` bash
+Run the dash application by
+
+```bash
 make funnel
 ```
-The app is running on http://127.0.0.1:8050
+
+This will install [uv](https://github.com/astral-sh/uv), create a virtual environment
+and will start the app running on http://127.0.0.1:8050.
 
 # Usage
 Investment Funnel contains multiple portfolio optimization models, machine learning methods and algorithms located in
@@ -80,6 +78,7 @@ Furthermore, this project contains dash application for visualizing the data, ou
 You can explore the dash application by running [app.py](funnel/app.py) file. <br/>
 
 ### Market Overview
+
 On the first page of our Dash application, you'll find an overview of the performance of the ETF/Mutual fund market
 in terms of risk and returns. This can provide a clearer understanding of the data included in the project.
 
@@ -91,6 +90,7 @@ universe of assets. For even deeper insight, you can repeat this experiment for 
 </p>
 
 ### AI Feature Selection
+
 An integral part of optimal portfolio allocation involves feature selection. In this regard, we've implemented
 two machine learning methods, Minimum Spanning Tree and Hierarchical Clustering, to streamline the number of assets
 needed for the optimization model.
@@ -104,6 +104,7 @@ selected, and scrutinize the performance, specifically the risk and returns, of 
 </p>
 
 ### Backtesting
+
 Backtesting is arguably the most crucial aspect of this project. It allows you to test your investment strategies
 on historical data and compare their performance with other models.
 
@@ -129,12 +130,14 @@ each investment period, as well as comparisons in terms of average annual return
 
 
 ### Develop and test your own model
+
 Lastly, you have the option to develop your own optimization and machine learning models for portfolio allocation or
 feature selection, and seamlessly integrate those into the investment funnel. By utilizing our Dash application,
 you can leverage the backtesting framework to visualize your model's results and conveniently compare its performance
 against those of existing models in this repository.
 
 # Further configuration for professionals or students
+
 Are you intrigued by the Investment Funnel project? Do you wish to utilize it for your own research, teaching,
 or the development of investment strategies?
 
@@ -156,6 +159,7 @@ To make the best of this project, you'll likely need access to up-to-date financ
 * **Alexandra Mourier** - *Design of our GitHub README banner*
 
 ## Research related to Investment Funnel
+*
 * **Arnar Tjörvi Charlesson & Thorvaldur Ingi Ingimundarson** - *Self-Organizing Maps and Strategic Fund Selection* (Master Thesis, DTU, 2023)
 * **Dimosthenis Karafylias** - *Deep Reinforcement Learning For Portfolio Optimisation* (Master Thesis, DTU, 2022)
 * **Carlos Daniel Pinho Ventura** - *Designing Hybrid Investment Packages of Cryptocurrencies with Rewards and Index Funds* (Master Thesis, DTU, 2022)
@@ -171,6 +175,7 @@ To make the best of this project, you'll likely need access to up-to-date financ
 Do you want to write your thesis on Investment Funnel? Please reach out and let us know.
 
 ## Contributing
+
 Thank you for considering contributing to this project! We welcome contributions from everyone. Before getting started, please take a moment to review our [Contribution Guidelines](CONTRIBUTING.md).
 
 ## Versioning
