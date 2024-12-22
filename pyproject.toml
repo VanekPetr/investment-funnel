@@ -56,10 +56,6 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["funnel"]
 
-
-#[tool.poetry.scripts]
-#funnel = "funnel.app:main"
-
 [tool.deptry.per_rule_ignores]
 DEP001 = ["gams"]
 DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn"]
