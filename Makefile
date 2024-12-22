@@ -8,9 +8,6 @@ UNAME=$(shell uname -s)
 install:  ## Install a virtual environment
 	@curl -LsSf https://astral.sh/uv/install.sh | sh
 	@uv sync -vv
-	@echo 'Please perform'
-	@echo 'source .venv/bin/activate'
-
 
 
 .PHONY: fmt
