@@ -51,4 +51,4 @@ help:  ## Display this help screen
 
 .PHONY: funnel
 funnel: install ## run the funnel app
-	@poetry run funnel
+	@uv run funnel

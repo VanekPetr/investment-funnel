@@ -63,3 +63,6 @@ packages = ["funnel"]
 [tool.deptry.per_rule_ignores]
 DEP001 = ["gams"]
 DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn"]
+
+[project.scripts]
+funnel = "funnel.app:main"
