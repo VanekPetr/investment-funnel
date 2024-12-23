@@ -7,7 +7,7 @@ UNAME=$(shell uname -s)
 .PHONY: install
 install:  ## Install a virtual environment
 	@curl -LsSf https://astral.sh/uv/install.sh | sh
-	@uv sync -vv
+	@uv sync -vv --frozen
 
 
 .PHONY: fmt
