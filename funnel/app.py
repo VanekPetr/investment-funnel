@@ -85,7 +85,7 @@ def load_page():
     )
 
 
-def main():
+def create_app():
     # Initialize the app
     app = dash.Dash(
         __name__,
@@ -101,8 +101,21 @@ def main():
     # App callbacks
     get_callbacks(app)
 
-    app.run_server(debug=False, dev_tools_hot_reload=False)
+    # return the flask server
+    return app.server
+
+
+# Create the Flask server instance for Gunicorn
+server = create_app()
+
+
+# Keep the development server setup
+def main():
+    a = create_app()
+    dash_app = dash.Dash(__name__)
+    dash_app.server = a
+    dash_app.run_server(debug=False, dev_tools_hot_reload=False)
 
 
 if __name__ == "__main__":
-    main()
+    app = main()
