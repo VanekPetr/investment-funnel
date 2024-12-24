@@ -1,0 +1,23 @@
+{
+	"name": "Python 3",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
+	"onCreateCommand": ".devcontainer/startup.sh",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"python.testing.pytestEnabled": true,
+				"python.testing.unittestEnabled": false,
+				"python.testing.pytestArgs": [
+					"."
+				],
+				"python.pythonPath": ".venv/bin/python",
+				"python.defaultInterpreterPath": ".venv/bin/python",
+				"python.terminal.activateEnvInCurrentTerminal": true
+			},
+			"extensions": [
+				"ms-toolsai.jupyter"
+			]
+		}
+	}
+}

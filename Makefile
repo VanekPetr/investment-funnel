@@ -6,18 +6,20 @@ UNAME=$(shell uname -s)
 
 .PHONY: install
 install:  ## Install a virtual environment
-	@poetry config virtualenvs.in-project true
-	@poetry install -vv
+	@curl -LsSf https://astral.sh/uv/install.sh | sh
+	@uv sync -vv --frozen
 
 
 .PHONY: fmt
 fmt:  ## Run autoformatting and linting
-	@poetry run pre-commit run --all-files
+	@uv pip install pre-commit
+	@uv run pre-commit install
+	@uv run pre-commit run --all-files
 
 
 .PHONY: test
 test: install ## Run tests
-	@poetry run pytest
+	@uv run pytest
 
 
 .PHONY: clean
@@ -27,9 +29,9 @@ clean:  ## Clean up caches and build artifacts
 
 .PHONY: coverage
 coverage: install ## test and coverage
-	@poetry run coverage run --source=funnel/. -m pytest
-	@poetry run coverage report -m
-	@poetry run coverage html
+	@uv run coverage run --source=cvx/. -m pytest
+	@uv run coverage report -m
+	@uv run coverage html
 
 	@if [ ${UNAME} == "Darwin" ]; then \
 		open htmlcov/index.html; \
@@ -46,4 +48,4 @@ help:  ## Display this help screen
 
 .PHONY: funnel
 funnel: install ## run the funnel app
-	@poetry run funnel
+	@uv run funnel

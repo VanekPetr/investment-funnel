@@ -15,7 +15,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: cvxgrp/.github/actions/test@main
+      - uses: actions/checkout@v4
+
+      - uses: cvxgrp/.github/actions/uv/test@main
         with:
           python-version: ${{ matrix.python-version }}
-          source-folder: funnel
+          source-folder: 'funnel'
