@@ -32,7 +32,7 @@ SUB_TITLE = {
 }
 
 DESCRIP_INFO = {
-    "text-aling": "left",
+    "text-align": "left",
     "margin": "2%",
     "font-size": "12px",
     "color": "#5d5d5d",
