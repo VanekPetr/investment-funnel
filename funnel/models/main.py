@@ -13,7 +13,6 @@ from loguru import logger
 from plotly.subplots import make_subplots
 from scipy.stats import gaussian_kde
 
-from ..financial_data.etf_isins import ETFlist
 from .Clustering import cluster, pick_cluster
 from .CVaRmodel import cvar_model
 from .CVaRtargets import get_cvar_targets
@@ -29,6 +28,8 @@ from .MVOtargets import get_mvo_targets
 from .ScenarioGeneration import MomentGenerator, ScenarioGenerator
 
 pio.renderers.default = "browser"
+
+# that's unfortunate but will be addressed later
 ROOT_DIR = Path(__file__).parent.parent
 # Load our data
 weekly_returns = pd.read_parquet(
@@ -361,15 +362,8 @@ class TradeBot:
         ]
         stat_df["ISIN"] = stat_df.index  # Add names into the table
         stat_df["Name"] = self.names
-
-        # IS ETF OR NOT? Set size
-        for isin in stat_df.index:
-            if isin in ETFlist:
-                stat_df.loc[isin, "Type"] = "ETF"
-                stat_df.loc[isin, "Size"] = 1
-            else:
-                stat_df.loc[isin, "Type"] = "ETF"
-                stat_df.loc[isin, "Size"] = 1
+        stat_df["Size"] = 1
+        stat_df["Type"] = "ETF"
 
         return stat_df
 
