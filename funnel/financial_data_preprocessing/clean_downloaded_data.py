@@ -9,7 +9,7 @@ def clean_data(data_raw):
     """
     data_raw = data_raw.fillna("")
 
-    # Delete tickers fo which we don't have data for the whole time period
+    # Delete tickers for which we don't have data for the whole time period
     for column in data_raw.columns:
         # if the first three or last three values of the column are not empty, then delete the column
         if (
