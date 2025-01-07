@@ -31,8 +31,8 @@ jobs:
           ls -all
           pwd
           podman build \
-            --tag ghcr.io/${{ github.repository }}:${{ github.sha }} \
-            --tag ghcr.io/${{ github.repository }}:latest \
+            --tag ghcr.io/${ github.repository,,}:${{ github.sha }} \
+            --tag ghcr.io/${github.repository,,}:latest \
             -f docker/Dockerfile \
             .
 
@@ -43,5 +43,5 @@ jobs:
       - name: Push container image
         if: github.event_name != 'pull_request'
         run: |
-          podman push ghcr.io/${{ github.repository }}:${{ github.sha }}
-          podman push ghcr.io/${{ github.repository }}:latest
+          podman push ghcr.io/${github.repository,,}:${{ github.sha }}
+          podman push ghcr.io/${github.repository,,}:latest
