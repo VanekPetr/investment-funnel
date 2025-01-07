@@ -20,6 +20,8 @@ University, this project is also a pivotal tool for amateur/beginner quants.
 The primary goal of this project is to provide a better overview of the ETF/Mutual fund market and to allow users to
 experiment with various investment techniques and algorithms. Ultimately, it offers a platform to backtest and refine investment strategies.
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/VanekPetr/investment-funnel)
+
 <!-- toc -->
 - [Technologies and Models](#technologies-and-models)
   * [Portfolio optimization models](#portfolio-optimization-models)
