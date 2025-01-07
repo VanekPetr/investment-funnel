@@ -19,5 +19,6 @@
 				"ms-toolsai.jupyter"
 			]
 		}
-	}
+	},
+	"onCreateCommand": ".devcontainer/startup.sh"
 }
