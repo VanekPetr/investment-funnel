@@ -29,7 +29,7 @@ clean:  ## Clean up caches and build artifacts
 
 .PHONY: coverage
 coverage: install ## test and coverage
-	@uv run coverage run --source=cvx/. -m pytest
+	@uv run coverage run --source=funnel/. -m pytest
 	@uv run coverage report -m
 	@uv run coverage html
 
