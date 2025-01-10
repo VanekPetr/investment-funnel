@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import dash
 import dash_bootstrap_components as dbc
 import numpy as np
@@ -10,7 +13,8 @@ from .dashboard.utils import logger
 from .models.main import TradeBot
 
 logger.setup_logging()
-algo = TradeBot()
+ROOT_DIR = Path(__file__).parent
+algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 
 
 def load_page():
