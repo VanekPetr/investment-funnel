@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: cvxgrp/.github/actions/uv/coverage@v2.0.3
+      - uses: cvxgrp/.github/actions/uv/coverage@v2.0.6
         with:
           source-folder: 'funnel'
 
