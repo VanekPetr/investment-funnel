@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import flask
 from dash import dcc
 from dash.dependencies import Input, Output, State
@@ -11,7 +14,9 @@ from .app_layouts import (
     page_mobile_layout,
 )
 
-algo = TradeBot()
+ROOT_DIR = Path(__file__).parent.parent
+algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
+
 
 
 def get_callbacks(app):

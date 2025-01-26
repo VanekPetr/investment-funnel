@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import cvxpy
 import dash_bootstrap_components as dbc
 from dash import dcc, html
@@ -14,7 +17,8 @@ from .styles import (
     SUB_TITLE,
 )
 
-algo = TradeBot()
+ROOT_DIR = Path(__file__).parent.parent.parent
+algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 
 
 optionBacktest = html.Div(
