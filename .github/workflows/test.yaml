@@ -8,8 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: "Build the virtual environment for ${{ github.repository }}"
         uses: cvxgrp/.github/actions/uv/environment@v2.1.0
 
