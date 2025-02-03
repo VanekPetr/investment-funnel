@@ -9,10 +9,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: "Build the virtual environment for ${{ github.repository }}"
         uses: cvxgrp/.github/actions/uv/environment@v2.1.0
-        
+
       - uses: cvxgrp/.github/actions/coverage@v2.1.0
         with:
           source-folder: 'funnel'
