@@ -8,15 +8,14 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: pre-commit/action@v3.0.1
-      with:
-          extra_args: '--verbose --all-files'
+      - uses: cvxgrp/.github/actions/pre-commit@v2.1.0
 
   deptry:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: cvxgrp/.github/actions/uv/deptry@v2.0.7
+      - name: "Build the virtual environment for ${{ github.repository }}"
+        uses: cvxgrp/.github/actions/uv/environment@v2.1.0
+
+      - uses: cvxgrp/.github/actions/deptry@v2.1.0
         with:
           source-folder: 'funnel'

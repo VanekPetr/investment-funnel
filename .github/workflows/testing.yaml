@@ -10,14 +10,16 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ ubuntu-latest, macos-latest ]
         python-version: ['3.10', '3.11', '3.12', '3.13' ]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: cvxgrp/.github/actions/uv/test@v2.0.7
+      - name: "Build the virtual environment for ${{ github.repository }}"
+        uses: cvxgrp/.github/actions/uv/environment@v2.1.0
         with:
           python-version: ${{ matrix.python-version }}
+
+      - uses: cvxgrp/.github/actions/test@v2.1.0
+        with:
           source-folder: 'funnel'
