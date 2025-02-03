@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: "Build the virtual environment for ${{ github.repository }}"
         uses: cvxgrp/.github/actions/uv/environment@v2.1.0
-        
+
       - uses: cvxgrp/.github/actions/deptry@v2.1.0
         with:
           source-folder: 'funnel'
