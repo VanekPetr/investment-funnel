@@ -16,7 +16,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: "Build the virtual environment for ${{ github.repository }}"
-        uses: cvxgrp/.github/actions/uv/environment@v2.2.3
+        uses: cvxgrp/.github/actions/environment@v2.2.3
         with:
           python-version: ${{ matrix.python-version }}
 
