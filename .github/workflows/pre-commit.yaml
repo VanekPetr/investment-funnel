@@ -8,14 +8,14 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: cvxgrp/.github/actions/pre-commit@v2.2.3
+      - uses: cvxgrp/.github/actions/pre-commit@v2.2.5
 
   deptry:
     runs-on: ubuntu-latest
     steps:
       - name: "Build the virtual environment for ${{ github.repository }}"
-        uses: cvxgrp/.github/actions/environment@v2.2.3
+        uses: cvxgrp/.github/actions/environment@v2.2.5
 
-      - uses: cvxgrp/.github/actions/deptry@v2.2.3
+      - uses: cvxgrp/.github/actions/deptry@v2.2.5
         with:
           source-folder: 'funnel'
