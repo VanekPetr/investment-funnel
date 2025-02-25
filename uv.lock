@@ -620,7 +620,6 @@ dependencies = [
     { name = "gunicorn" },
     { name = "ifunnel" },
     { name = "loguru" },
-    { name = "matplotlib" },
     { name = "networkx" },
     { name = "numpy" },
     { name = "pandas" },
@@ -629,11 +628,7 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "python-dateutil" },
     { name = "python-dotenv" },
-    { name = "requests" },
-    { name = "scikit-learn" },
-    { name = "scipy" },
     { name = "tqdm" },
-    { name = "yfinance" },
 ]
 
 [package.dev-dependencies]
@@ -654,7 +649,6 @@ requires-dist = [
     { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "ifunnel", specifier = ">=0.0.2" },
     { name = "loguru", specifier = ">=0.7.2" },
-    { name = "matplotlib", specifier = ">=3.9.3" },
     { name = "networkx", specifier = ">=3.4.2" },
     { name = "numpy", specifier = ">=2.2.1" },
     { name = "pandas", specifier = ">=2.2.3" },
@@ -663,11 +657,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.6.1" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
-    { name = "requests", specifier = ">=2.32.3" },
-    { name = "scikit-learn", specifier = ">=1.5.2" },
-    { name = "scipy", specifier = ">=1.14.1" },
     { name = "tqdm", specifier = ">=4.67.1" },
-    { name = "yfinance", specifier = ">=0.2.51" },
 ]
 
 [package.metadata.requires-dev]
