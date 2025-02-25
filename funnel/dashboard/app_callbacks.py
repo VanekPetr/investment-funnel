@@ -1,11 +1,11 @@
-import os
 from pathlib import Path
 
 import flask
+import pandas as pd
 from dash import dcc
 from dash.dependencies import Input, Output, State
+from ifunnel.models.main import build_bot
 
-from ..models.main import TradeBot
 from .app_layouts import (
     page_1_layout,
     page_2_layout,
@@ -15,7 +15,12 @@ from .app_layouts import (
 )
 
 ROOT_DIR = Path(__file__).parent.parent
-algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
+# Load our data
+weekly_returns = pd.read_parquet(ROOT_DIR / "financial_data" / "all_etfs_rets.parquet.gzip")
+algo = build_bot(weekly_returns=weekly_returns)
+
+#ROOT_DIR = Path(__file__).parent.parent
+#algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 
 
 
