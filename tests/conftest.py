@@ -3,9 +3,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
-
-from funnel.models.MST import minimum_spanning_tree
-from funnel.models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
+from ifunnel.models.MST import minimum_spanning_tree
+from ifunnel.models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
 
 
 @pytest.fixture(scope="session", name="resource_dir")

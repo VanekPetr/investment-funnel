@@ -560,7 +560,7 @@ wheels = [
 
 [[package]]
 name = "ifunnel"
-version = "0.0.1"
+version = "0.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "clarabel" },
@@ -581,9 +581,9 @@ dependencies = [
     { name = "scipy" },
     { name = "yfinance" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/37/da/7ab0b4082ee9126d9043c8dad9693a2a374b71b3b346e3545f4eaf6df315/ifunnel-0.0.1.tar.gz", hash = "sha256:35d882f07e43dd83383c177e104f23c5a718f392f756504dc09b149737997187", size = 3639642 }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/d3/9451aee866c3f4fc7b64302e92313be46190b329eaf644a317aac7894ee6/ifunnel-0.0.2.tar.gz", hash = "sha256:123d3fb3d990478955063b290df64a6ead2dd79fd905724670646caca229d0bd", size = 3639640 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/28/9f/728e130ada1356e09662e466398d02044bf2cb86a93d41f20050a17b7a86/ifunnel-0.0.1-py3-none-any.whl", hash = "sha256:257950573844b40b1e6da49c713f69f050260d4c048ada34eeab0b94bb055973", size = 3649368 },
+    { url = "https://files.pythonhosted.org/packages/2a/aa/84a231b2281aeaaa9a0edd765c2068881253c0bea9564c51ea07d3e13db1/ifunnel-0.0.2-py3-none-any.whl", hash = "sha256:d62e70d226774460593da234ebb576d9ebc837266f1b6e8c3a164be2400e04c1", size = 3649409 },
 ]
 
 [[package]]
@@ -652,7 +652,7 @@ requires-dist = [
     { name = "dash-bootstrap-components", specifier = ">=1.6.0" },
     { name = "flask", specifier = ">=3.0.3" },
     { name = "gunicorn", specifier = ">=23.0.0" },
-    { name = "ifunnel", specifier = ">=0.0.1" },
+    { name = "ifunnel", specifier = ">=0.0.2" },
     { name = "loguru", specifier = ">=0.7.2" },
     { name = "matplotlib", specifier = ">=3.9.3" },
     { name = "networkx", specifier = ">=3.4.2" },

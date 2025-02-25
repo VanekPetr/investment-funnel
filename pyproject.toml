@@ -27,7 +27,7 @@ dependencies = [
     "flask>=3.0.3",
     "requests>=2.32.3",
     "pydantic-settings>=2.6.1",
-    "ifunnel>=0.0.1",
+    "ifunnel>=0.0.2",
 ]
 
 [project.urls]
