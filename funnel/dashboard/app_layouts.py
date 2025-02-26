@@ -7,28 +7,22 @@ from .components_and_styles.ai_feature_selection_page import (
     optionML,
     spinner_ml,
 )
-from .components_and_styles.backtest_page import (
-    graphResults,
-    optionBacktest,
-    spinner_backtest,
-)
+
+#from .components_and_styles.backtest_page import (
+#    graphResults,
+#    optionBacktest,
+#    spinner_backtest,
+#)
+from .components_and_styles.backtest_page import divs as backtest_divs
 from .components_and_styles.general import mobile_page, sideBar
-from .components_and_styles.lifecycle_page import (
-    options_lifecycle,
-    results_lifecycle,
-    spinner_lifecycle,
-)
-from .components_and_styles.market_overview_page import divs as market_overview
+from .components_and_styles.lifecycle_page import divs as lifecycle_divs
+from .components_and_styles.market_overview_page import divs as market_overview_divs
 
 algo = initialize_bot()
 
-overview = market_overview(algo)
-
-#
-#    (graphOverview,
-#    optionGraph,
-#    spinner_dots),
-#)
+overview = market_overview_divs(algo)
+lifecycle = lifecycle_divs(algo)
+backtest = backtest_divs(algo)
 
 # *** LIFECYCLE ***
 page_4_layout = html.Div(
@@ -39,9 +33,9 @@ page_4_layout = html.Div(
                 # Row 1, Col 1 - navigation bar
                 dbc.Col([sideBar]),
                 # Row 1, col 2 - text description
-                dbc.Col([options_lifecycle]),
+                dbc.Col([lifecycle.options]),
                 # Row 1, Col 3 - table
-                dbc.Col([results_lifecycle, spinner_lifecycle]),
+                dbc.Col([lifecycle.results, lifecycle.spinner]),
             ]
         )
     ]
@@ -56,9 +50,9 @@ page_3_layout = html.Div(
                 # Row 1, Col 1 - navigation bar
                 dbc.Col([sideBar]),
                 # Row 1, col 2 - text description
-                dbc.Col([optionBacktest]),
+                dbc.Col([backtest.options]),
                 # Row 1, Col 3 - table
-                dbc.Col([graphResults, spinner_backtest]),
+                dbc.Col([backtest.results, backtest.spinner]),
             ]
         )
     ]
