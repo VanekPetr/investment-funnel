@@ -4,7 +4,6 @@ import cvxpy
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-#from ifunnel.models.main import initialize_bot
 from .styles import (
     DESCRIP_INFO,
     GRAPH_LEFT,
@@ -16,15 +15,6 @@ from .styles import (
     SUB_TITLE,
 )
 
-#algo = initialize_bot()
-
-#ROOT_DIR = Path(__file__).parent.parent.parent
-# Load our data
-#weekly_returns = pd.read_parquet(ROOT_DIR / "financial_data" / "all_etfs_rets.parquet.gzip")
-#algo = build_bot(weekly_returns=weekly_returns)
-
-#ROOT_DIR = Path(__file__).parent.parent.parent
-#algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 Backtest = NamedTuple('BacktestPage', [
     ('options', html.Div),
     ('results', html.Div),
