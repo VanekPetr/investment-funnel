@@ -1,22 +1,23 @@
-from pathlib import Path
-
 import dash
 import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 from dash import dcc, html
-from ifunnel.models.main import build_bot
+from ifunnel.models.main import initialize_bot
 
 from funnel.dashboard.app_callbacks import get_callbacks
 from funnel.dashboard.app_layouts import page_1_layout
 from funnel.dashboard.utils import logger
 
 logger.setup_logging()
-ROOT_DIR = Path(__file__).parent
-# Load our data
-weekly_returns = pd.read_parquet(ROOT_DIR / "financial_data" / "all_etfs_rets.parquet.gzip")
 
-algo = build_bot(weekly_returns=weekly_returns)
+#ROOT_DIR = Path(__file__).parent
+# Load our data
+#weekly_returns = pd.read_parquet(ROOT_DIR / "financial_data" / "all_etfs_rets.parquet.gzip")
+
+#algo = build_bot(weekly_returns=weekly_returns)
+algo = initialize_bot()
+
 
 
 #build_bot()
