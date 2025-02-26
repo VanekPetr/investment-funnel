@@ -591,8 +591,6 @@ name = "investment-funnel"
 version = "0.0.0"
 source = { editable = "." }
 dependencies = [
-    { name = "clarabel" },
-    { name = "cvxpy-base" },
     { name = "dash" },
     { name = "dash-bootstrap-components" },
     { name = "flask" },
@@ -612,8 +610,6 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "clarabel", specifier = ">=0.9.0" },
-    { name = "cvxpy-base", specifier = ">=1.6.0" },
     { name = "dash", specifier = ">=2.18.2" },
     { name = "dash-bootstrap-components", specifier = ">=1.6.0" },
     { name = "flask", specifier = ">=3.0.3" },
