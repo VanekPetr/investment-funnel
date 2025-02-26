@@ -1,6 +1,5 @@
 from typing import NamedTuple
 
-import cvxpy
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
@@ -66,8 +65,7 @@ def divs(algo) -> Backtest:
                 id="select-solver",
                 options=[
                     {"label": value, "value": value}
-                    for value in cvxpy.installed_solvers()
-                    if value not in ["ECOS", "ECOS_BB", "SCS"]
+                    for value in ["clarabel", "mosek"]
                 ],
                 placeholder="Select your installed solver",
                 style=OPTION_ELEMENT,
