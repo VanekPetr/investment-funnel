@@ -2,7 +2,8 @@
 name = "investment-funnel"
 version = "0.0.0"
 description = "Open-source testing and benchmarking plaform for asset allocation."
-authors = [{name="Petr Vanek", email="abc@gmail.com"}]
+authors = [{name="Petr Vanek", email="abc@gmail.com"},
+           {name="Thomas Schmelzer", email="thomas.schmelzer@gmail.com"}]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -10,11 +11,8 @@ dependencies = [
     "dash>=2.18.2",
     "pandas>=2.2.3",
     "numpy>=2.2.1",
-    #"pyarrow>=18.1.0",
     "loguru>=0.7.2",
     "gunicorn>=23.0.0",
-    #"cvxpy-base>=1.6.0",
-    #"clarabel>=0.9.0",
     "flask>=3.0.3",
     "ifunnel>=0.0.3",
 ]
