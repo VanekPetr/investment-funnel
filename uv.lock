@@ -601,7 +601,6 @@ dependencies = [
     { name = "loguru" },
     { name = "numpy" },
     { name = "pandas" },
-    { name = "pyarrow" },
 ]
 
 [package.dev-dependencies]
@@ -623,7 +622,6 @@ requires-dist = [
     { name = "loguru", specifier = ">=0.7.2" },
     { name = "numpy", specifier = ">=2.2.1" },
     { name = "pandas", specifier = ">=2.2.3" },
-    { name = "pyarrow", specifier = ">=18.1.0" },
 ]
 
 [package.metadata.requires-dev]
