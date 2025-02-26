@@ -3,18 +3,21 @@ from dash import dcc
 from dash.dependencies import Input, Output, State
 from ifunnel.models.main import initialize_bot
 
-from .app_layouts import (
-    page_1_layout,
-    page_2_layout,
-    page_3_layout,
-    page_4_layout,
-    page_mobile_layout,
-)
+from .app_layouts import divs as app_layout
+
+#    page_1_layout,
+#    page_2_layout,
+#    page_3_layout,
+#    page_4_layout,
+#    page_mobile_layout,
+#)
 
 #ROOT_DIR = Path(__file__).parent.parent
 # Load our data
 #weekly_returns = pd.read_parquet(ROOT_DIR / "financial_data" / "all_etfs_rets.parquet.gzip")
 algo = initialize_bot()
+layout = app_layout(algo)
+
     #build_bot(weekly_returns=weekly_returns))
 
 #ROOT_DIR = Path(__file__).parent.parent
@@ -28,15 +31,16 @@ def get_callbacks(app):
     def display_page(pathname: str):
         is_mobile = flask.request.headers.get("User-Agent").lower()
         if "mobile" in is_mobile or "mobi" in is_mobile:
-            return page_mobile_layout
+            return layout.page_mobile
         elif pathname == "/":
-            return page_1_layout
+            return layout.page_1
         elif pathname == "/page-1":
-            return page_2_layout
+            return layout.page_2
         elif pathname == "/page-2":
-            return page_3_layout
+            return layout.page_3
         else:
-            return page_4_layout
+            return layout.page_4
+
 
     # BACK-TESTING
     # -----------------------------------------------------------------------------------------------------------------

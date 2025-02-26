@@ -6,7 +6,7 @@ from dash import dcc, html
 from ifunnel.models.main import initialize_bot
 
 from funnel.dashboard.app_callbacks import get_callbacks
-from funnel.dashboard.app_layouts import page_1_layout
+from funnel.dashboard.app_layouts import divs as layout_divs
 from funnel.dashboard.utils import logger
 
 logger.setup_logging()
@@ -17,6 +17,8 @@ logger.setup_logging()
 
 #algo = build_bot(weekly_returns=weekly_returns)
 algo = initialize_bot()
+
+layout = layout_divs(algo)
 
 
 
@@ -29,7 +31,7 @@ def load_page():
         [
             # layout of the app
             dcc.Location(id="url"),
-            html.Div(id="page-content", children=page_1_layout),
+            html.Div(id="page-content", children=layout.page_1),
             # Hidden divs to store data
             dcc.Store(id="saved-start-date-page-0", data=algo.min_date),
             dcc.Store(id="saved-end-date-page-0", data=algo.max_date),
