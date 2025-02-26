@@ -10,7 +10,7 @@ dependencies = [
     "dash>=2.18.2",
     "pandas>=2.2.3",
     "numpy>=2.2.1",
-    "pyarrow>=18.1.0",
+    #"pyarrow>=18.1.0",
     "loguru>=0.7.2",
     "gunicorn>=23.0.0",
     "cvxpy-base>=1.6.0",
@@ -46,7 +46,7 @@ build-backend = "hatchling.build"
 packages = ["funnel"]
 
 [tool.deptry.per_rule_ignores]
-DEP002 = ["clarabel","pyarrow","gunicorn"]
+DEP002 = ["clarabel","gunicorn"]
 DEP003 = ["funnel"]
 
 [project.scripts]
