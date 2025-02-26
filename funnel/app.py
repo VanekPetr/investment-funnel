@@ -11,27 +11,13 @@ from funnel.dashboard.utils import logger
 
 logger.setup_logging()
 
-#ROOT_DIR = Path(__file__).parent
-# Load our data
-#weekly_returns = pd.read_parquet(ROOT_DIR / "financial_data" / "all_etfs_rets.parquet.gzip")
 
-#algo = build_bot(weekly_returns=weekly_returns)
-algo = initialize_bot()
-
-layout = layout_divs(algo)
-
-
-
-#build_bot()
-#algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
-
-
-def load_page():
+def load_page(page, algo):
     return html.Div(
         [
             # layout of the app
             dcc.Location(id="url"),
-            html.Div(id="page-content", children=layout.page_1),
+            html.Div(id="page-content", children=page),
             # Hidden divs to store data
             dcc.Store(id="saved-start-date-page-0", data=algo.min_date),
             dcc.Store(id="saved-end-date-page-0", data=algo.max_date),
@@ -98,8 +84,11 @@ def load_page():
     )
 
 
-def create_app():
+# Function to create the Dash app
+def create_app(algo=None):
     # Initialize the app
+    algo = algo or initialize_bot()
+
     app = dash.Dash(
         __name__,
         external_stylesheets=[dbc.themes.BOOTSTRAP],
@@ -107,28 +96,26 @@ def create_app():
             {"name": "viewport", "content": "width=device-width, initial-scale=1"}
         ],
     )
-    # server = app.server
 
-    # App layout
-    app.layout = load_page()
-    # App callbacks
-    get_callbacks(app)
+    layout = layout_divs(algo)
 
-    # return the flask server
+    # Set up callbacks
+    get_callbacks(app, layout, algo)
+
+    # Set the app layout
+    app.layout = load_page(page=layout.page_1, algo=algo)
+
+    # Return the Flask server
     return app.server
-
 
 # Create the Flask server instance for Gunicorn
 server = create_app()
 
-
-# Keep the development server setup
-def main():
-    a = create_app()
-    dash_app = dash.Dash(__name__)
-    dash_app.server = a
-    dash_app.run_server(debug=False, dev_tools_hot_reload=False)
-
-
+# Development server setup
 if __name__ == "__main__":
-    app = main()
+    app = dash.Dash(__name__)
+    # Initialize the app
+    algo = initialize_bot()
+
+    app.server = create_app(algo=algo)
+    app.run_server(debug=True, dev_tools_hot_reload=False)
