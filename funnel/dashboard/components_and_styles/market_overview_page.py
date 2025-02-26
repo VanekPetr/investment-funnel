@@ -1,6 +1,7 @@
+from typing import NamedTuple
+
 import dash_bootstrap_components as dbc
 from dash import dcc, html
-from ifunnel.models.main import initialize_bot
 
 from .styles import (
     GRAPH_LEFT,
@@ -12,90 +13,95 @@ from .styles import (
     SUB_TITLE,
 )
 
-algo = initialize_bot()
+MarketOverview = NamedTuple('MarketOverviewPage', [
+    ('optionsGraph', html.Div),
+    ('graphOverview', html.Div),
+    ('spinner_dots', html.Div),
+])
 
-#ROOT_DIR = Path(__file__).parent.parent.parent
-# Load our data
-#weekly_returns = pd.read_parquet(ROOT_DIR / "financial_data" / "all_etfs_rets.parquet.gzip")
-#algo = build_bot(weekly_returns=weekly_returns)
+# call this function from outside
+def divs(algo) -> MarketOverview:
+    optionsGraph = html.Div(
+        [
+            html.H5("Investment Funnel", style=MAIN_TITLE),
+            html.P("Selected dates for market overview", style=SUB_TITLE),
+            # Date picker for plotting
+            dcc.DatePickerRange(
+                id="picker-show",
+                style=OPTION_ELEMENT,
+                min_date_allowed=algo.min_date,
+                max_date_allowed=algo.max_date,
+            ),
+            # Option to search for a fund
+            html.P("Find your fund", style=SUB_TITLE),
+            dcc.Dropdown(
+                id="find-fund",
+                options=[{"label": value, "value": value} for value in algo.names],
+                placeholder="Select here",
+                multi=True,
+                style=OPTION_ELEMENT,
+            ),
+            html.P("Show top performers for each asset class", style=SUB_TITLE),
+            dcc.RadioItems(
+                [
+                    {"label": "yes", "value": "yes"},
+                    {"label": "no", "value": "no"},
+                ],
+                inline=True,
+                style=OPTION_ELEMENT,
+                id="top-performers",
+            ),
+            html.Div(
+                id="if-top-performers",
+                children=[
+                    html.P(
+                        "% of top performing assets from each risk class", style=SUB_TITLE
+                    ),
+                    dcc.Input(
+                        id="top-performers-pct",
+                        type="number",
+                        value=15,
+                        style=OPTION_ELEMENT,
+                    ),
+                    html.P("Combine with previous top performers", style=SUB_TITLE),
+                    dcc.RadioItems(
+                        [
+                            {"label": "yes", "value": "yes"},
+                            {"label": "no", "value": "no"},
+                        ],
+                        "no",
+                        inline=True,
+                        style=OPTION_ELEMENT,
+                        id="combine-top-performers",
+                    ),
+                ],
+                style={"display": "none"},
+            ),
+            # Button to plot results
+            dbc.Button("Show Plot", id="show", style=OPTION_BTN),
+        ],
+        style=GRAPH_LEFT,
+    )
 
-#ROOT_DIR = Path(__file__).parent.parent.parent
-#algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
+    # Table
+    graphOverview = html.Div(id="dotsFig", style=GRAPH_RIGHT)
+
+    spinner_dots = html.Div(
+        [
+            dcc.Loading(
+                id="loading-dots",
+                children=[html.Div([html.Div(id="loading-output-dots")])],
+                type="circle",
+                style=LOADING_STYLE,
+                color="black",
+            ),
+        ]
+    )
 
 
-optionGraph = html.Div(
-    [
-        html.H5("Investment Funnel", style=MAIN_TITLE),
-        html.P("Selected dates for market overview", style=SUB_TITLE),
-        # Date picker for plotting
-        dcc.DatePickerRange(
-            id="picker-show",
-            style=OPTION_ELEMENT,
-            min_date_allowed=algo.min_date,
-            max_date_allowed=algo.max_date,
-        ),
-        # Option to search for a fund
-        html.P("Find your fund", style=SUB_TITLE),
-        dcc.Dropdown(
-            id="find-fund",
-            options=[{"label": value, "value": value} for value in algo.names],
-            placeholder="Select here",
-            multi=True,
-            style=OPTION_ELEMENT,
-        ),
-        html.P("Show top performers for each asset class", style=SUB_TITLE),
-        dcc.RadioItems(
-            [
-                {"label": "yes", "value": "yes"},
-                {"label": "no", "value": "no"},
-            ],
-            inline=True,
-            style=OPTION_ELEMENT,
-            id="top-performers",
-        ),
-        html.Div(
-            id="if-top-performers",
-            children=[
-                html.P(
-                    "% of top performing assets from each risk class", style=SUB_TITLE
-                ),
-                dcc.Input(
-                    id="top-performers-pct",
-                    type="number",
-                    value=15,
-                    style=OPTION_ELEMENT,
-                ),
-                html.P("Combine with previous top performers", style=SUB_TITLE),
-                dcc.RadioItems(
-                    [
-                        {"label": "yes", "value": "yes"},
-                        {"label": "no", "value": "no"},
-                    ],
-                    "no",
-                    inline=True,
-                    style=OPTION_ELEMENT,
-                    id="combine-top-performers",
-                ),
-            ],
-            style={"display": "none"},
-        ),
-        # Button to plot results
-        dbc.Button("Show Plot", id="show", style=OPTION_BTN),
-    ],
-    style=GRAPH_LEFT,
-)
-
-# Table
-graphOverview = html.Div(id="dotsFig", style=GRAPH_RIGHT)
-
-spinner_dots = html.Div(
-    [
-        dcc.Loading(
-            id="loading-dots",
-            children=[html.Div([html.Div(id="loading-output-dots")])],
-            type="circle",
-            style=LOADING_STYLE,
-            color="black",
-        ),
-    ]
-)
+    # Return the NamedTuple with the components
+    return MarketOverview(
+        optionsGraph=optionsGraph,
+        graphOverview=graphOverview,
+        spinner_dots=spinner_dots,
+    )
