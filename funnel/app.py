@@ -41,5 +41,5 @@ app = create_app()
 server = app.server
 
 # Development server setup
-if __name__ == "__main__":
+if __name__ == "__main__":     # pragma: no cover
     app.run_server(debug=True)
