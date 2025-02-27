@@ -26,6 +26,10 @@ dev = [
     "pytest-cov>=6.0.0",
     "pytest>=8.3.3",
     "pre-commit>=4.0.1",
+    "psutil>=7.0.0",
+    "multiprocess>=0.70.17",
+    "selenium>=4.29.0",
+    "percy>=2.0.2",
 ]
 
 [tool.ruff]
