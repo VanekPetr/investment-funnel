@@ -2,31 +2,18 @@
 name = "investment-funnel"
 version = "0.0.0"
 description = "Open-source testing and benchmarking plaform for asset allocation."
-authors = [{name="Petr Vanek", email="abc@gmail.com"}]
+authors = [{name="Petr Vanek", email="abc@gmail.com"},
+           {name="Thomas Schmelzer", email="thomas.schmelzer@gmail.com"}]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "dash-bootstrap-components>=1.6.0",
     "dash>=2.18.2",
     "pandas>=2.2.3",
-    "plotly>=5.24.1",
     "numpy>=2.2.1",
-    "networkx>=3.4.2",
-    "python-dateutil>=2.9.0.post0",
-    "scipy>=1.14.1",
-    "scikit-learn>=1.5.2",
-    "matplotlib>=3.9.3",
-    "pyarrow>=18.1.0",
-    "yfinance>=0.2.51",
-    "loguru>=0.7.2",
     "gunicorn>=23.0.0",
-    "cvxpy-base>=1.6.0",
-    "clarabel>=0.9.0",
-    "python-dotenv>=1.0.1",
-    "tqdm>=4.67.1",
     "flask>=3.0.3",
-    "requests>=2.32.3",
-    "pydantic-settings>=2.6.1",
+    "ifunnel>=0.0.3",
 ]
 
 [project.urls]
@@ -38,7 +25,10 @@ dev = [
     "pytest-cov>=6.0.0",
     "pytest>=8.3.3",
     "pre-commit>=4.0.1",
-    "ecos>=2.0.14",
+    "psutil>=7.0.0",
+    "multiprocess>=0.70.17",
+    "selenium>=4.29.0",
+    "percy>=2.0.2",
 ]
 
 [tool.ruff]
@@ -57,8 +47,8 @@ build-backend = "hatchling.build"
 packages = ["funnel"]
 
 [tool.deptry.per_rule_ignores]
-DEP001 = ["gams"]
-DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn"]
+DEP002 = ["gunicorn"]
+DEP003 = ["funnel"]
 
 [project.scripts]
 funnel = "funnel.app:main"
