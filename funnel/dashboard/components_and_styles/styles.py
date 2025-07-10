@@ -46,7 +46,6 @@ SIDEBAR_STYLE = {
     "width": SIDE_BAR_WIDTH,
     "padding": "1rem",
     "background-color": "#111723",
-    # "li:hover" : "#EF9761"
     "display": "flex",
     "flex-direction": "column",
     "overflow": "auto",

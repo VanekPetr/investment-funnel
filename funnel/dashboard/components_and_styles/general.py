@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 from pathlib import Path
 
@@ -10,17 +11,29 @@ from .styles import (
     SIDEBAR_STYLE,
 )
 
+# Set up logging
+logger = logging.getLogger(__name__)
+
 ROOT_DIR = Path(__file__).parent.parent.parent
-encoded_image = base64.b64encode(
-    open(os.path.join(ROOT_DIR, "assets/ALGO_logo.png"), "rb").read()
-)
+try:
+    logo_path = os.path.join(ROOT_DIR, "assets/ALGO_logo.png")
+    if os.path.exists(logo_path):
+        with open(logo_path, "rb") as f:
+            encoded_image = base64.b64encode(f.read())
+    else:
+        logger.warning(f"Logo file not found at {logo_path}")
+        encoded_image = None
+except Exception as e:
+    logger.error(f"Error loading logo: {e}")
+    encoded_image = None
 
 # sidebar with navigation
 sideBar = html.Div(
     [
         html.Img(
-            src="data:image/png;base64,{}".format(encoded_image.decode()),
-            style={"position": "fixed", "width": "9%", "margin-top": "16px"},
+            src="data:image/png;base64,{}".format(encoded_image.decode() if encoded_image else ""),
+            style={"position": "fixed", "width": "9%",
+                   "margin-top": "16px", "display": "block" if encoded_image else "none"},
         ),
         html.H5(
             "Investment Funnel",
@@ -53,12 +66,13 @@ sideBar = html.Div(
 mobile_page = html.Div(
     [
         html.Img(
-            src="data:image/png;base64,{}".format(encoded_image.decode()),
+            src="data:image/png;base64,{}".format(encoded_image.decode() if encoded_image else ""),
             style={
                 "position": "fixed",
                 "width": "90%",
                 "margin-top": "16px",
                 "right": "5%",
+                "display": "block" if encoded_image else "none",
             },
         ),
         html.H1(

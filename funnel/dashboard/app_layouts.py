@@ -19,14 +19,9 @@ Layout = NamedTuple('Layout', [
     ('page_mobile', html.Div),
 ])
 
-def divs(algo) -> Layout:
-    overview = market_overview_divs(algo)
-    lifecycle = lifecycle_divs(algo)
-    backtest = backtest_divs(algo)
-    ai_feature_selection = ai_feature_selection_divs(algo)
-
-    # *** LIFECYCLE ***
-    page_4_layout = html.Div(
+def create_lifecycle_layout(lifecycle):
+    """Create the layout for the lifecycle page."""
+    return html.Div(
         [
             # Row 1 - body
             dbc.Row(
@@ -42,8 +37,10 @@ def divs(algo) -> Layout:
         ]
     )
 
-    # *** BACK-TESTING ***
-    page_3_layout = html.Div(
+
+def create_backtest_layout(backtest):
+    """Create the layout for the backtest page."""
+    return html.Div(
         [
             # Row 1 - body
             dbc.Row(
@@ -60,8 +57,9 @@ def divs(algo) -> Layout:
     )
 
 
-    # *** AI Feature Selection ***
-    page_2_layout = html.Div(
+def create_ai_feature_selection_layout(ai_feature_selection):
+    """Create the layout for the AI feature selection page."""
+    return html.Div(
         [
             # Row 1 - body
             dbc.Row(
@@ -77,8 +75,10 @@ def divs(algo) -> Layout:
         ]
     )
 
-    # *** MARKET OVERVIEW ***
-    page_1_layout = html.Div(
+
+def create_market_overview_layout(overview):
+    """Create the layout for the market overview page."""
+    return html.Div(
         [
             # Row 1 - body
             dbc.Row(
@@ -94,24 +94,44 @@ def divs(algo) -> Layout:
         ]
     )
 
-    # *** MOBILE PAGE ***
-    page_mobile_layout = html.Div(
+
+def create_mobile_layout():
+    """Create the layout for the mobile page."""
+    return html.Div(
         [
             # Row 1 - body
             dbc.Row([mobile_page])
         ]
     )
 
+
+def divs(algo) -> Layout:
+    """Create the layouts for all pages."""
+    overview = market_overview_divs(algo)
+    lifecycle = lifecycle_divs(algo)
+    backtest = backtest_divs(algo)
+    ai_feature_selection = ai_feature_selection_divs(algo)
+
     return Layout(
-        page_1=page_1_layout,
-        page_2=page_2_layout,
-        page_3=page_3_layout,
-        page_4=page_4_layout,
-        page_mobile=page_mobile_layout
+        page_1=create_market_overview_layout(overview),
+        page_2=create_ai_feature_selection_layout(ai_feature_selection),
+        page_3=create_backtest_layout(backtest),
+        page_4=create_lifecycle_layout(lifecycle),
+        page_mobile=create_mobile_layout()
     )
 
 
 def load_page(page, algo):
+    """
+    Load a page with the necessary components and data stores.
+
+    Args:
+        page: The page layout to load
+        algo: The algorithm object containing data and methods
+
+    Returns:
+        html.Div: The complete page layout with data stores
+    """
     return html.Div(
         [
             # layout of the app
@@ -155,7 +175,7 @@ def load_page(page, algo):
                     ],
                 ).to_dict("records"),
             ),
-            dcc.Store(id="saved-split-date", data="2017-07-01"),
+            dcc.Store(id="saved-split-date", data=algo.min_date),
             dcc.Store(id="saved-ml-model-back", data=""),
             dcc.Store(id="saved-ml-spec-back", data=2),
             dcc.Store(id="saved-pick-num-back", data=5),

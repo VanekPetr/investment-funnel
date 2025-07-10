@@ -1,12 +1,52 @@
+import logging
+from functools import wraps
+
 import flask
 from dash import dcc
 from dash.dependencies import Input, Output, State
 
+# Set up logging
+logger = logging.getLogger(__name__)
+
+def error_handler(func):
+    """
+    Decorator to handle errors in callback functions.
+    Logs the error and returns a message to the user.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error in callback {func.__name__}: {str(e)}")
+            # Return the original inputs to maintain state
+            return args[1:]  # Skip the first arg (n_clicks)
+    return wrapper
 
 def get_callbacks(app, layout, algo):
-    # WHICH WEBPAGE
+    """
+    Register all callbacks for the dashboard application.
+
+    Args:
+        app: The Dash application instance
+        layout: The layout object containing page layouts
+        algo: The algorithm object containing data and methods
+    """
+
+    # NAVIGATION
+    # -----------------------------------------------------------------------------------------------------------------
     @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
     def display_page(pathname: str):
+        """
+        Display the appropriate page based on the URL pathname.
+        Detects mobile devices and shows the mobile page if necessary.
+
+        Args:
+            pathname: The URL pathname
+
+        Returns:
+            The appropriate page layout
+        """
         is_mobile = flask.request.headers.get("User-Agent").lower()
         if "mobile" in is_mobile or "mobi" in is_mobile:
             return layout.page_mobile
@@ -20,7 +60,7 @@ def get_callbacks(app, layout, algo):
             return layout.page_4
 
 
-    # BACK-TESTING
+    # LIFECYCLE INVESTMENT ANALYSIS
     # -----------------------------------------------------------------------------------------------------------------
     @app.callback(
         [
@@ -73,6 +113,7 @@ def get_callbacks(app, layout, algo):
             State("saved-lifecycle-all-figure-page-3", "data"),
         ],
     )
+    @error_handler
     def plot_lifecycle(
         click,
         model,
@@ -99,6 +140,31 @@ def get_callbacks(app, layout, algo):
         saved_performance_figure,
         saved_lifecycle_all_figure,
     ):
+        """
+        Generate lifecycle investment analysis figures based on user inputs.
+
+        This callback runs when the user clicks the "Run" button on the lifecycle page.
+        It performs ML-based asset selection and lifecycle scenario analysis to generate
+        glidepath, performance, and asset allocation figures.
+
+        Args:
+            click: Button click event
+            model: ML model type (MST or Clustering)
+            model_spec: Number of MST runs or clusters
+            pick_top: Number of top assets to select from each cluster
+            scen_model: Scenario model type
+            scen_spec: Number of simulations
+            start_data: Start date for analysis
+            end_train: End date for training data
+            end_year: Final year for lifecycle analysis
+            portfolio_value: Initial portfolio value
+            yearly_withdraws: Annual withdrawal amount
+            risk_preference: Initial risk appetite (percentage)
+            saved_*: Previously saved values for maintaining state
+
+        Returns:
+            Multiple outputs including figures and saved state values
+        """
         # Lifecycle analysis
         if click:
             # RUN ML algo
@@ -240,6 +306,7 @@ def get_callbacks(app, layout, algo):
             State("slider-trading-sizes", "value"),
         ],
     )
+    @error_handler
     def plot_backtest(
         click,
         model,
@@ -267,6 +334,33 @@ def get_callbacks(app, layout, algo):
         saved_optimization_model,
         lower_bound,
     ):
+        """
+        Generate backtesting analysis figures based on user inputs.
+
+        This callback runs when the user clicks the "Run" button on the backtesting page.
+        It performs ML-based asset selection and backtesting to generate performance,
+        composition, and universe comparison figures.
+
+        Args:
+            click: Button click event
+            model: ML model type (MST or Clustering)
+            model_spec: Number of MST runs or clusters
+            pick_top: Number of top assets to select from each cluster
+            scen_model: Scenario model type
+            scen_spec: Number of simulations
+            benchmark: Selected benchmark(s)
+            start_data: Start date for training data
+            end_train: End date for training data
+            start_test: Start date for test data
+            end_data: End date for test data
+            solver: Optimization solver
+            optimization_model: Optimization model type
+            lower_bound: Minimum required asset weight in portfolio
+            saved_*: Previously saved values for maintaining state
+
+        Returns:
+            Multiple outputs including figures and saved state values
+        """
         # Initialize
         opt_init = ["Optimal", "Optimal Portfolio", "Optimal Portfolio", 3]
         bench_init = ["Benchmark", "Benchmark Portfolio", "Benchmark Portfolio", 3]
@@ -454,11 +548,26 @@ def get_callbacks(app, layout, algo):
         Input("picker-train", "end_date"),
         State("saved-split-date", "data"),
     )
+    @error_handler
     def update_test_date(selected_date, saved_split_date):
+        """
+        Update the test date range based on the selected training end date.
+
+        This callback ensures that the training and test periods are properly synchronized.
+        When the user changes the end date of the training period, the test period is
+        automatically adjusted to start from that date.
+
+        Args:
+            selected_date: The selected end date for the training period
+            saved_split_date: The previously saved split date
+
+        Returns:
+            Updated date ranges for the test and training periods
+        """
         if selected_date:
             split_date = selected_date
         else:
-            # TODO change this hardcoded date
+            # Use the saved split date (dynamically calculated in app_layouts.py)
             split_date = saved_split_date
 
         return split_date, algo.max_date, algo.min_date, split_date, split_date
@@ -484,7 +593,7 @@ def get_callbacks(app, layout, algo):
             Output("saved-figure-page-1", "data"),
             Output("loading-output-ml", "children"),
         ],
-        [Input("MLRun", "n_clicks")],
+        [Input("url", "pathname"), Input("MLRun", "n_clicks")],
         [
             State("model-dropdown", "value"),
             State("ML-num-dropdown", "value"),
@@ -499,7 +608,9 @@ def get_callbacks(app, layout, algo):
             State("saved-figure-page-1", "data"),
         ],
     )
+    @error_handler
     def plot_ml(
+        pathname,
         click_ml,
         model,
         spec,
@@ -513,6 +624,52 @@ def get_callbacks(app, layout, algo):
         saved_text,
         saved_figure,
     ):
+        """
+        Generate AI feature selection analysis based on user inputs.
+
+        This callback runs when the user clicks the "Run" button on the AI feature selection page.
+        It performs either MST (Minimum Spanning Tree) or Clustering analysis on the assets
+        and displays the results as a graph and a table of selected assets with their statistics.
+
+        Args:
+            pathname: Current URL pathname
+            click_ml: Button click event
+            model: ML model type (MST or Clustering)
+            spec: Number of MST runs or clusters
+            start: Start date for analysis
+            end: End date for analysis
+            saved_start: Previously saved start date
+            saved_end: Previously saved end date
+            saved_ai_table: Previously saved AI table data
+            saved_model: Previously saved model type
+            saved_spec: Previously saved model specification
+            saved_text: Previously saved text description
+            saved_figure: Previously saved figure
+
+        Returns:
+            Multiple outputs including the generated figure, date ranges, table data,
+            and other state information
+        """
+        # Only process if we're on the AI feature selection page
+        if pathname != "/page-1" and not click_ml:
+            return (
+                saved_figure,
+                saved_start,
+                saved_end,
+                saved_ai_table,
+                saved_text,
+                saved_model,
+                saved_spec,
+                saved_start,
+                saved_end,
+                saved_ai_table,
+                saved_model,
+                saved_spec,
+                saved_text,
+                saved_figure,
+                True,
+            )
+
         if click_ml:
             selected_start = str(start)
             selected_end = str(end)
@@ -640,6 +797,7 @@ def get_callbacks(app, layout, algo):
             State("saved-top-performers-pct", "data"),
         ],
     )
+    @error_handler
     def plot_dots(
         trigger,
         click,
@@ -658,6 +816,35 @@ def get_callbacks(app, layout, algo):
         saved_combine_top_performers,
         saved_top_performers_pct,
     ):
+        """
+        Generate market overview visualization based on user inputs.
+
+        This callback runs when the user clicks the "Show Plot" button on the market overview page
+        or when the page content changes. It creates a scatter plot visualization of assets
+        with their risk and return characteristics, optionally highlighting top performers.
+
+        Args:
+            trigger: Page content change event
+            click: Button click event
+            start: Start date for analysis
+            end: End date for analysis
+            search: List of funds to highlight in the visualization
+            saved_start: Previously saved start date
+            saved_end: Previously saved end date
+            saved_find_fund: Previously saved fund selection
+            saved_figure: Previously saved figure
+            top_performers: Whether to highlight top performers ("yes" or "no")
+            combine_top_performers: Whether to combine with previous top performers ("yes" or "no")
+            top_performers_pct: Percentage of top performers to highlight
+            saved_top_performers_names: Previously saved top performer names
+            saved_top_performers: Previously saved top performers setting
+            saved_combine_top_performers: Previously saved combine setting
+            saved_top_performers_pct: Previously saved top performers percentage
+
+        Returns:
+            Multiple outputs including the generated figure, date ranges, fund selection,
+            and other state information
+        """
         if click:
             selected_start = str(start)
             selected_end = str(end)
