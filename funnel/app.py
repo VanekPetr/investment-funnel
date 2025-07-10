@@ -2,9 +2,9 @@ import dash
 import dash_bootstrap_components as dbc
 from ifunnel.models.main import initialize_bot
 
-from funnel.dashboard.app_callbacks import get_callbacks
-from funnel.dashboard.app_layouts import divs as layout_divs
-from funnel.dashboard.app_layouts import load_page
+from .dashboard.app_callbacks import get_callbacks
+from .dashboard.app_layouts import divs as layout_divs
+from .dashboard.app_layouts import load_page
 
 
 # Function to create the Dash app
