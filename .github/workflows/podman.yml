@@ -1,7 +1,7 @@
 name: Build Container Image
 
 on:
-  push:
+  # push:
   #push:
   #  branches: [ "main" ]
   #pull_request:
