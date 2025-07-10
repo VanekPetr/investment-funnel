@@ -4,17 +4,17 @@ SHELL=/bin/bash
 
 UNAME=$(shell uname -s)
 
-.PHONY: install
-install:  ## Install a virtual environment
+uv:
 	@curl -LsSf https://astral.sh/uv/install.sh | sh
+
+.PHONY: install
+install:  uv ## Install a virtual environment
 	@uv sync -vv --frozen
 
 
 .PHONY: fmt
 fmt:  ## Run autoformatting and linting
-	@uv pip install pre-commit
-	@uv run pre-commit install
-	@uv run pre-commit run --all-files
+	@uvx pre-commit run --all-files
 
 
 .PHONY: test
