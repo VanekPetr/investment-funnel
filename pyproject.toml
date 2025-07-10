@@ -68,4 +68,3 @@ python-dotenv = ["dotenv"]
 cvxpy-base = ["cvxpy"]
 python-dateutil = ["dateutil"]
 scikit-learn = ["sklearn"]
-
