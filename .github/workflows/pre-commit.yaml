@@ -8,7 +8,6 @@ jobs:
   deptry:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: cvxgrp/.github/actions/uv/deptry@v2.0.0
+      - uses: tschm/cradle/actions/deptry@v0.3.01
         with:
           source-folder: 'funnel'

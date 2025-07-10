@@ -8,18 +8,18 @@ repos:
       - id: check-yaml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 'v0.8.6'
+    rev: 'v0.12.2'
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.1
+    rev: v3.20.0
     hooks:
       - id: pyupgrade
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.30.0
+    rev: 0.33.2
     hooks:
       - id: check-dependabot
         args: ["--verbose"]
@@ -33,18 +33,18 @@ repos:
   #    - id: markdownlint-fix
 
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.6
+    rev: v1.7.7
     hooks:
       - id: actionlint
         args: [-ignore, SC]
 
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: v0.23
+    rev: v0.24.1
     hooks:
       - id: validate-pyproject
 
   - repo: https://github.com/crate-ci/typos
-    rev: dictgen-v0.3.1
+    rev: v1
     hooks:
       - id: typos
         exclude: '\.(csv|txt)$'

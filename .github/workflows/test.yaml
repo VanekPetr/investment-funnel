@@ -8,14 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: "Build the virtual environment for ${{ github.repository }}"
+        uses: cvxgrp/.github/actions/environment@v2.2.8
 
-      - uses: cvxgrp/.github/actions/uv/coverage@v2.0.0
+      - uses: cvxgrp/.github/actions/coverage@v2.2.8
         with:
           source-folder: 'funnel'
-
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@v2
-        with:
-          files: artifacts/tests/coverage/coverage.info
-          format: lcov

@@ -16,7 +16,8 @@
 				"python.terminal.activateEnvInCurrentTerminal": true
 			},
 			"extensions": [
-				"ms-toolsai.jupyter"
+				"ms-toolsai.jupyter",
+				"ms-vscode.makefile-tools"
 			]
 		}
 	}

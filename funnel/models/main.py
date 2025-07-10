@@ -29,14 +29,14 @@ from .ScenarioGeneration import MomentGenerator, ScenarioGenerator
 
 pio.renderers.default = "browser"
 
-# that's unfortunate but will be addressed later
-ROOT_DIR = Path(__file__).parent.parent
-# Load our data
-weekly_returns = pd.read_parquet(
-    os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip")
-)
-tickers = [pair[0] for pair in weekly_returns.columns.values]
-names = [pair[1] for pair in weekly_returns.columns.values]
+# # that's unfortunate but will be addressed later
+# ROOT_DIR = Path(__file__).parent.parent
+# # Load our data
+# weekly_returns = pd.read_parquet(
+#     os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip")
+# )
+# tickers = [pair[0] for pair in weekly_returns.columns.values]
+# names = [pair[1] for pair in weekly_returns.columns.values]
 
 
 class TradeBot:
@@ -45,14 +45,14 @@ class TradeBot:
     optimization suggesting optimal portfolio of assets.
     """
 
-    def __init__(self):
-        self.tickers = tickers
-        self.names = names
-        self.weeklyReturns = weekly_returns
-        self.min_date = str(weekly_returns.index[0])
-        self.max_date = str(weekly_returns.index[-1])
+    def __init__(self, data_path: str) -> None:
+        self.weeklyReturns = pd.read_parquet(data_path)
+        self.tickers = [pair[0] for pair in self.weeklyReturns.columns.values]
+        self.names = [pair[1] for pair in self.weeklyReturns.columns.values]
+        self.min_date = str(self.weeklyReturns.index[0])
+        self.max_date = str(self.weeklyReturns.index[-1])
 
-        weekly_returns.columns = tickers
+        self.weeklyReturns.columns = self.tickers
 
     @staticmethod
     def __plot_backtest(
@@ -881,7 +881,8 @@ class TradeBot:
 
 if __name__ == "__main__":
     # INITIALIZATION OF THE CLASS
-    algo = TradeBot()
+    ROOT_DIR = Path(__file__).parent.parent
+    algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 
     # Get top performing assets for given periods and measure
     top_assets = algo.get_top_performing_assets(
