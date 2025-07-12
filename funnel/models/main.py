@@ -9,23 +9,22 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
-from loguru import logger
-from plotly.subplots import make_subplots
-from scipy.stats import gaussian_kde
-
-from .Clustering import cluster, pick_cluster
-from .CVaRmodel import cvar_model
-from .CVaRtargets import get_cvar_targets
-from .dataAnalyser import final_stats, mean_an_returns
-from .lifecycle.glidePathCreator import generate_risk_profiles
-from .lifecycle.MVOlifecycleModel import (
+from ifunnel.models.Clustering import cluster, pick_cluster
+from ifunnel.models.CVaRmodel import cvar_model
+from ifunnel.models.CVaRtargets import get_cvar_targets
+from ifunnel.models.dataAnalyser import final_stats, mean_an_returns
+from ifunnel.models.lifecycle.glidePathCreator import generate_risk_profiles
+from ifunnel.models.lifecycle.MVOlifecycleModel import (
     get_port_allocations,
     riskadjust_model_scen,
 )
-from .MST import minimum_spanning_tree
-from .MVOmodel import mvo_model
-from .MVOtargets import get_mvo_targets
-from .ScenarioGeneration import MomentGenerator, ScenarioGenerator
+from ifunnel.models.MST import minimum_spanning_tree
+from ifunnel.models.MVOmodel import mvo_model
+from ifunnel.models.MVOtargets import get_mvo_targets
+from ifunnel.models.ScenarioGeneration import MomentGenerator, ScenarioGenerator
+from loguru import logger
+from plotly.subplots import make_subplots
+from scipy.stats import gaussian_kde
 
 pio.renderers.default = "browser"
 

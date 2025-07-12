@@ -668,13 +668,10 @@ dependencies = [
     { name = "gunicorn" },
     { name = "ifunnel" },
     { name = "loguru" },
-    { name = "matplotlib" },
-    { name = "networkx" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "plotly" },
     { name = "pyarrow" },
-    { name = "scikit-learn" },
     { name = "scipy" },
 ]
 
@@ -697,13 +694,10 @@ requires-dist = [
     { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "ifunnel", specifier = ">=0.0.6" },
     { name = "loguru", specifier = ">=0.7.2" },
-    { name = "matplotlib", specifier = ">=3.9.3" },
-    { name = "networkx", specifier = ">=3.4.2" },
     { name = "numpy", specifier = ">=2.2.1" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "plotly", specifier = ">=5.24.1" },
     { name = "pyarrow", specifier = ">=18.1.0" },
-    { name = "scikit-learn", specifier = ">=1.5.2" },
     { name = "scipy", specifier = ">=1.14.1" },
 ]
 
