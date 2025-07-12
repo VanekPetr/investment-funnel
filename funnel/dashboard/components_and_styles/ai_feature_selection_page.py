@@ -136,19 +136,3 @@ def div(algo):
             )
         ]
     )
-
-
-def create_ai_feature_selection_layout(algo):
-    """
-    Create the layout for the AI Feature Selection page.
-
-    This function is a wrapper around the div function that creates
-    the layout for the AI Feature Selection page.
-
-    Args:
-        algo: The algorithm object containing data and methods
-
-    Returns:
-        html.Div: The layout for the AI Feature Selection page
-    """
-    return div(algo)
