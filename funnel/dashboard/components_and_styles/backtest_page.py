@@ -336,7 +336,6 @@ def _divs(algo) -> Backtest:
             dbc.Button(
                 "Run Backtest",
                 id="backtestRun",
-                loading_state={"is_loading": "true"},
                 style=OPTION_BTN,
             ),
         ],

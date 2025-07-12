@@ -7,8 +7,8 @@ authors = [{name="Petr Vanek", email="abc@gmail.com"},
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "dash-bootstrap-components>=1.6.0",
-    "dash>=2.18.2",
+    "dash-bootstrap-components>=2.0.3",
+    "dash>=3.0",
     "gunicorn>=23.0.0",
     "flask>=3.0.3",
     "ifunnel>=0.0.6",
@@ -22,7 +22,12 @@ homepage = "https://investment-funnel.algostrata.com"
 dev = [
     "pytest-cov>=6.0.0",
     "pytest>=8.3.3",
-    "pre-commit>=4.0.1"
+    "pre-commit>=4.0.1",
+    #"psutil>=7.0.0",
+    #"multiprocess>=0.70.18",
+    #"selenium>=4.34.2",
+    "dash[testing]>=3.0"
+
 ]
 
 [tool.ruff]

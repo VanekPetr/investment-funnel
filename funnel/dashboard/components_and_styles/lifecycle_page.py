@@ -356,7 +356,6 @@ def _divs(algo) -> LifeCycle:
             dbc.Button(
                 "Run Simulations",
                 id="lifecycle-run",
-                loading_state={"is_loading": "true"},
                 style=OPTION_BTN,
             ),
         ],

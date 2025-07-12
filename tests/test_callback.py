@@ -1,6 +1,22 @@
+import pytest
 from dash import Dash
+from dash.testing.application_runners import import_app
 
-# Import the function directly to test it
+
+@pytest.mark.parametrize(
+    "pathname, expected_text_snippet",
+    [
+        ("/", "Market Overview"),         # Replace with actual expected text for /
+        ("/backtest", "Backtest Results"),  # Replace with actual content for /backtest
+        ("/lifecycle", "Lifecycle View"),  # And so on...
+        ("/nonexistent", "404"),           # If you have a 404 page
+    ],
+)
+def test_real_display_page(pathname, expected_text_snippet, dash_duo):
+    # This assumes your Dash app entrypoint is funnel/dashboard/app.py and named `app`
+    app = import_app("funnel.app")  # adjust import path if needed
+    dash_duo.start_server(app)
+
 
 
 def test_callback(app: Dash) -> None:
