@@ -6,8 +6,8 @@ authors = [{name="Petr Vanek", email="abc@gmail.com"}]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "dash-bootstrap-components>=1.6.0",
-    "dash>=2.18.2",
+    "dash-bootstrap-components>=2.0",
+    "dash>=3.1.0",
     "pandas>=2.2.3",
     "plotly>=5.24.1",
     "numpy>=2.2.1",

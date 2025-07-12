@@ -145,7 +145,6 @@ options_lifecycle = html.Div(
         dbc.Button(
             "Run Simulations",
             id="lifecycle-run",
-            loading_state={"is_loading": "true"},
             style=OPTION_BTN,
         ),
     ],

@@ -485,6 +485,10 @@ class TradeBot:
             "Benchmark Portfolio": "#f58f02",
             "Optimal Portfolio": "olive",
         }
+
+        # Ensure Size column contains only numeric values
+        data["Size"] = pd.to_numeric(data["Size"], errors="coerce").fillna(1)
+
         fig = px.scatter(
             data,
             x="Standard Deviation of Returns",
