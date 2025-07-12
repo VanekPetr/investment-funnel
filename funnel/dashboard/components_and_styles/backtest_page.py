@@ -13,7 +13,6 @@ from .styles import (
     SUB_TITLE,
 )
 
-
 optionBacktest = html.Div(
     [
         # part1

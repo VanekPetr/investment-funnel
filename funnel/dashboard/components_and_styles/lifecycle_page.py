@@ -12,7 +12,6 @@ from .styles import (
     SUB_TITLE,
 )
 
-
 options_lifecycle = html.Div(
     [
         # part1

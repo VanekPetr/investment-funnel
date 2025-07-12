@@ -11,7 +11,6 @@ from .styles import (
     SUB_TITLE,
 )
 
-
 optionGraph = html.Div(
     [
         html.H5("Investment Funnel", style=MAIN_TITLE),
