@@ -40,9 +40,22 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build and Push Docker Image
-        uses: cvxgrp/.github/actions/docker@v2.2.8
+        uses: tschm/cradle/actions/docker@v0.3.01
         with:
-          repository: ${{ github.repository }}
-          tag: ${{ needs.tagging.outputs.new_tag }}
-          dockerfile-path: 'docker/Dockerfile'
+          registry: 'ghcr.io'
+          github_repository: ${{ github.repository }}
+          github_actor: ${{ github.actor }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.tagging.outputs.new_tag }}
+          labels: |
+            org.opencontainers.image.title=Investment Funnel App
+            org.opencontainers.image.description=Investment Funnel
+            org.opencontainers.image.vendor=Petr Vanek
+
+      #- name: Build and Push Docker Image
+      #  uses: cvxgrp/.github/actions/docker@v2.2.8
+      #  with:
+      #    repository: ${{ github.repository }}
+      #    tag: ${{ needs.tagging.outputs.new_tag }}
+      #    dockerfile-path: 'docker/Dockerfile'
+      #    github_token: ${{ secrets.GITHUB_TOKEN }}
