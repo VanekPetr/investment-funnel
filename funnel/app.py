@@ -9,10 +9,10 @@ from dash import dcc, html
 
 from .dashboard.app_callbacks import get_callbacks
 from .dashboard.app_layouts import page_1_layout
-from .dashboard.utils import logger
+#from .dashboard.utils import logger
 from .models.main import TradeBot
 
-logger.setup_logging()
+#logger.setup_logging()
 ROOT_DIR = Path(__file__).parent
 algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 
