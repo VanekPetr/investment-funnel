@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 import dash
 import dash_bootstrap_components as dbc
 import numpy as np
@@ -9,10 +6,11 @@ from dash import dcc, html
 
 from .dashboard.app_callbacks import get_callbacks
 from .dashboard.app_layouts import page_1_layout
-from .models.main import TradeBot
+from ifunnel.models.main import initialize_bot
 
-ROOT_DIR = Path(__file__).parent
-algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
+algo = initialize_bot()
+
+#algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 
 
 def load_page():
@@ -100,8 +98,9 @@ def create_app():
 
     # App layout
     app.layout = load_page()
+
     # App callbacks
-    get_callbacks(app)
+    get_callbacks(app, algo)
 
     # return the flask server
     return app.server

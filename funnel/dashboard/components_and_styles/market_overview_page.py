@@ -1,10 +1,6 @@
-import os
-from pathlib import Path
-
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-from ...models.main import TradeBot
 from .styles import (
     GRAPH_LEFT,
     GRAPH_RIGHT,
@@ -14,9 +10,6 @@ from .styles import (
     OPTION_ELEMENT,
     SUB_TITLE,
 )
-
-ROOT_DIR = Path(__file__).parent.parent.parent
-algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 
 
 optionGraph = html.Div(
