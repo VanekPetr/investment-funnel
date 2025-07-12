@@ -14,3 +14,4 @@ jobs:
       - uses: tschm/cradle/actions/coverage@v0.3.01
         with:
           source-folder: 'funnel'
+          tests-folder: 'tests'
