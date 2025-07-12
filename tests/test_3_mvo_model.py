@@ -2,7 +2,6 @@ from datetime import timedelta
 
 import pandas as pd
 import pytest
-
 from ifunnel.models.MVOmodel import mvo_model
 from ifunnel.models.MVOtargets import get_mvo_targets
 
