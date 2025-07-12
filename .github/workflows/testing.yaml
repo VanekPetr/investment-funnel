@@ -16,10 +16,10 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: "Build the virtual environment for ${{ github.repository }}"
-        uses: cvxgrp/.github/actions/environment@v2.2.8
+        uses: tschm/cradle/actions/environment@v0.3.01
         with:
           python-version: ${{ matrix.python-version }}
 
-      - uses: cvxgrp/.github/actions/test@v2.2.8
+      - uses: tschm/cradle/actions/test@v0.3.01
         with:
           source-folder: 'funnel'
