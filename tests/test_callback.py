@@ -6,8 +6,10 @@ from dash.testing.application_runners import import_app
 @pytest.mark.parametrize(
     "pathname, expected_text_snippet",
     [
-        ("/", "Market Overview"),         # Replace with actual expected text for /
-        ("/backtest", "Backtest Results"),  # Replace with actual content for /backtest
+        ("/", "Market Overview"),          # Replace with actual expected text for /
+        ("/page-1", "AI Feature Selection"),
+        ("/page-2", "Backtesting"),
+        ("/backtest", "Backtest Results"), # Replace with actual content for /backtest
         ("/lifecycle", "Lifecycle View"),  # And so on...
         ("/nonexistent", "404"),           # If you have a 404 page
     ],
