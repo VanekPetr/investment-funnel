@@ -65,10 +65,10 @@ def get_callbacks(app, layout, algo):
     # -----------------------------------------------------------------------------------------------------------------
     # Import and register the AI feature selection callbacks
 
-    # from .components_and_styles.ai_feature_selection_page import register_callbacks as reg_ai_feature_selection
+    from .components_and_styles.ai_feature_selection_page import register_callbacks as reg_ai_feature_selection
 
     # Register the AI feature selection callbacks
-    # reg_ai_feature_selection(app, algo)
+    reg_ai_feature_selection(app, algo)
 
 
     # MARKET OVERVIEW

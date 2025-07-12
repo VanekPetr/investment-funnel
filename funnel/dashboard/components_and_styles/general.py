@@ -13,17 +13,9 @@ from .styles import (
 logger = logging.getLogger(__name__)
 
 def encoded_image():
-    try:
-        logo_path = Path(__file__).parent / "assets" / "ALGO_logo.png"
-        if logo_path.exists():
-            with open(logo_path, "rb") as f:
-                encoded_image = base64.b64encode(f.read())
-        else:
-            logger.warning(f"Logo file not found at {logo_path}")
-            encoded_image = None
-    except Exception as e:
-        logger.error(f"Error loading logo: {e}")
-        encoded_image = None
+    logo_path = Path(__file__).parent / "assets" / "ALGO_logo.png"
+    with open(logo_path, "rb") as f:
+        encoded_image = base64.b64encode(f.read())
 
     return encoded_image
 
