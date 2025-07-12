@@ -20,8 +20,6 @@ University, this project is also a pivotal tool for amateur/beginner quants.
 The primary goal of this project is to provide a better overview of the ETF/Mutual fund market and to allow users to
 experiment with various investment techniques and algorithms. Ultimately, it offers a platform to backtest and refine investment strategies.
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/VanekPetr/investment-funnel)
-
 <!-- toc -->
 - [Technologies and Models](#technologies-and-models)
   * [Portfolio optimization models](#portfolio-optimization-models)
@@ -41,27 +39,28 @@ experiment with various investment techniques and algorithms. Ultimately, it off
 - [License](#license)
 <!-- tocstop -->
 
-# Technologies and Models
+## Technologies and Models
+
 The Investment Funnel brings together various optimization models for asset allocation, machine learning (ML)
 methodologies for feature selection, and algorithms for scenario generation. Coupled with the backtesting
 framework and Dash application, it presents a comprehensive environment for the development and backtesting of
 investment strategies
 
-#### Portfolio optimization models
+### Portfolio optimization models
 1. Conditional Value at Risk (CVaR) model - [read more](https://docs.mosek.com/portfolio-cookbook/riskmeasures.html#conditional-value-at-risk)
 2. Mean-Variance (Markowitz) model - [read more](https://docs.mosek.com/portfolio-cookbook/markowitz.html)
 
-#### ML models
+### ML models
 1. Minimum Spanning Tree (MST) model - [read more](https://en.wikipedia.org/wiki/Minimum_spanning_tree)
 2. Hierarchical Clustering (HCA) model - [read more](https://en.wikipedia.org/wiki/Hierarchical_clustering)
 
-#### Scenario generation algorithms
+### Scenario generation algorithms
 1. Monte Carlo scenario simulation - [read more](https://en.wikipedia.org/wiki/Monte_Carlo_method)
 2. Bootstrap scenario simulation - [read more](https://en.wikipedia.org/wiki/Bootstrapping_(statistics))
 
 To further enhance your knowledge on mathematical optimization in finance, we highly recommend the [MOSEK Portfolio Optimization Cookbook](https://github.com/MOSEK/PortfolioOptimization).
 
-# How to start
+## How to start
 
 Run the dash application by
 
@@ -72,7 +71,8 @@ make funnel
 This will install [uv](https://github.com/astral-sh/uv), create a virtual environment
 and will start the app running on http://127.0.0.1:8050.
 
-# Usage
+## Usage
+
 Investment Funnel contains multiple portfolio optimization models, machine learning methods and algorithms located in
 [models folder](funnel/models). <br/>
 
@@ -130,7 +130,6 @@ each investment period, as well as comparisons in terms of average annual return
   <img width="100%" src="funnel/assets/backtesting2.png"></a>
 </p>
 
-
 ### Develop and test your own model
 
 Lastly, you have the option to develop your own optimization and machine learning models for portfolio allocation or
@@ -138,7 +137,7 @@ feature selection, and seamlessly integrate those into the investment funnel. By
 you can leverage the backtesting framework to visualize your model's results and conveniently compare its performance
 against those of existing models in this repository.
 
-# Further configuration for professionals or students
+## Further configuration for professionals or students
 
 Are you intrigued by the Investment Funnel project? Do you wish to utilize it for your own research, teaching,
 or the development of investment strategies?
@@ -161,7 +160,7 @@ To make the best of this project, you'll likely need access to up-to-date financ
 * **Alexandra Mourier** - *Design of our GitHub README banner*
 
 ## Research related to Investment Funnel
-*
+
 * **Arnar Tjörvi Charlesson & Thorvaldur Ingi Ingimundarson** - *Self-Organizing Maps and Strategic Fund Selection* (Master Thesis, DTU, 2023)
 * **Dimosthenis Karafylias** - *Deep Reinforcement Learning For Portfolio Optimisation* (Master Thesis, DTU, 2022)
 * **Carlos Daniel Pinho Ventura** - *Designing Hybrid Investment Packages of Cryptocurrencies with Rewards and Index Funds* (Master Thesis, DTU, 2022)
