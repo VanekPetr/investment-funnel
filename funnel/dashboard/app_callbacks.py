@@ -19,13 +19,13 @@ def get_callbacks(app, algo):
         if "mobile" in is_mobile or "mobi" in is_mobile:
             return page_mobile_layout
         elif pathname == "/":
-            return page_1_layout
+            return page_1_layout(algo)
         elif pathname == "/page-1":
-            return page_2_layout
+            return page_2_layout(algo)
         elif pathname == "/page-2":
-            return page_3_layout
+            return page_3_layout(algo)
         else:
-            return page_4_layout
+            return page_4_layout(algo)
 
     # BACK-TESTING
     # -----------------------------------------------------------------------------------------------------------------

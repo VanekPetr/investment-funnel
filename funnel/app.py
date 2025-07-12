@@ -18,7 +18,7 @@ def load_page():
         [
             # layout of the app
             dcc.Location(id="url"),
-            html.Div(id="page-content", children=page_1_layout),
+            html.Div(id="page-content", children=page_1_layout(algo)),
             # Hidden divs to store data
             dcc.Store(id="saved-start-date-page-0", data=algo.min_date),
             dcc.Store(id="saved-end-date-page-0", data=algo.max_date),
