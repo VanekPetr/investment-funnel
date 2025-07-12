@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from funnel.models.CVaRmodel import cvar_model
-from funnel.models.CVaRtargets import get_cvar_targets
+from ifunnel.models.CVaRmodel import cvar_model
+from ifunnel.models.CVaRtargets import get_cvar_targets
 
 
 @pytest.fixture(scope="module")
