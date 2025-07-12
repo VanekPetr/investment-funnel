@@ -1,18 +1,26 @@
-name: Bump version
+name: Bump version and publish
+
+# Workflow for creating a new release and publishing to PyPI
+# This workflow handles version bumping, package building, and publishing
+
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:  # Manual trigger only - run when explicitly requested
+
+# Permissions needed for creating tags and releases
+permissions:
+  contents: write  # Allows writing to repository (for tagging)
 
 jobs:
-  tag:
-    permissions:
-      contents: write
-
+  # Job to create a new version tag
+  tagging:
     runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.tag_step.outputs.new_tag }}  # Output the new tag for use in other jobs
 
     steps:
+      # Generate a new version tag based on semantic versioning
       - name: Generate Tag
-        uses: cvxgrp/.github/actions/tag@v2.2.8
+        id: tag_step
+        uses: tschm/cradle/actions/tag@v0.3.01
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # Token for GitHub API access
