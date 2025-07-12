@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 from ifunnel.models.main import initialize_bot
 
+
 @pytest.fixture(scope="session", name="resource_dir")
 def resource_fixture():
     """resource fixture"""
