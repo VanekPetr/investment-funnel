@@ -12,21 +12,16 @@ dependencies = [
     "plotly>=5.24.1",
     "numpy>=2.2.1",
     "networkx>=3.4.2",
-    "python-dateutil>=2.9.0.post0",
     "scipy>=1.14.1",
     "scikit-learn>=1.5.2",
     "matplotlib>=3.9.3",
     "pyarrow>=18.1.0",
-    "yfinance>=0.2.51",
     "loguru>=0.7.2",
     "gunicorn>=23.0.0",
     "cvxpy-base>=1.6.0",
     "clarabel>=0.9.0",
-    "python-dotenv>=1.0.1",
-    "tqdm>=4.67.1",
     "flask>=3.0.3",
-    "requests>=2.32.3",
-    "pydantic-settings>=2.6.1",
+    "ifunnel>=0.0.6",
 ]
 
 [project.urls]
@@ -38,6 +33,7 @@ dev = [
     "pytest-cov>=6.0.0",
     "pytest>=8.3.3",
     "pre-commit>=4.0.1",
+    "ifunnel>=0.0.6",
     "ecos>=2.0.14",
 ]
 
@@ -58,13 +54,12 @@ packages = ["funnel"]
 
 [tool.deptry.per_rule_ignores]
 DEP001 = ["gams"]
-DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn"]
+DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn","ifunnel"]
+
 
 [project.scripts]
 funnel = "funnel.app:main"
 
 [tool.deptry.package_module_name_map]
-python-dotenv = ["dotenv"]
 cvxpy-base = ["cvxpy"]
-python-dateutil = ["dateutil"]
 scikit-learn = ["sklearn"]
