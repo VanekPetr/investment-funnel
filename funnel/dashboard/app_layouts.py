@@ -1,96 +1,64 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-from .components_and_styles.ai_feature_selection_page import (
-    graphML,
-    optionML,
-    spinner_ml,
-)
-from .components_and_styles.backtest_page import (
-    graphResults,
-    optionBacktest,
-    spinner_backtest,
-)
-from .components_and_styles.general import mobile_page, sideBar
-from .components_and_styles.lifecycle_page import (
-    options_lifecycle,
-    results_lifecycle,
-    spinner_lifecycle,
-)
-from .components_and_styles.market_overview_page import (
-    graphOverview,
-    optionGraph,
-    spinner_dots,
-)
+from .components_and_styles.ai_feature_selection_page import div as ai_feature_selection_div
+from .components_and_styles.backtest_page import div as backtest_div
+from .components_and_styles.general import mobile_page
+from .components_and_styles.lifecycle_page import div as lifecycle_div
+from .components_and_styles.market_overview_page import div as market_overview_div
+
 
 # *** LIFECYCLE ***
-page_4_layout = html.Div(
-    [
-        # Row 1 - body
-        dbc.Row(
-            [
-                # Row 1, Col 1 - navigation bar
-                dbc.Col([sideBar]),
-                # Row 1, col 2 - text description
-                dbc.Col([options_lifecycle]),
-                # Row 1, Col 3 - table
-                dbc.Col([results_lifecycle, spinner_lifecycle]),
-            ]
-        )
-    ]
-)
+def page_4_layout(algo):
+    """
+    Create the layout for the Lifecycle Investments page.
+
+    Args:
+        algo: The algorithm object containing data and methods
+
+    Returns:
+        html.Div: The layout for the Lifecycle Investments page
+    """
+    return lifecycle_div(algo)
 
 # *** BACK-TESTING ***
-page_3_layout = html.Div(
-    [
-        # Row 1 - body
-        dbc.Row(
-            [
-                # Row 1, Col 1 - navigation bar
-                dbc.Col([sideBar]),
-                # Row 1, col 2 - text description
-                dbc.Col([optionBacktest]),
-                # Row 1, Col 3 - table
-                dbc.Col([graphResults, spinner_backtest]),
-            ]
-        )
-    ]
-)
+def page_3_layout(algo):
+    """
+    Create the layout for the Backtesting page.
 
+    Args:
+        algo: The algorithm object containing data and methods
+
+    Returns:
+        html.Div: The layout for the Backtesting page
+    """
+    return backtest_div(algo)
 
 # *** AI Feature Selection ***
-page_2_layout = html.Div(
-    [
-        # Row 1 - body
-        dbc.Row(
-            [
-                # Row 1, Col 1 - navigation bar
-                dbc.Col([sideBar]),
-                # Row 1, col 2 - set-up
-                dbc.Col([optionML]),
-                # Row 1, Col 3 - table
-                dbc.Col([graphML, spinner_ml]),
-            ]
-        )
-    ]
-)
+def page_2_layout(algo):
+    """
+    Create the layout for the AI Feature Selection page.
+
+    Args:
+        algo: The algorithm object containing data and methods
+
+    Returns:
+        html.Div: The layout for the AI Feature Selection page
+    """
+    return ai_feature_selection_div(algo)
 
 # *** MARKET OVERVIEW ***
-page_1_layout = html.Div(
-    [
-        # Row 1 - body
-        dbc.Row(
-            [
-                # Row 1, Col 1 - navigation bar
-                dbc.Col([sideBar]),
-                # Row 1, col 2 - text description
-                dbc.Col([optionGraph]),
-                # Row 1, Col 3 - table
-                dbc.Col([graphOverview, spinner_dots]),
-            ]
-        )
-    ]
-)
+def page_1_layout(algo):
+    """
+    Create the layout for the Market Overview page.
+
+    Args:
+        algo: The algorithm object containing data and methods
+
+    Returns:
+        html.Div: The layout for the Market Overview page
+    """
+    return market_overview_div(algo)
 
 # *** MOBILE PAGE ***
 page_mobile_layout = html.Div(

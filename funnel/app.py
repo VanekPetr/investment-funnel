@@ -1,18 +1,16 @@
-import os
-from pathlib import Path
-
 import dash
 import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 from dash import dcc, html
+from ifunnel.models.main import initialize_bot
 
 from .dashboard.app_callbacks import get_callbacks
 from .dashboard.app_layouts import page_1_layout
-from .models.main import TradeBot
 
-ROOT_DIR = Path(__file__).parent
-algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
+algo = initialize_bot()
+
+#algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 
 
 def load_page():
@@ -20,7 +18,7 @@ def load_page():
         [
             # layout of the app
             dcc.Location(id="url"),
-            html.Div(id="page-content", children=page_1_layout),
+            html.Div(id="page-content", children=page_1_layout(algo)),
             # Hidden divs to store data
             dcc.Store(id="saved-start-date-page-0", data=algo.min_date),
             dcc.Store(id="saved-end-date-page-0", data=algo.max_date),
@@ -100,8 +98,9 @@ def create_app():
 
     # App layout
     app.layout = load_page()
+
     # App callbacks
-    get_callbacks(app)
+    get_callbacks(app, algo)
 
     # return the flask server
     return app.server

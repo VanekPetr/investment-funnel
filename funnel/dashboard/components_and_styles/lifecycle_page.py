@@ -1,10 +1,7 @@
-import os
-from pathlib import Path
-
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-from ...models.main import TradeBot
+from .general import sideBar
 from .styles import (
     DESCRIP_INFO,
     GRAPH_LEFT,
@@ -16,11 +13,10 @@ from .styles import (
     SUB_TITLE,
 )
 
-ROOT_DIR = Path(__file__).parent.parent.parent
-algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
 
+def div(algo) -> html.Div:
 
-options_lifecycle = html.Div(
+    options_lifecycle = html.Div(
     [
         # part1
         html.H5("Lifecycle Investments", style=MAIN_TITLE),
@@ -149,25 +145,41 @@ options_lifecycle = html.Div(
         ),
     ],
     style=GRAPH_LEFT,
-)
+    )
 
-results_lifecycle = html.Div(
-    [
-        html.Div(id="glidepaths-output-fig", style=OPTION_ELEMENT),
-        html.Div(id="performance-output-fig", style=OPTION_ELEMENT),
-        html.Div(id="lifecycle-all-output-fig", style=OPTION_ELEMENT),
-    ],
-    style=GRAPH_RIGHT,
-)
+    results_lifecycle = html.Div(
+        [
+            html.Div(id="glidepaths-output-fig", style=OPTION_ELEMENT),
+            html.Div(id="performance-output-fig", style=OPTION_ELEMENT),
+            html.Div(id="lifecycle-all-output-fig", style=OPTION_ELEMENT),
+        ],
+        style=GRAPH_RIGHT,
+    )
 
-spinner_lifecycle = html.Div(
-    [
-        dcc.Loading(
-            id="loading-output-lifecycle",
-            children=[html.Div([html.Div(id="loading-output-backtest-lifecycle")])],
-            type="circle",
-            style=LOADING_STYLE,
-            color="black",
-        ),
-    ]
-)
+    spinner_lifecycle = html.Div(
+        [
+            dcc.Loading(
+                id="loading-output-lifecycle",
+                children=[html.Div([html.Div(id="loading-output-backtest-lifecycle")])],
+                type="circle",
+                style=LOADING_STYLE,
+                color="black",
+            ),
+        ]
+    )
+
+    return html.Div(
+        [
+            # Row 1 - body
+            dbc.Row(
+                [
+                    # Row 1, Col 1 - navigation bar
+                    dbc.Col([sideBar]),
+                    # Row 1, col 2 - text description
+                    dbc.Col([options_lifecycle]),
+                    # Row 1, Col 3 - table
+                    dbc.Col([results_lifecycle, spinner_lifecycle]),
+                ]
+            )
+        ]
+    )
