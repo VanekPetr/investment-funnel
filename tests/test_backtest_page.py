@@ -591,7 +591,7 @@ def test_generate_backtest_datetime_error(algo):
     with patch.object(algo, 'mst', return_value=(None, ['asset1', 'asset2'])):
         # Mock the algo.backtest method to raise a TypeError with datetime64 and NoneType
         with patch.object(algo, 'backtest', side_effect=TypeError("Invalid comparison")):
-            with pytest.raises(ValueError, match="Invalid date comparison"):
+            with pytest.raises(ValueError, match="Failed to run backtest: Invalid comparison"):
                 _generate_backtest(
                     algo,
                     model=model,

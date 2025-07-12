@@ -139,12 +139,11 @@ def _generate_backtest(
             lower_bound=lower_bound,
         )
     except TypeError as e:
-        if "datetime64[ns, UTC]" in str(e) and "NoneType" in str(e):
-            raise ValueError("Error in callback plot_backtest: "
-                             "Invalid date comparison. Please ensure all date fields are filled correctly.")
+        error_msg = str(e)
+        if "datetime64[ns, UTC]" in error_msg and "NoneType" in error_msg:
+            raise ValueError("Error in callback plot_backtest: Invalid date type comparison.")
         else:
-            raise ValueError(f"Error in callback plot_backtest: "
-                             f"Failed to run backtest: {str(e)}")
+            raise ValueError(f"Error in callback plot_backtest: Failed to run backtest: {error_msg}")
     except Exception as e:
         error_msg = str(e)
         if "solver" in error_msg.lower() and "not installed" in error_msg.lower():

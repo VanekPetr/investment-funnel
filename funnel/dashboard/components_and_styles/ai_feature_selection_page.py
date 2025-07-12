@@ -125,7 +125,7 @@ def generate_plot_ml(
             ai_table["Average Annual Returns"], 2
         )
 
-        return generated_figure, ai_subset, ai_table.to_dict("records")
+        return generated_figure, ai_subset, {"records": ai_table.to_dict("records")}
     except Exception as e:
         # Handle any errors that occur during the analysis
         raise ValueError(f"Error in callback plot_ml: Failed to run AI feature selection: {str(e)}")
@@ -260,6 +260,7 @@ def register_callbacks(app, algo):
         algo: The algorithm object containing data and methods
     """
     @app.callback(
+        Output=
         [
             Output("mlFig", "children"),
             Output("picker-AI", "start_date"),
@@ -277,8 +278,8 @@ def register_callbacks(app, algo):
             Output("saved-figure-page-1", "data"),
             Output("loading-output-ml", "children"),
         ],
-        [Input("url", "pathname"), Input("MLRun", "n_clicks")],
-        [
+        Input=[Input("url", "pathname"), Input("MLRun", "n_clicks")],
+        State=[
             State("model-dropdown", "value"),
             State("ML-num-dropdown", "value"),
             State("picker-AI", "start_date"),
