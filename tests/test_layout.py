@@ -2,10 +2,12 @@ from typing import Any
 
 from funnel.dashboard.app_layouts import divs as app_layouts
 from funnel.dashboard.app_layouts import load_page
-from funnel.dashboard.components_and_styles.ai_feature_selection_page import divs as ai_feature_selection
-from funnel.dashboard.components_and_styles.backtest_page import divs as backtest
-from funnel.dashboard.components_and_styles.lifecycle_page import divs as lifecycle
-from funnel.dashboard.components_and_styles.market_overview_page import divs as market_overview
+from funnel.dashboard.components_and_styles.ai_feature_selection_page import (
+    create_ai_feature_selection_layout as ai_feature_selection,
+)
+from funnel.dashboard.components_and_styles.backtest_page import create_backtest_layout as backtest
+from funnel.dashboard.components_and_styles.lifecycle_page import create_lifecycle_layout as lifecycle
+from funnel.dashboard.components_and_styles.market_overview_page import create_market_overview_layout as market_overview
 
 
 def test_marketOverview(algo: Any) -> None:
@@ -113,7 +115,7 @@ def test_load_page(algo: Any) -> None:
     layout = app_layouts(algo)
 
     # Load the market overview page
-    page = load_page(layout.page_1, algo)
+    page = load_page(layout.page_1)
 
     # Verify that page was loaded (implicitly checks that no exception was raised)
     assert page is not None, "Page should be loaded successfully"

@@ -29,7 +29,7 @@ def create_app(algo=None):
     get_callbacks(app, layout, algo)
 
     # Set the app layout
-    app.layout = load_page(page=layout.page_1, algo=algo)
+    app.layout = load_page(page=layout.page_1)
 
     # Return the Flask server
     return app
