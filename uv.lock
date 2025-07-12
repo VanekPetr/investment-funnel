@@ -637,14 +637,11 @@ name = "investment-funnel"
 version = "0.0.0"
 source = { editable = "." }
 dependencies = [
-    { name = "clarabel" },
     { name = "dash" },
     { name = "dash-bootstrap-components" },
     { name = "flask" },
     { name = "gunicorn" },
     { name = "ifunnel" },
-    { name = "numpy" },
-    { name = "pandas" },
 ]
 
 [package.dev-dependencies]
@@ -660,14 +657,11 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "clarabel", specifier = ">=0.10.0" },
     { name = "dash", specifier = ">=2.18.2" },
     { name = "dash-bootstrap-components", specifier = ">=1.6.0" },
     { name = "flask", specifier = ">=3.0.3" },
     { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "ifunnel", specifier = ">=0.0.6" },
-    { name = "numpy", specifier = ">=2.2.1" },
-    { name = "pandas", specifier = ">=2.2.3" },
 ]
 
 [package.metadata.requires-dev]
