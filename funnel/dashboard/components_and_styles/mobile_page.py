@@ -1,5 +1,4 @@
 import base64
-import os
 from pathlib import Path
 
 import dash_bootstrap_components as dbc
@@ -62,4 +61,3 @@ def div(algo):
             dbc.Row([mobile_page])
         ]
     )
-
