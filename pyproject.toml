@@ -26,7 +26,8 @@ dev = [
     #"psutil>=7.0.0",
     #"multiprocess>=0.70.18",
     #"selenium>=4.34.2",
-    "dash[testing]>=3.0"
+    "dash[testing]>=3.0",
+    "chromedriver-autoinstaller"
 
 ]
 

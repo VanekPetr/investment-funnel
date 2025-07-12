@@ -191,6 +191,18 @@ wheels = [
 ]
 
 [[package]]
+name = "chromedriver-autoinstaller"
+version = "0.6.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d0/5a/9fc60c65673444d592b8922316c3abcd6177b42208c5a6179f96ccf0e11b/chromedriver-autoinstaller-0.6.4.tar.gz", hash = "sha256:1b4df04b87e6107c730085b98e5fd541db3d1777c32b8bd08e2ca4b1244050af", size = 6944, upload-time = "2024-01-28T15:30:22.385Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a5/b5/36f0b0add145c371b5282e881a687601899f2d27fae5d0595bc02026b67c/chromedriver_autoinstaller-0.6.4-py3-none-any.whl", hash = "sha256:b12ed187ca9fac4d744deb588d221222ed50836384607e5303e6eab98bb9dc64", size = 7634, upload-time = "2024-01-28T15:30:20.234Z" },
+]
+
+[[package]]
 name = "clarabel"
 version = "0.10.0"
 source = { registry = "https://pypi.org/simple" }
@@ -725,6 +737,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "chromedriver-autoinstaller" },
     { name = "dash", extra = ["testing"] },
     { name = "pre-commit" },
     { name = "pytest" },
@@ -742,6 +755,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "chromedriver-autoinstaller" },
     { name = "dash", extras = ["testing"], specifier = ">=3.0" },
     { name = "pre-commit", specifier = ">=4.0.1" },
     { name = "pytest", specifier = ">=8.3.3" },
