@@ -92,8 +92,6 @@ def create_app():
             {"name": "viewport", "content": "width=device-width, initial-scale=1"}
         ],
     )
-    # server = app.server
-
     # App layout
     app.layout = load_page()
 
