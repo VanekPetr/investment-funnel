@@ -41,7 +41,7 @@ app = create_app()
 # Create the Flask server instance for Gunicorn
 server = app.server
 
-def main():
+def main():  # pragma: no cover
     app.run_server(debug=True)
 
 # Development server setup
