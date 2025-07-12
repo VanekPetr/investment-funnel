@@ -112,7 +112,7 @@ def main():
     dash_app = dash.Dash(__name__)
     dash_app.server = a
     dash_app.run(debug=False, dev_tools_hot_reload=False)
-
+    return
 
 if __name__ == "__main__":
-    app = main()
+    app = main()            # pragma: no cover
