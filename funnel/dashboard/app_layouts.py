@@ -1,11 +1,12 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-from .components_and_styles.general import mobile_page
 from .components_and_styles.ai_feature_selection_page import div as ai_feature_selection_div
 from .components_and_styles.backtest_page import div as backtest_div
+from .components_and_styles.general import mobile_page
 from .components_and_styles.lifecycle_page import div as lifecycle_div
 from .components_and_styles.market_overview_page import div as market_overview_div
+
 
 # *** LIFECYCLE ***
 def page_4_layout(algo):

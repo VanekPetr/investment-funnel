@@ -14,6 +14,7 @@ from .styles import (
     SUB_TITLE,
 )
 
+
 def div(algo) -> html.Div:
     optionBacktest = html.Div(
         [
@@ -183,4 +184,3 @@ def div(algo) -> html.Div:
             )
         ]
     )
-
