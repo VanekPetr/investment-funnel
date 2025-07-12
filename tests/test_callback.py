@@ -19,6 +19,15 @@ def test_real_display_page(pathname, expected_text_snippet, dash_duo):
     app = import_app("funnel.app")  # adjust import path if needed
     dash_duo.start_server(app)
 
+    # Navigate to the route
+    dash_duo.driver.get(dash_duo.server_url + pathname)
+
+    # Wait for expected text to appear in the body (or use a more specific selector)
+    # dash_duo.wait_for_text_to_include("body", expected_text_snippet, timeout=10)
+    # dash_duo.wait_for_text_to_equal("h1", expected_text_snippet, timeout=10)
+
+    # Final assertion
+    # assert expected_text_snippet in dash_duo.find_element("body").text
 
 
 def test_callback(app: Dash) -> None:
