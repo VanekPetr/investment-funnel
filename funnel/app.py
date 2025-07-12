@@ -10,8 +10,6 @@ from .dashboard.app_layouts import page_1_layout
 
 algo = initialize_bot()
 
-#algo = TradeBot(os.path.join(ROOT_DIR, "financial_data/all_etfs_rets.parquet.gzip"))
-
 
 def load_page():
     return html.Div(
