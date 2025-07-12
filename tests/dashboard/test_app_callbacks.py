@@ -5,12 +5,10 @@ This module contains tests for the app_callbacks.py module, which
 provides the callback functions for the investment funnel dashboard.
 """
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-import flask
+import pytest
 from dash import html
-from dash.dependencies import Input, Output, State
 
 from funnel.dashboard.app_callbacks import get_callbacks
 
