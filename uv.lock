@@ -653,7 +653,6 @@ dependencies = [
     { name = "pandas" },
     { name = "plotly" },
     { name = "pyarrow" },
-    { name = "pydantic-settings" },
     { name = "scikit-learn" },
     { name = "scipy" },
 ]
@@ -682,7 +681,6 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "plotly", specifier = ">=5.24.1" },
     { name = "pyarrow", specifier = ">=18.1.0" },
-    { name = "pydantic-settings", specifier = ">=2.6.1" },
     { name = "scikit-learn", specifier = ">=1.5.2" },
     { name = "scipy", specifier = ">=1.14.1" },
 ]

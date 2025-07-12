@@ -21,7 +21,6 @@ dependencies = [
     "cvxpy-base>=1.6.0",
     "clarabel>=0.9.0",
     "flask>=3.0.3",
-    "pydantic-settings>=2.6.1",
     "ifunnel>=0.0.6",
 ]
 
