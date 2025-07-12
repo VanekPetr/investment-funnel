@@ -3,7 +3,7 @@ from dash import html
 
 from .components_and_styles.ai_feature_selection_page import div as ai_feature_selection_div
 from .components_and_styles.backtest_page import div as backtest_div
-from .components_and_styles.general import mobile_page
+from .components_and_styles.mobile_page import div as mobile_page_div
 from .components_and_styles.lifecycle_page import div as lifecycle_div
 from .components_and_styles.market_overview_page import div as market_overview_div
 
@@ -61,9 +61,14 @@ def page_1_layout(algo):
     return market_overview_div(algo)
 
 # *** MOBILE PAGE ***
-page_mobile_layout = html.Div(
-    [
-        # Row 1 - body
-        dbc.Row([mobile_page])
-    ]
-)
+def page_mobile_layout(algo):
+    """
+    Create the layout for the mobile page.
+
+    Args:
+        algo: The algorithm object containing data and methods
+
+    Returns:
+        html.Div: The layout for the mobile page
+    """
+    return mobile_page_div(algo)
