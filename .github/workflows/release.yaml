@@ -24,3 +24,25 @@ jobs:
         uses: tschm/cradle/actions/tag@v0.3.01
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}  # Token for GitHub API access
+
+  docker:
+    needs: tagging
+    permissions:
+      contents: read
+      packages: write
+
+    runs-on: ubuntu-latest
+    steps:
+      # -----------------------------------------------------------------------------
+      # Step 1: Checkout the repository
+      # -----------------------------------------------------------------------------
+      - name: Checkout [${{ github.repository }}]
+        uses: actions/checkout@v4
+
+      - name: Build and Push Docker Image
+        uses: cvxgrp/.github/actions/docker@v2.2.8
+        with:
+          repository: ${{ github.repository }}
+          tag: ${{ needs.tagging.outputs.new_tag }}
+          dockerfile-path: 'docker/Dockerfile'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
