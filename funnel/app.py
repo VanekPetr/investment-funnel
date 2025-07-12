@@ -118,7 +118,7 @@ def main():
     a = create_app()
     dash_app = dash.Dash(__name__)
     dash_app.server = a
-    dash_app.run_server(debug=False, dev_tools_hot_reload=False)
+    dash_app.run(debug=False, dev_tools_hot_reload=False)
 
 
 if __name__ == "__main__":
