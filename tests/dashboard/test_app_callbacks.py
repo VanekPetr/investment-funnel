@@ -233,8 +233,8 @@ def test_update_test_date(callbacks):
     result = update_test_date("2018-01-01", "2017-07-01")
     assert len(result) == 5, "Should return 5 values"
     assert result[0] == "2018-01-01", "First value should be the selected date"
-    assert result[1] == "2022-07-27 00:00:00", "Second value should be algo.max_date"
-    assert result[2] == "2014-06-11 00:00:00", "Third value should be algo.min_date"
+    assert result[1] == "2024-07-24 00:00:00+00:00", "Second value should be algo.max_date"
+    assert result[2] == "2013-01-09 00:00:00+00:00", "Third value should be algo.min_date"
     assert result[3] == "2018-01-01", "Fourth value should be the selected date"
     assert result[4] == "2018-01-01", "Fifth value should be the selected date"
 
@@ -242,8 +242,8 @@ def test_update_test_date(callbacks):
     result = update_test_date(None, "2017-07-01")
     assert len(result) == 5, "Should return 5 values"
     assert result[0] == "2017-07-01", "First value should be the saved_split_date"
-    assert result[1] == "2022-07-27 00:00:00"    # Call the function
-    assert result[2] == "2014-06-11 00:00:00", "Third value should be algo.min_date"
+    assert result[1] == "2024-07-24 00:00:00+00:00"    # Call the function
+    assert result[2] == "2013-01-09 00:00:00+00:00", "Third value should be algo.min_date"
     assert result[3] == "2017-07-01", "Fourth value should be the saved_split_date"
     assert result[4] == "2017-07-01", "Fifth value should be the saved_split_date"
 
@@ -365,11 +365,11 @@ def test_plot_lifecycle_with_click(callbacks):
         5,  # pick_top
         "Bootstrap",  # scen_model
         1000,  # scen_spec
-        "2013-01-01",  # start_data
+        "2019-01-01",  # start_data
         "2023-01-01",  # end_train
-        2040,  # end_year
+        2030,  # end_year
         100000,  # portfolio_value
-        1000,  # yearly_withdraws
+        4,  # yearly_withdraws
         15,  # risk_preference
         saved_model,
         saved_model_spec,
@@ -505,11 +505,11 @@ def test_plot_backtest_with_click(callbacks):
     saved_pick_top = 5
     saved_scen_model = "Bootstrap"
     saved_scen_spec = 1000
-    saved_benchmark = ["Benchmark1"]
+    saved_benchmark = ["Wealth Invest Amalie Global AK"]
     saved_perf_figure = html.Div(id="saved-perf")
     saved_comp_figure = html.Div(id="saved-comp")
     saved_universe_figure = html.Div(id="saved-universe")
-    saved_solver = "ECOS"
+    saved_solver = "CLARABEL"
     saved_optimization_model = "CVaR model"
 
     # Call the function with a click
@@ -520,7 +520,7 @@ def test_plot_backtest_with_click(callbacks):
         5,  # pick_top
         "Bootstrap",  # scen_model
         1000,  # scen_spec
-        ["Benchmark1"],  # benchmark
+        ["Wealth Invest Amalie Global AK"],  # benchmark
         "2013-01-01",  # start_data
         "2017-01-01",  # end_train
         "2017-01-01",  # start_test
@@ -534,7 +534,7 @@ def test_plot_backtest_with_click(callbacks):
         saved_perf_figure,
         saved_comp_figure,
         saved_universe_figure,
-        "ECOS",  # solver
+        "CLARABEL",  # solver
         saved_solver,
         "CVaR model",  # optimization_model
         saved_optimization_model,
@@ -730,13 +730,13 @@ def test_plot_dots_with_click(callbacks):
     assert result[0] is not None, "Should return a figure"
     assert result[1] == "2013-01-01", "Should return the input start date"
     assert result[2] == "2023-01-01", "Should return the input end date"
-    assert result[3] == ["Fund1", "Fund2"], "Should return the input search"
+    assert result[3] == ['Wealth Invest Amalie Global AK', 'BankInvest Danske Aktier A'], "Should return the input search"
     assert result[4] == "2013-01-01", "Should return the input start date"
     assert result[5] == "2023-01-01", "Should return the input end date"
-    assert result[6] == ["Fund1", "Fund2"], "Should return the input search"
+    assert result[6] == ['Wealth Invest Amalie Global AK', 'BankInvest Danske Aktier A'], "Should return the input search"
     assert result[7] is not None, "Should return a figure"
     assert result[8] is True, "Should return True for loading output"
-    assert result[9] == ["Fund3", "Fund4"], "Should return the top performers"
+    assert len(result[9]) == 116, "Should return the top performers"
     assert result[10] == "yes", "Should return the input top performers"
     assert result[11] == "no", "Should return the input combine top performers"
     assert result[12] == 15, "Should return the input top performers percentage"
@@ -750,11 +750,10 @@ def test_plot_dots_with_click(callbacks):
     # Test with top_performers="no"
 
     result = plot_dots(
-        "trigger",  # trigger
         1,  # Click
         "2013-01-01",  # start
         "2023-01-01",  # end
-        ["Fund1", "Fund2"],  # search
+        ["Wealth Invest Amalie Global AK", "BankInvest Danske Aktier A"],  # search
         saved_start,
         saved_end,
         saved_find_fund,
@@ -778,11 +777,10 @@ def test_plot_dots_with_click(callbacks):
     # Test with combine_top_performers="yes"
 
     result = plot_dots(
-        "trigger",  # trigger
         1,  # Click
         "2013-01-01",  # start
         "2023-01-01",  # end
-        ["Fund1", "Fund2"],  # search
+        ["Wealth Invest Amalie Global AK", "BankInvest Danske Aktier A"],  # search
         saved_start,
         saved_end,
         saved_find_fund,
