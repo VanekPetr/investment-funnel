@@ -7,6 +7,7 @@ provides the callback functions for the investment funnel dashboard.
 
 from dash import html
 
+
 def test_get_callbacks_registers_callbacks(callbacks):
     """
     Test that get_callbacks registers the expected callbacks.
