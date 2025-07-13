@@ -10,6 +10,7 @@ from dash import html
 
 from funnel.dashboard.app_callbacks import get_callbacks
 
+
 def test_get_callbacks_registers_callbacks(app, algo):
     """
     Test that get_callbacks registers the expected callbacks.
