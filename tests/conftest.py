@@ -58,4 +58,4 @@ def app(algo) -> dash.Dash:
 
 @pytest.fixture
 def callbacks(app, algo):
-    app.callback()
+    return get_callbacks(app, algo=algo)

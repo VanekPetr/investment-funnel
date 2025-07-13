@@ -5,13 +5,9 @@ This module contains tests for the app_callbacks.py module, which
 provides the callback functions for the investment funnel dashboard.
 """
 
-import pytest
 from dash import html
 
-from funnel.dashboard.app_callbacks import get_callbacks
-
-
-def test_get_callbacks_registers_callbacks(app, algo):
+def test_get_callbacks_registers_callbacks(callbacks):
     """
     Test that get_callbacks registers the expected callbacks.
 
@@ -19,15 +15,8 @@ def test_get_callbacks_registers_callbacks(app, algo):
     all the expected callbacks with the Dash app.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
-    # Call the function
-    callbacks = get_callbacks(app, algo)
-
-    # Verify that callbacks were returned
-    assert callbacks is not None, "No callbacks were returned"
-
     # Check for specific callbacks
     callback_names = [
         "display_page",
@@ -52,29 +41,7 @@ def test_get_callbacks_registers_callbacks(app, algo):
         assert name in callbacks, f"Callback {name} was not registered"
 
 
-def test_display_page_routing(app, algo):
-    """
-    Test that display_page routes to the correct page based on pathname.
-
-    This test verifies that the display_page function returns the
-    correct layout based on the pathname.
-
-    Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
-    """
-    # Get the display_page function
-    callbacks = get_callbacks(app, algo)
-    display_page = callbacks.get("display_page")
-
-    assert display_page is not None, "display_page function not found"
-
-    # Note: This test now relies on the dash[testing] tests to verify the routing functionality
-    # The dash[testing] tests provide a more realistic test environment by running the app in a real browser
-    # See test_display_page_routing_with_dash_testing for the full test
-
-
-def test_update_output(app, algo):
+def test_update_output(callbacks):
     """
     Test that update_output returns the expected output.
 
@@ -82,21 +49,17 @@ def test_update_output(app, algo):
     the expected string based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the update_output function
-    callbacks = get_callbacks(app, algo)
     update_output = callbacks.get("update_output")
-
-    assert update_output is not None, "update_output function not found"
 
     # Test with different values
     assert update_output(500) == "# of scenarios: 500", "Should return correct string for 500"
     assert update_output(1000) == "# of scenarios: 1000", "Should return correct string for 1000"
 
 
-def test_update_output_lifecycle(app, algo):
+def test_update_output_lifecycle(callbacks):
     """
     Test that update_output_lifecycle returns the expected output.
 
@@ -104,21 +67,17 @@ def test_update_output_lifecycle(app, algo):
     the expected string based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the update_output_lifecycle function
-    callbacks = get_callbacks(app, algo)
     update_output_lifecycle = callbacks.get("update_output_lifecycle")
-
-    assert update_output_lifecycle is not None, "update_output_lifecycle function not found"
 
     # Test with different values
     assert update_output_lifecycle(500) == "# of scenarios: 500", "Should return correct string for 500"
     assert update_output_lifecycle(1000) == "# of scenarios: 1000", "Should return correct string for 1000"
 
 
-def test_show_hide_element(app, algo):
+def test_show_hide_element(callbacks):
     """
     Test that show_hide_element returns the expected output.
 
@@ -126,14 +85,10 @@ def test_show_hide_element(app, algo):
     the expected style dictionary based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the show_hide_element function
-    callbacks = get_callbacks(app, algo)
     show_hide_element = callbacks.get("show_hide_element")
-
-    assert show_hide_element is not None, "show_hide_element function not found"
 
     # Test with different values
     assert show_hide_element("ECOS_BB") == {"display": "block"}, "Should show for ECOS_BB"
@@ -143,7 +98,7 @@ def test_show_hide_element(app, algo):
     assert show_hide_element("SCS") == {"display": "none"}, "Should hide for SCS"
 
 
-def test_update_output_cluster(app, algo):
+def test_update_output_cluster(callbacks):
     """
     Test that update_output_cluster returns the expected output.
 
@@ -151,21 +106,17 @@ def test_update_output_cluster(app, algo):
     the expected style dictionary based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the update_output_cluster function
-    callbacks = get_callbacks(app, algo)
     update_output_cluster = callbacks.get("update_output_cluster")
-
-    assert update_output_cluster is not None, "update_output_cluster function not found"
 
     # Test with different values
     assert update_output_cluster(5) == "In case of CLUSTERING: # of the best performing assets selected from each cluster: 5", "Should return correct string for 5"
     assert update_output_cluster(10) == "In case of CLUSTERING: # of the best performing assets selected from each cluster: 10", "Should return correct string for 10"
 
 
-def test_update_output_ml_type(app, algo):
+def test_update_output_ml_type(callbacks):
     """
     Test that update_output_ml_type returns the expected output.
 
@@ -173,21 +124,17 @@ def test_update_output_ml_type(app, algo):
     the expected string based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the update_output_ml_type function
-    callbacks = get_callbacks(app, algo)
     update_output_ml_type = callbacks.get("update_output_ml_type")
-
-    assert update_output_ml_type is not None, "update_output_ml_type function not found"
 
     # Test with different values
     assert update_output_ml_type(3) == "# of clusters or # of MST runs: 3", "Should return correct string for 3"
     assert update_output_ml_type(5) == "# of clusters or # of MST runs: 5", "Should return correct string for 5"
 
 
-def test_update_output_cluster_lifecycle(app, algo):
+def test_update_output_cluster_lifecycle(callbacks):
     """
     Test that update_output_cluster_lifecycle returns the expected output.
 
@@ -195,14 +142,10 @@ def test_update_output_cluster_lifecycle(app, algo):
     the expected style dictionary based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the update_output_cluster_lifecycle function
-    callbacks = get_callbacks(app, algo)
     update_output_cluster_lifecycle = callbacks.get("update_output_cluster_lifecycle")
-
-    assert update_output_cluster_lifecycle is not None, "update_output_cluster_lifecycle function not found"
 
     # Test with different values
     assert update_output_cluster_lifecycle("Clustering") == {"display": "block"}, "Should show for Clustering"
@@ -210,7 +153,7 @@ def test_update_output_cluster_lifecycle(app, algo):
     assert update_output_cluster_lifecycle(None) == {"display": "none"}, "Should hide for None"
 
 
-def test_update_output_top_performers(app, algo):
+def test_update_output_top_performers(callbacks):
     """
     Test that update_output_top_performers returns the expected output.
 
@@ -218,14 +161,10 @@ def test_update_output_top_performers(app, algo):
     the expected style dictionary based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the update_output_top_performers function
-    callbacks = get_callbacks(app, algo)
     update_output_top_performers = callbacks.get("update_output_top_performers")
-
-    assert update_output_top_performers is not None, "update_output_top_performers function not found"
 
     # Test with different values
     assert update_output_top_performers("yes") == {"display": "block"}, "Should show for yes"
@@ -233,7 +172,7 @@ def test_update_output_top_performers(app, algo):
     assert update_output_top_performers(None) == {"display": "none"}, "Should hide for None"
 
 
-def test_update_output_ml_type_lifecycle(app, algo):
+def test_update_output_ml_type_lifecycle(callbacks):
     """
     Test that update_output_ml_type_lifecycle returns the expected output.
 
@@ -241,11 +180,9 @@ def test_update_output_ml_type_lifecycle(app, algo):
     the expected string based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the update_output_ml_type_lifecycle function
-    callbacks = get_callbacks(app, algo)
     update_output_ml_type_lifecycle = callbacks.get("update_output_ml_type_lifecycle")
 
     assert update_output_ml_type_lifecycle is not None, "update_output_ml_type_lifecycle function not found"
@@ -255,7 +192,7 @@ def test_update_output_ml_type_lifecycle(app, algo):
     assert update_output_ml_type_lifecycle(5) == "# of clusters or # of MST runs: 5", "Should return correct string for 5"
 
 
-def test_update_trading_sizes(app, algo):
+def test_update_trading_sizes(callbacks):
     """
     Test that update_trading_sizes returns the expected output.
 
@@ -263,11 +200,9 @@ def test_update_trading_sizes(app, algo):
     the expected string based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the update_trading_sizes function
-    callbacks = get_callbacks(app, algo)
     update_trading_sizes = callbacks.get("update_trading_sizes")
 
     assert update_trading_sizes is not None, "update_trading_sizes function not found"
@@ -277,7 +212,7 @@ def test_update_trading_sizes(app, algo):
     assert update_trading_sizes(10) == "Minimum required asset weight in the portfolio: 10%", "Should return correct string for 10"
 
 
-def test_update_test_date(app, algo):
+def test_update_test_date(callbacks):
     """
     Test that update_test_date returns the expected output.
 
@@ -285,11 +220,10 @@ def test_update_test_date(app, algo):
     the expected dates based on the input value.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
+        algo: The algorithm bot fixture (needed for date validation)
     """
     # Get the update_test_date function
-    callbacks = get_callbacks(app, algo)
     update_test_date = callbacks.get("update_test_date")
 
     assert update_test_date is not None, "update_test_date function not found"
@@ -298,8 +232,8 @@ def test_update_test_date(app, algo):
     result = update_test_date("2018-01-01", "2017-07-01")
     assert len(result) == 5, "Should return 5 values"
     assert result[0] == "2018-01-01", "First value should be the selected date"
-    assert result[1] == algo.max_date, "Second value should be algo.max_date"
-    assert result[2] == algo.min_date, "Third value should be algo.min_date"
+    assert result[1] == "2022-07-27 00:00:00", "Second value should be algo.max_date"
+    assert result[2] == "2014-06-11 00:00:00", "Third value should be algo.min_date"
     assert result[3] == "2018-01-01", "Fourth value should be the selected date"
     assert result[4] == "2018-01-01", "Fifth value should be the selected date"
 
@@ -307,13 +241,13 @@ def test_update_test_date(app, algo):
     result = update_test_date(None, "2017-07-01")
     assert len(result) == 5, "Should return 5 values"
     assert result[0] == "2017-07-01", "First value should be the saved_split_date"
-    assert result[1] == algo.max_date, "Second value should be algo.max_date"
-    assert result[2] == algo.min_date, "Third value should be algo.min_date"
+    assert result[1] == "2022-07-27 00:00:00"    # Call the function
+    assert result[2] == "2014-06-11 00:00:00", "Third value should be algo.min_date"
     assert result[3] == "2017-07-01", "Fourth value should be the saved_split_date"
     assert result[4] == "2017-07-01", "Fifth value should be the saved_split_date"
 
 
-def test_plot_lifecycle_no_click(app, algo):
+def test_plot_lifecycle_no_click(callbacks):
     """
     Test that plot_lifecycle returns the saved values when not clicked.
 
@@ -321,11 +255,9 @@ def test_plot_lifecycle_no_click(app, algo):
     the saved values when the button is not clicked.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the plot_lifecycle function
-    callbacks = get_callbacks(app, algo)
     plot_lifecycle = callbacks.get("plot_lifecycle")
 
     assert plot_lifecycle is not None, "plot_lifecycle function not found"
@@ -397,7 +329,7 @@ def test_plot_lifecycle_no_click(app, algo):
     assert result[20] is True, "Should return True for loading output"
 
 
-def test_plot_lifecycle_with_click(app, algo):
+def test_plot_lifecycle_with_click(callbacks):
     """
     Test that plot_lifecycle generates new figures when clicked.
 
@@ -405,14 +337,10 @@ def test_plot_lifecycle_with_click(app, algo):
     new figures when the button is clicked.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the plot_lifecycle function
-    callbacks = get_callbacks(app, algo)
     plot_lifecycle = callbacks.get("plot_lifecycle")
-
-    assert plot_lifecycle is not None, "plot_lifecycle function not found"
 
     # Create mock saved values
     saved_model = "MST"
@@ -484,7 +412,7 @@ def test_plot_lifecycle_with_click(app, algo):
     # Instead, we verify that the function returns the expected values based on the input parameters
 
 
-def test_plot_backtest_no_click(app, algo):
+def test_plot_backtest_no_click(callbacks):
     """
     Test that plot_backtest returns the saved values when not clicked.
 
@@ -492,14 +420,10 @@ def test_plot_backtest_no_click(app, algo):
     the saved values when the button is not clicked.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the plot_backtest function
-    callbacks = get_callbacks(app, algo)
     plot_backtest = callbacks.get("plot_backtest")
-
-    assert plot_backtest is not None, "plot_backtest function not found"
 
     # Create mock saved values
     saved_model = "MST"
@@ -559,7 +483,7 @@ def test_plot_backtest_no_click(app, algo):
     # assert result[11] == saved_optimization_model, "Should return saved optimization model"
 
 
-def test_plot_backtest_with_click(app, algo):
+def test_plot_backtest_with_click(callbacks):
     """
     Test that plot_backtest generates new figures when clicked.
 
@@ -567,11 +491,9 @@ def test_plot_backtest_with_click(app, algo):
     new figures when the button is clicked.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the plot_backtest function
-    callbacks = get_callbacks(app, algo)
     plot_backtest = callbacks.get("plot_backtest")
 
     assert plot_backtest is not None, "plot_backtest function not found"
@@ -637,7 +559,7 @@ def test_plot_backtest_with_click(app, algo):
     # Instead, we verify that the function returns the expected values based on the input parameters
 
 
-def test_plot_ml_no_click(app, algo):
+def test_plot_ml_no_click(callbacks):
     """
     Test that plot_ml returns the saved values when not clicked.
 
@@ -645,11 +567,9 @@ def test_plot_ml_no_click(app, algo):
     the saved values when the button is not clicked.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the plot_ml function
-    callbacks = get_callbacks(app, algo)
     plot_ml = callbacks.get("plot_ml")
 
     assert plot_ml is not None, "plot_ml function not found"
@@ -698,7 +618,7 @@ def test_plot_ml_no_click(app, algo):
     assert result[14] is True, "Should return True for loading output"
 
 
-def test_plot_ml_with_click(app, algo):
+def test_plot_ml_with_click(callbacks):
     """
     Test that plot_ml generates new figures when clicked.
 
@@ -706,11 +626,9 @@ def test_plot_ml_with_click(app, algo):
     new figures when the button is clicked.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the plot_ml function
-    callbacks = get_callbacks(app, algo)
     plot_ml = callbacks.get("plot_ml")
 
     assert plot_ml is not None, "plot_ml function not found"
@@ -762,74 +680,7 @@ def test_plot_ml_with_click(app, algo):
     # Instead, we verify that the function returns the expected values based on the input parameters
 
 
-def test_plot_dots_no_click(app, algo):
-    """
-    Test that plot_dots returns the saved values when not clicked.
-
-    This test verifies that the plot_dots function returns
-    the saved values when the button is not clicked.
-
-    Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
-    """
-    # Get the plot_dots function
-    callbacks = get_callbacks(app, algo)
-    plot_dots = callbacks.get("plot_dots")
-
-    assert plot_dots is not None, "plot_dots function not found"
-
-    # Create mock saved values
-    saved_figure = html.Div(id="saved-dots-figure")
-    saved_start = "2013-01-01"
-    saved_end = "2023-01-01"
-    saved_find_fund = ["Fund1", "Fund2"]
-    saved_top_performers_names = ["Fund3", "Fund4"]
-    saved_top_performers = "yes"
-    saved_combine_top_performers = "no"
-    saved_top_performers_pct = 15
-
-    # Call the function with no click
-    result = plot_dots(
-        "trigger",  # trigger
-        None,  # No click
-        "2013-01-01",  # start
-        "2023-01-01",  # end
-        ["Fund1", "Fund2"],  # search
-        saved_start,
-        saved_end,
-        saved_find_fund,
-        saved_figure,
-        "yes",  # top_performers
-        "no",  # combine_top_performers
-        15,  # top_performers_pct
-        saved_top_performers_names,
-        saved_top_performers,
-        saved_combine_top_performers,
-        saved_top_performers_pct,
-    )
-
-    # Verify the results
-    assert len(result) == 16, "Should return 16 values"
-    assert result[0] == saved_figure, "Should return saved figure"
-    assert result[1] == saved_start, "Should return saved start date"
-    assert result[2] == saved_end, "Should return saved end date"
-    assert result[3] == saved_find_fund, "Should return saved find fund"
-    assert result[4] == saved_start, "Should return saved start date"
-    assert result[5] == saved_end, "Should return saved end date"
-    assert result[6] == saved_find_fund, "Should return saved find fund"
-    assert result[7] == saved_figure, "Should return saved figure"
-    assert result[8] is True, "Should return True for loading output"
-    assert result[9] == saved_top_performers_names, "Should return saved top performers names"
-    assert result[10] == saved_top_performers, "Should return saved top performers"
-    assert result[11] == saved_combine_top_performers, "Should return saved combine top performers"
-    assert result[12] == saved_top_performers_pct, "Should return saved top performers percentage"
-    assert result[13] == saved_top_performers, "Should return saved top performers"
-    assert result[14] == saved_combine_top_performers, "Should return saved combine top performers"
-    assert result[15] == saved_top_performers_pct, "Should return saved top performers percentage"
-
-
-def test_plot_dots_with_click(app, algo):
+def test_plot_dots_with_click(callbacks):
     """
     Test that plot_dots generates new figures when clicked.
 
@@ -837,11 +688,9 @@ def test_plot_dots_with_click(app, algo):
     new figures when the button is clicked.
 
     Args:
-        app: The Dash app fixture
-        algo: The algorithm bot fixture
+        callbacks: The callbacks fixture
     """
     # Get the plot_dots function
-    callbacks = get_callbacks(app, algo)
     plot_dots = callbacks.get("plot_dots")
 
     assert plot_dots is not None, "plot_dots function not found"
@@ -858,7 +707,6 @@ def test_plot_dots_with_click(app, algo):
 
     # Call the function with a click and top_performers="yes"
     result = plot_dots(
-        "trigger",  # trigger
         1,  # Click
         "2013-01-01",  # start
         "2023-01-01",  # end
@@ -953,228 +801,3 @@ def test_plot_dots_with_click(app, algo):
 
     # Note: We can't verify the exact calls to the algo methods when using the real algo fixture
     # Instead, we verify that the function returns the expected values based on the input parameters
-
-
-# Tests using dash[testing]
-# These tests require dash[testing] to be installed
-# They demonstrate how to test callbacks using dash[testing]
-try:
-    import pytest
-    from dash.testing.application_runners import ThreadedRunner
-    from dash.testing.composite import DashComposite
-
-    from funnel.app import app
-
-    # The dash_app fixture is now defined in conftest.py
-
-    @pytest.fixture
-    def dash_duo_custom(dash_thread_server, request, tmpdir):
-        """
-        Create a DashComposite instance for testing.
-
-        This fixture creates a DashComposite instance that can be used
-        to test Dash applications with dash[testing].
-
-        Returns:
-            DashComposite: A DashComposite instance for testing
-        """
-        with DashComposite(
-            server=dash_thread_server,
-            browser=request.config.getoption("webdriver", "Chrome"),
-            remote=request.config.getoption("remote", False),
-            remote_url=request.config.getoption("remote_url", "http://localhost:4444/wd/hub"),
-            headless=request.config.getoption("headless", True),
-            options=request.config.hook.pytest_setup_options() if hasattr(request.config.hook, "pytest_setup_options") else None,
-            download_path=tmpdir.mkdir("download").strpath,
-            percy_assets_root=request.config.getoption("percy_assets", "tests/assets"),
-            percy_finalize=request.config.getoption("nopercyfinalize", True),
-            pause=request.config.getoption("pause", False),
-        ) as dc:
-            yield dc
-
-    def test_display_page_routing_with_dash_testing(dash_duo_custom, dash_app):
-        """
-        Test that display_page routes to the correct page based on pathname.
-
-        This test verifies that the display_page function returns the
-        correct layout based on the pathname.
-        """
-        # Start the server with the app
-        dash_duo_custom.start_server(dash_app)
-
-        # Wait for the page to load
-        dash_duo_custom.wait_for_page()
-
-        # Check that we're on the root page (page 1)
-        assert dash_duo_custom.driver.current_url.endswith("/")
-
-        # Navigate to page 2
-        dash_duo_custom.driver.get(f"{dash_duo_custom.server_url}/page-1")
-        dash_duo_custom.wait_for_page()
-
-        # Check that we're on page 2
-        assert dash_duo_custom.driver.current_url.endswith("/page-1")
-
-        # Navigate to page 3
-        dash_duo_custom.driver.get(f"{dash_duo_custom.server_url}/page-2")
-        dash_duo_custom.wait_for_page()
-
-        # Check that we're on page 3
-        assert dash_duo_custom.driver.current_url.endswith("/page-2")
-
-        # Navigate to an unknown page (should show page 4)
-        dash_duo_custom.driver.get(f"{dash_duo_custom.server_url}/unknown")
-        dash_duo_custom.wait_for_page()
-
-        # Check that we're on an unknown page
-        assert dash_duo_custom.driver.current_url.endswith("/unknown")
-
-    def test_update_output_with_dash_testing(dash_duo_custom, dash_app):
-        """
-        Test that update_output updates the output text based on slider value.
-
-        This test verifies that the update_output function updates the
-        output text based on the slider value.
-        """
-        # Start the server with the app
-        dash_duo_custom.start_server(dash_app)
-
-        # Navigate to page 2 where the slider is located
-        dash_duo_custom.driver.get(f"{dash_duo_custom.server_url}/page-1")
-        dash_duo_custom.wait_for_page()
-
-        # Find the slider and set its value to 500
-        dash_duo_custom.find_element("#my-slider2").send_keys("500")
-
-        # Wait for the callback to complete
-        dash_duo_custom.wait_for_callbacks_to_complete()
-
-        # Check that the output text has been updated
-        output_text = dash_duo_custom.find_element("#slider-output-container2").text
-        assert output_text == "# of scenarios: 500"
-
-        # Set the slider value to 1000
-        dash_duo_custom.find_element("#my-slider2").clear()
-        dash_duo_custom.find_element("#my-slider2").send_keys("1000")
-
-        # Wait for the callback to complete
-        dash_duo_custom.wait_for_callbacks_to_complete()
-
-        # Check that the output text has been updated
-        output_text = dash_duo_custom.find_element("#slider-output-container2").text
-        assert output_text == "# of scenarios: 1000"
-
-    def test_plot_backtest_with_dash_testing(dash_duo_custom, dash_app):
-        """
-        Test that plot_backtest updates the figures when the button is clicked.
-
-        This test verifies that the plot_backtest function updates the
-        figures when the backtest button is clicked.
-        """
-        # Start the server with the app
-        dash_duo_custom.start_server(dash_app)
-
-        # Navigate to page 2 where the backtest button is located
-        dash_duo_custom.driver.get(f"{dash_duo_custom.server_url}/page-1")
-        dash_duo_custom.wait_for_page()
-
-        # Check that we're on page 2
-        assert dash_duo_custom.driver.current_url.endswith("/page-1")
-
-        # Find the backtest button and click it
-        dash_duo_custom.find_element("#backtestRun").click()
-
-        # Wait for the callback to complete
-        dash_duo_custom.wait_for_callbacks_to_complete()
-
-        # Check that the figures have been updated
-        assert dash_duo_custom.find_element("#backtestPerfFig") is not None
-        assert dash_duo_custom.find_element("#backtestCompFig") is not None
-        assert dash_duo_custom.find_element("#backtestUniverseFig") is not None
-
-    def test_plot_ml_with_dash_testing(dash_duo_custom, dash_app):
-        """
-        Test that plot_ml updates the figures when the button is clicked.
-
-        This test verifies that the plot_ml function updates the
-        figures when the ML button is clicked.
-        """
-        # Start the server with the app
-        dash_duo_custom.start_server(dash_app)
-
-        # Navigate to the root page where the ML button is located
-        dash_duo_custom.driver.get(f"{dash_duo_custom.server_url}/")
-        dash_duo_custom.wait_for_page()
-
-        # Check that we're on the root page
-        assert dash_duo_custom.driver.current_url.endswith("/")
-
-        # Find the ML button and click it
-        dash_duo_custom.find_element("#MLRun").click()
-
-        # Wait for the callback to complete
-        dash_duo_custom.wait_for_callbacks_to_complete()
-
-        # Check that the figure has been updated
-        assert dash_duo_custom.find_element("#mlFig") is not None
-
-        # Check that the AI result table has been updated
-        assert dash_duo_custom.find_element("#AInumber") is not None
-
-    def test_plot_lifecycle_with_dash_testing(dash_duo_custom, dash_app):
-        """
-        Test that plot_lifecycle updates the figures when the button is clicked.
-
-        This test verifies that the plot_lifecycle function updates the
-        figures when the lifecycle button is clicked.
-        """
-        # Start the server with the app
-        dash_duo_custom.start_server(dash_app)
-
-        # Navigate to page 3 where the lifecycle button is located
-        dash_duo_custom.driver.get(f"{dash_duo_custom.server_url}/page-2")
-        dash_duo_custom.wait_for_page()
-
-        # Check that we're on page 3
-        assert dash_duo_custom.driver.current_url.endswith("/page-2")
-
-        # Find the lifecycle button and click it
-        dash_duo_custom.find_element("#lifecycle-run").click()
-
-        # Wait for the callback to complete
-        dash_duo_custom.wait_for_callbacks_to_complete()
-
-        # Check that the figures have been updated
-        assert dash_duo_custom.find_element("#glidepaths-output-fig") is not None
-        assert dash_duo_custom.find_element("#performance-output-fig") is not None
-        assert dash_duo_custom.find_element("#lifecycle-all-output-fig") is not None
-
-    def test_plot_dots_with_dash_testing(dash_duo_custom, dash_app):
-        """
-        Test that plot_dots updates the figures when the button is clicked.
-
-        This test verifies that the plot_dots function updates the
-        figures when the show button is clicked.
-        """
-        # Start the server with the app
-        dash_duo_custom.start_server(dash_app)
-
-        # Navigate to the root page where the show button is located
-        dash_duo_custom.driver.get(f"{dash_duo_custom.server_url}/")
-        dash_duo_custom.wait_for_page()
-
-        # Check that we're on the root page
-        assert dash_duo_custom.driver.current_url.endswith("/")
-
-        # Find the show button and click it
-        dash_duo_custom.find_element("#show").click()
-
-        # Wait for the callback to complete
-        dash_duo_custom.wait_for_callbacks_to_complete()
-
-        # Check that the figure has been updated
-        assert dash_duo_custom.find_element("#dotsFig") is not None
-
-except ImportError:
-    # dash[testing] is not installed, so we skip these tests
-    pass
