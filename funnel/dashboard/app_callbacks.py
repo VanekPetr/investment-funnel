@@ -738,3 +738,22 @@ def get_callbacks(app, algo):
                 saved_combine_top_performers,
                 saved_top_performers_pct,
             )
+
+    # Return all callback functions so they can be accessed by tests
+    return {
+        "display_page": display_page,
+        "plot_lifecycle": plot_lifecycle,
+        "plot_backtest": plot_backtest,
+        "plot_ml": plot_ml,
+        "plot_dots": plot_dots,
+        "update_output": update_output,
+        "update_output_lifecycle": update_output_lifecycle,
+        "show_hide_element": show_hide_element,
+        "update_output_cluster": update_output_cluster,
+        "update_output_ml_type": update_output_ml_type,
+        "update_output_cluster_lifecycle": update_output_cluster_lifecycle,
+        "update_output_top_performers": update_output_top_performers,
+        "update_output_ml_type_lifecycle": update_output_ml_type_lifecycle,
+        "update_trading_sizes": update_trading_sizes,
+        "update_test_date": update_test_date,
+    }
