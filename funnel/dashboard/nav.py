@@ -18,9 +18,10 @@ def get_navbar():
                 [
                     dbc.Nav(
                         [
-                            dbc.NavLink("Page 1", href="/page-1", active="exact"),
-                            dbc.NavLink("Page 2", href="/page-2", active="exact"),
                             dbc.NavLink("Overview", href="/overview", active="exact"),
+                            dbc.NavLink("Lifecycle", href="/lifecycle", active="exact"),
+                            dbc.NavLink("Backtest", href="/backtest", active="exact"),
+                            dbc.NavLink("AI Feature Selection", href="/ai_feature_selection", active="exact"),
                         ],
                         vertical=True,
                         pills=True,

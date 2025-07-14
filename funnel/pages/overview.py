@@ -2,7 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 from typing import Any
 
-from dash import html, dcc, callback, Input, Output, State
+from dash import html, dcc, callback, Input
 from ifunnel.models.main import initialize_bot
 from funnel.models.overview import OverviewInputs, OverviewOutputs, plot_overview
 
