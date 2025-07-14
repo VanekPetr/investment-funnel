@@ -5,8 +5,8 @@ import dash_bootstrap_components as dbc
 from dash import Input, callback, dcc, html
 from ifunnel.models.main import initialize_bot
 
-from funnel.models.lifecycle import LifecycleInputs, LifecycleOutputs, plot_lifecycle
-from funnel.styles import (
+from .models.lifecycle import LifecycleInputs, LifecycleOutputs, plot_lifecycle
+from .styles import (
     DESCRIP_INFO,
     GRAPH_LEFT,
     GRAPH_RIGHT,

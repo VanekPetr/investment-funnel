@@ -6,8 +6,8 @@ import dash_bootstrap_components as dbc
 from dash import Input, callback, dcc, html
 from ifunnel.models.main import initialize_bot
 
-from funnel.models.backtest import BacktestInputs, BacktestOutputs, plot_backtest
-from funnel.styles import (
+from .models.backtest import BacktestInputs, BacktestOutputs, plot_backtest
+from .styles import (
     DESCRIP_INFO,
     GRAPH_LEFT,
     GRAPH_RIGHT,
