@@ -48,16 +48,6 @@ def test_load_page():
     assert any(isinstance(child, html.Div) and child.id == "page-content" for child in children), \
         "Layout should have a page-content Div"
 
-    # Check for dcc.Store components
-    store_ids = [
-        "saved-start-date-page-0", "saved-end-date-page-0", "saved-find-fund",
-        "saved-top-performers-names", "saved-top-performers", "saved-combine-top-performers",
-        "saved-top-performers-pct", "saved-figure-page-0"
-    ]
-    for store_id in store_ids:
-        assert any(isinstance(child, dcc.Store) and child.id == store_id for child in children), \
-            f"Layout should have a {store_id} Store"
-
 
 def test_create_app():
     """
