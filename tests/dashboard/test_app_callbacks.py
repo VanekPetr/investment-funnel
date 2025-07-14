@@ -8,7 +8,7 @@ provides the callback functions for the investment funnel dashboard.
 from funnel.dashboard.ai_feature import FeatureInput, FeatureOutput, plot_ml
 from funnel.dashboard.backtest import BacktestInputs, BacktestOutputs, plot_backtest
 from funnel.dashboard.lifecycle import LifecycleInputs, LifecycleOutputs, plot_lifecycle
-from funnel.dashboard.overview import OverviewInputs, OverviewOutputs, plot_overview
+from funnel.models.overview import OverviewInputs, plot_overview, OverviewOutputs
 
 
 def test_plot_lifecycle(algo):

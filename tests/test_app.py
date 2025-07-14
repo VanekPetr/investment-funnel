@@ -9,10 +9,10 @@ from unittest.mock import MagicMock, patch
 
 from dash import dcc, html
 
-from funnel.app import algo, create_app, load_page, main, server
+from funnel.app import main, server
 
 
-def test_algo_initialization():
+def test_algo_initialization(algo):
     """
     Test that the algo global variable is properly initialized.
 
@@ -25,18 +25,17 @@ def test_algo_initialization():
     assert hasattr(algo, "names"), "algo should have names attribute"
 
 
-def test_load_page():
+def test_load_page(app):
     """
     Test that load_page returns the expected layout.
 
     This test verifies that the load_page function returns a Div
     with the expected structure and components.
     """
-    # Call the function
-    layout = load_page()
+    layout = app.layout
 
     # Verify the results
-    assert layout is not None, "Layout should be created"
+    assert app.layout is not None, "Layout should be created"
     assert isinstance(layout, html.Div), "Layout should be a Div"
 
     # Check that the layout has the expected structure
