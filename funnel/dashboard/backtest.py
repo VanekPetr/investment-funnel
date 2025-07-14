@@ -114,8 +114,9 @@ def plot_backtest(algo, inputs):
         benchmark=bench_table.iloc[0].to_list() + bench_init,
     )
 
-    fig_universe.show()
-
+    # try:
+    # fig_universe.show()
+    
     universe_figure = dcc.Graph(
         figure=fig_universe, style={"margin": "0%", "height": "1200px"}
     )
