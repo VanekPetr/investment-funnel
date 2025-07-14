@@ -42,6 +42,7 @@ server = app.server
 # Local dev
 def main():
     app.run(debug=False, dev_tools_hot_reload=True, port=8222)
+    return app
 
 
 if __name__ == "__main__":
