@@ -5,15 +5,20 @@ This module contains tests for the app.py module, which
 provides the main entry point for the investment funnel dashboard.
 """
 
+from typing import Any
+
 from funnel.app import server
 
 
-def test_algo_initialization(algo):
+def test_algo_initialization(algo: Any) -> None:
     """
     Test that the algo global variable is properly initialized.
 
     This test verifies that the algo global variable is an instance
     of the investment bot with the expected attributes.
+
+    Args:
+        algo (Any): The investment bot fixture from conftest.py
     """
     assert algo is not None, "algo should be initialized"
     assert hasattr(algo, "min_date"), "algo should have min_date attribute"
@@ -21,7 +26,7 @@ def test_algo_initialization(algo):
     assert hasattr(algo, "names"), "algo should have names attribute"
 
 
-def test_server():
+def test_server() -> None:
     """
     Test that the server global variable is properly initialized.
 
