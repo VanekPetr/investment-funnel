@@ -5,8 +5,8 @@ import dash_bootstrap_components as dbc
 from dash import Input, callback, dash_table, dcc, html
 from ifunnel.models.main import initialize_bot
 
-from .models.ai_feature import FeatureInput, FeatureOutput, plot_ml
-from .styles import (
+from funnel.pages.models.ai_feature import FeatureInput, FeatureOutput, plot_ml
+from funnel.pages.styles import (
     DESCRIP_INFO,
     GRAPH_LEFT,
     GRAPH_RIGHT,
