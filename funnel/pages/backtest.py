@@ -1,3 +1,12 @@
+"""
+Backtesting page module for the Investment Funnel dashboard.
+
+This module defines the UI components and callback functions for the Backtest page.
+It allows users to test investment strategies with different machine learning models,
+scenario generation methods, and portfolio optimization models for a given training
+and testing time period.
+"""
+
 from typing import Any
 
 import cvxpy
@@ -193,6 +202,26 @@ layout = html.Div(
     prevent_initial_call=True
 )
 def run_backtest(click: int, *args: Any):
+    """
+    Callback function for the Backtest page.
+
+    This function is triggered when the user clicks the "Run Backtest" button.
+    It processes the input parameters, runs the backtesting workflow with the
+    selected feature selection method, scenario generation method, and portfolio
+    optimization model, and returns the visualization results.
+
+    Args:
+        click (int): Number of times the button has been clicked
+        *args (Any): Variable length argument list containing the input values
+                    from the UI components, in the order defined by BacktestInputs.as_state_vector()
+
+    Returns:
+        tuple: A tuple of output values for the UI components, as defined by
+               BacktestOutputs.as_output_vector()
+
+    Raises:
+        dash.exceptions.PreventUpdate: If the callback is triggered without a button click
+    """
     if not click:
         raise dash.exceptions.PreventUpdate
 

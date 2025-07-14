@@ -1,3 +1,11 @@
+"""
+AI Feature Selection page module for the Investment Funnel dashboard.
+
+This module defines the UI components and callback functions for the AI Feature Selection page.
+It allows users to apply machine learning algorithms (Minimum Spanning Tree or Clustering)
+to reduce the number of ETFs in their investment universe based on similarity measures.
+"""
+
 from typing import Any
 
 import dash
@@ -133,6 +141,25 @@ layout = html.Div(
     prevent_initial_call=True
 )
 def run_ml(click: int, *args: Any):
+    """
+    Callback function for the AI Feature Selection page.
+
+    This function is triggered when the user clicks the "Compute" button.
+    It processes the input parameters, runs the selected machine learning algorithm
+    (MST or Clustering), and returns the visualization results.
+
+    Args:
+        click (int): Number of times the button has been clicked
+        *args (Any): Variable length argument list containing the input values
+                    from the UI components, in the order defined by FeatureInput.as_state_vector()
+
+    Returns:
+        tuple: A tuple of output values for the UI components, as defined by
+               FeatureOutput.as_output_vector()
+
+    Raises:
+        dash.exceptions.PreventUpdate: If the callback is triggered without a button click
+    """
     if not click:
         raise dash.exceptions.PreventUpdate
 

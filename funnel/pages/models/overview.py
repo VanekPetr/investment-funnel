@@ -105,6 +105,20 @@ class OverviewOutputs(BaseModel):
         return tuple(self.__dict__.values())
 
 def plot_overview(algo, inputs):
+    """
+    Generate market overview visualization based on input parameters.
+
+    This function processes the input parameters to create a scatter plot visualization
+    of the investment universe. It can highlight specific funds and top-performing assets
+    based on the user's selections.
+
+    Args:
+        algo: The algorithm object containing the visualization methods
+        inputs (OverviewInputs): The input parameters for the visualization
+
+    Returns:
+        OverviewOutputs: The output data containing the visualization figure
+    """
     selected_start = str(inputs.start_date)
     selected_end = str(inputs.end_date)
 

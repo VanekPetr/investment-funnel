@@ -1,3 +1,11 @@
+"""
+Lifecycle Investment page module for the Investment Funnel dashboard.
+
+This module defines the UI components and callback functions for the Lifecycle page.
+It allows users to test lifecycle investment strategies with different risk appetites,
+time horizons, and withdrawal patterns, helping them plan for long-term financial goals.
+"""
+
 from typing import Any
 
 import dash
@@ -191,6 +199,26 @@ layout = html.Div(
     prevent_initial_call=True
 )
 def run_lifecycle(click: int, *args: Any):
+    """
+    Callback function for the Lifecycle page.
+
+    This function is triggered when the user clicks the "Run Simulations" button.
+    It processes the input parameters, runs the lifecycle investment analysis with the
+    selected feature selection method, scenario generation method, and investment parameters,
+    and returns the visualization results.
+
+    Args:
+        click (int): Number of times the button has been clicked
+        *args (Any): Variable length argument list containing the input values
+                    from the UI components, in the order defined by LifecycleInputs.as_state_vector()
+
+    Returns:
+        tuple: A tuple of output values for the UI components, as defined by
+               LifecycleOutputs.as_output_vector()
+
+    Raises:
+        dash.exceptions.PreventUpdate: If the callback is triggered without a button click
+    """
     if not click:
         raise dash.exceptions.PreventUpdate
 
