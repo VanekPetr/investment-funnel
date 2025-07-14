@@ -5,10 +5,11 @@ This module contains tests for the app_callbacks.py module, which
 provides the callback functions for the investment funnel dashboard.
 """
 
-from funnel.dashboard.backtest import plot_backtest, BacktestInputs, BacktestOutputs
-from funnel.dashboard.lifecycle import plot_lifecycle, LifecycleInputs, LifecycleOutputs
-from funnel.dashboard.overview import plot_overview, OverviewInputs, OverviewOutputs
-from funnel.dashboard.ai_feature import plot_ml, FeatureInput, FeatureOutput
+from funnel.dashboard.ai_feature import FeatureInput, FeatureOutput, plot_ml
+from funnel.dashboard.backtest import BacktestInputs, BacktestOutputs, plot_backtest
+from funnel.dashboard.lifecycle import LifecycleInputs, LifecycleOutputs, plot_lifecycle
+from funnel.dashboard.overview import OverviewInputs, OverviewOutputs, plot_overview
+
 
 def test_plot_lifecycle(algo):
     """

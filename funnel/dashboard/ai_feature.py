@@ -1,7 +1,8 @@
-from pydantic import BaseModel
-from dash import State, Output
 from typing import Any
-from dash import dcc
+
+from dash import Output, State, dcc
+from pydantic import BaseModel
+
 
 class FeatureInput(BaseModel):
     model: str

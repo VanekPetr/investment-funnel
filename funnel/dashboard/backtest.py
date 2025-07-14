@@ -1,7 +1,8 @@
-from pydantic import BaseModel
-from dash import State, Output
 from typing import Any
-from dash import dcc
+
+from dash import Output, State, dcc
+from pydantic import BaseModel
+
 
 class BacktestInputs(BaseModel):
     model: str
@@ -65,8 +66,8 @@ def plot_backtest(algo, inputs):
     # RUN ML algo
     if inputs.model == "MST":
         _, subset_of_assets = algo.mst(
-            start_date=inputs.start_train_date, 
-            end_date=inputs.end_train_date, 
+            start_date=inputs.start_train_date,
+            end_date=inputs.end_train_date,
             n_mst_runs=inputs.model_spec
         )
     else:
