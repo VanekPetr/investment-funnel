@@ -3,6 +3,7 @@ from typing import Any
 from dash import Output, State, dcc
 from pydantic import BaseModel
 
+
 class OverviewInputs(BaseModel):
     start_date: str
     end_date: str

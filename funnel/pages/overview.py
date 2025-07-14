@@ -1,19 +1,12 @@
-import dash
-import dash_bootstrap_components as dbc
 from typing import Any
 
-from dash import html, dcc, callback, Input
+import dash
+import dash_bootstrap_components as dbc
+from dash import Input, callback, dcc, html
 from ifunnel.models.main import initialize_bot
+
 from funnel.models.overview import OverviewInputs, OverviewOutputs, plot_overview
-
-from funnel.styles import (MAIN_TITLE,
-                     LOADING_STYLE,
-                     SUB_TITLE,
-                     OPTION_ELEMENT,
-                     GRAPH_RIGHT,
-                     GRAPH_LEFT,
-                     OPTION_BTN)
-
+from funnel.styles import GRAPH_LEFT, GRAPH_RIGHT, LOADING_STYLE, MAIN_TITLE, OPTION_BTN, OPTION_ELEMENT, SUB_TITLE
 
 dash.register_page(__name__, path="/overview", name="Overview")
 

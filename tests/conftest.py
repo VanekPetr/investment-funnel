@@ -22,5 +22,3 @@ def algo(resource_dir: Path):
         The initialized investment bot
     """
     return initialize_bot(file = resource_dir / "all_etfs_rets.parquet.gzip")
-
-

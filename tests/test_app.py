@@ -5,11 +5,9 @@ This module contains tests for the app.py module, which
 provides the main entry point for the investment funnel dashboard.
 """
 
-from unittest.mock import MagicMock, patch
 
-from dash import dcc, html
 
-from funnel.app import main, server
+from funnel.app import server
 
 
 def test_algo_initialization(algo):

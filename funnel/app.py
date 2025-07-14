@@ -1,6 +1,7 @@
 import dash
 import dash_bootstrap_components as dbc
 from ifunnel.models.main import initialize_bot
+
 from funnel.dashboard.nav import get_navbar
 
 # Global object
