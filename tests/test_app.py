@@ -45,7 +45,8 @@ def test_load_page():
 
     # Check for essential components
     assert any(isinstance(child, dcc.Location) for child in children), "Layout should have a Location component"
-    assert any(isinstance(child, html.Div) and child.id == "page-content" for child in children), "Layout should have a page-content Div"
+    assert any(isinstance(child, html.Div) and child.id == "page-content" for child in children), \
+        "Layout should have a page-content Div"
 
     # Check for dcc.Store components
     store_ids = [
@@ -54,7 +55,8 @@ def test_load_page():
         "saved-top-performers-pct", "saved-figure-page-0"
     ]
     for store_id in store_ids:
-        assert any(isinstance(child, dcc.Store) and child.id == store_id for child in children), f"Layout should have a {store_id} Store"
+        assert any(isinstance(child, dcc.Store) and child.id == store_id for child in children), \
+            f"Layout should have a {store_id} Store"
 
 
 def test_create_app():
