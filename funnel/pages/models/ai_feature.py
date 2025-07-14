@@ -1,3 +1,11 @@
+"""
+AI Feature Selection model module for the Investment Funnel dashboard.
+
+This module provides the data models and processing logic for the AI Feature Selection page.
+It includes functionality for Minimum Spanning Tree (MST) and Clustering methods to reduce
+the number of assets in the investment universe.
+"""
+
 from typing import Any
 
 from dash import Output, State, dcc
@@ -5,6 +13,18 @@ from pydantic import BaseModel
 
 
 class FeatureInput(BaseModel):
+    """
+    Input model for AI Feature Selection functionality.
+
+    This Pydantic model defines the input parameters required for the AI feature
+    selection process, including the model type, specifications, and date range.
+
+    Attributes:
+        model (str): The AI model type to use (e.g., "MST" or "Cluster")
+        spec (int): The number of clusters or MST runs to perform
+        start_date (str): The start date for the analysis period
+        end_date (str): The end date for the analysis period
+    """
     model: str
     spec: int
     start_date: str
@@ -12,6 +32,15 @@ class FeatureInput(BaseModel):
 
     @classmethod
     def as_state_vector(cls) -> list[State]:
+        """
+        Create a list of Dash State objects for callback input capturing.
+
+        This method maps the model's attributes to the corresponding UI components
+        to capture their values in a Dash callback.
+
+        Returns:
+            list[State]: A list of Dash State objects for the callback
+        """
         return [
             State("model-dropdown", "value"),
             State("ML-num-dropdown", "value"),
@@ -21,16 +50,49 @@ class FeatureInput(BaseModel):
 
     @classmethod
     def from_kwargs(cls, **kwargs: Any) -> "FeatureInput":
+        """
+        Create a FeatureInput instance from keyword arguments.
+
+        This factory method creates a new instance of the class from
+        the provided keyword arguments.
+
+        Args:
+            **kwargs: Keyword arguments matching the model's fields
+
+        Returns:
+            FeatureInput: A new instance of the FeatureInput class
+        """
         return cls(**kwargs)
 
 # --- Outputs Model ---
 class FeatureOutput(BaseModel):
+    """
+    Output model for AI Feature Selection functionality.
+
+    This Pydantic model defines the output data structure for the AI feature
+    selection process, including the visualization figure, selected assets data,
+    and summary information.
+
+    Attributes:
+        ml_figure (Any): The visualization figure (Dash component)
+        ai_result (Any): The selected assets data for the data table
+        ai_number (str): A text summary of the number of selected assets
+    """
     ml_figure: Any
     ai_result: Any
     ai_number: str
 
     @classmethod
     def as_output_vector(cls) -> list[Output]:
+        """
+        Create a list of Dash Output objects for callback output mapping.
+
+        This method maps the model's attributes to the corresponding UI components
+        that will display the results in the Dash application.
+
+        Returns:
+            list[Output]: A list of Dash Output objects for the callback
+        """
         return [
             Output("mlFig", "children"),
             Output("AIResult", "data"),
@@ -38,9 +100,32 @@ class FeatureOutput(BaseModel):
         ]
 
     def as_tuple(self) -> tuple[Any]:
+        """
+        Convert the model instance to a tuple of values.
+
+        This method is used to prepare the model's data for returning
+        from a Dash callback function.
+
+        Returns:
+            tuple[Any]: A tuple containing all the model's attribute values
+        """
         return tuple(self.__dict__.values())
 
 def plot_ml(algo, inputs):
+    """
+    Perform AI feature selection and generate visualization outputs.
+
+    This function processes the input parameters to run either the Minimum Spanning Tree
+    or Clustering algorithm for feature selection. It generates a visualization figure,
+    prepares the selected assets data for display in a table, and creates a summary text.
+
+    Args:
+        algo: The algorithm object containing the feature selection methods
+        inputs (FeatureInput): The input parameters for the feature selection process
+
+    Returns:
+        FeatureOutput: The output data containing the visualization and selected assets
+    """
     selected_start = str(inputs.start_date)
     selected_end = str(inputs.end_date)
 

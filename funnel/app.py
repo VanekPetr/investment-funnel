@@ -1,14 +1,33 @@
+"""
+Main application module for the Investment Funnel dashboard.
+
+This module initializes and configures the Dash application, sets up the layout,
+and provides entry points for both production (Gunicorn) and local development.
+"""
+
 import dash
 import dash_bootstrap_components as dbc
 from ifunnel.models.main import initialize_bot
 
 from .dashboard.nav import get_navbar
 
-# Global object
+# Global object - initialize the algorithm bot for use across the application
 algo = initialize_bot()
 
 
 def create_dash_app():
+    """
+    Create and configure the Dash application.
+
+    This function initializes a Dash application with the following configurations:
+    - Multi-page support enabled
+    - Bootstrap styling
+    - Responsive viewport
+    - Callback exceptions suppressed for dynamic loading
+
+    Returns:
+        dash.Dash: Configured Dash application instance
+    """
     app = dash.Dash(
         __name__,
         use_pages=True,
@@ -40,8 +59,17 @@ app = create_dash_app()
 server = app.server
 
 
-# Local dev
+# Local dev entry point
 def main():
+    """
+    Run the application for local development.
+
+    This function starts the Dash server with hot-reloading enabled
+    for development purposes. It uses port 8222 by default.
+
+    Returns:
+        dash.Dash: The running Dash application instance
+    """
     app.run(debug=False, dev_tools_hot_reload=True, port=8222)
     return app
 

@@ -1,8 +1,24 @@
+"""
+Navigation module for the Investment Funnel dashboard.
+
+This module provides the navigation sidebar component used across the application.
+"""
+
 import dash_bootstrap_components as dbc
 from dash import html
 
 
 def get_navbar():
+    """
+    Create and return the navigation sidebar component.
+
+    This function builds a responsive sidebar with the application logo and
+    navigation links to all available pages. The sidebar is fixed to the left
+    side of the screen and styled with Bootstrap.
+
+    Returns:
+        dbc.Col: A Bootstrap column component containing the navigation sidebar
+    """
     return dbc.Col(
         [
             # Logo (replace with actual image if you have one)
