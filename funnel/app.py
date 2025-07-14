@@ -1,54 +1,48 @@
 import dash
 import dash_bootstrap_components as dbc
-from dash import dcc, html
 from ifunnel.models.main import initialize_bot
+from funnel.dashboard.nav import get_navbar
 
-from .dashboard.app_callbacks import get_callbacks
-from .dashboard.app_layouts import page_1_layout
-
+# Global object
 algo = initialize_bot()
 
 
-def load_page():
-    return html.Div(
-        [
-            # layout of the app
-            dcc.Location(id="url"),
-            html.Div(id="page-content", children=page_1_layout(algo))
-        ]
-    )
-
-
-def create_app():
-    # Initialize the app
+def create_dash_app():
     app = dash.Dash(
         __name__,
+        use_pages=True,
+        pages_folder="pages",  # <-- adjust as needed
         external_stylesheets=[dbc.themes.BOOTSTRAP],
-        meta_tags=[
-            {"name": "viewport", "content": "width=device-width, initial-scale=1"}
-        ],
+        meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+        suppress_callback_exceptions=True,
     )
-    # App layout
-    app.layout = load_page()
 
-    # App callbacks
-    get_callbacks(app, algo)
+    # Global layout (navbar + dynamic page content)
+    app.layout = dbc.Container(
+        dbc.Row([
+            get_navbar(),  # Left column
+            dbc.Col(
+                dash.page_container,
+                width={"size": 10, "offset": 2},  # Adjust to avoid overlap
+                style={"padding": "2rem"}
+            )
+        ]),
+        fluid=True,
+        style={"padding": "0"}
+    )
 
-    # return the flask server
-    return app.server
+    return app
 
 
-# Create the Flask server instance for Gunicorn
-server = create_app()
+# Gunicorn entry
+app = create_dash_app()
+server = app.server
 
 
-# Keep the development server setup
+# Local dev
 def main():
-    a = create_app()
-    dash_app = dash.Dash(__name__)
-    dash_app.server = a
-    dash_app.run(debug=False, dev_tools_hot_reload=False)
-    return
+    app.run(debug=False, dev_tools_hot_reload=True, port=8222)
+
 
 if __name__ == "__main__":
-    app = main()            # pragma: no cover
+    main()  # pragma: no cover
