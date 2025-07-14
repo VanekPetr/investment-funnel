@@ -6,7 +6,15 @@ from dash import Input, callback, dcc, html
 from ifunnel.models.main import initialize_bot
 
 from funnel.pages.models.overview import OverviewInputs, OverviewOutputs, plot_overview
-from funnel.pages.styles import GRAPH_LEFT, GRAPH_RIGHT, LOADING_STYLE, MAIN_TITLE, OPTION_BTN, OPTION_ELEMENT, SUB_TITLE
+from funnel.pages.styles import (
+    GRAPH_LEFT,
+    GRAPH_RIGHT,
+    LOADING_STYLE,
+    MAIN_TITLE,
+    OPTION_BTN,
+    OPTION_ELEMENT,
+    SUB_TITLE,
+)
 
 dash.register_page(__name__, path="/overview", name="Overview")
 
