@@ -8,8 +8,6 @@ requires-python = ">=3.10"
 dependencies = [
     "dash-bootstrap-components>=2.0",
     "dash>=3.1.0",
-    "pandas>=2.2.3",
-    "numpy>=2.2.1",
     "pyarrow>=18.1.0",
     "gunicorn>=23.0.0",
     "cvxpy-base>=1.6.0",

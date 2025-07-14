@@ -667,8 +667,6 @@ dependencies = [
     { name = "flask" },
     { name = "gunicorn" },
     { name = "ifunnel" },
-    { name = "numpy" },
-    { name = "pandas" },
     { name = "pyarrow" },
     { name = "pydantic" },
 ]
@@ -691,8 +689,6 @@ requires-dist = [
     { name = "flask", specifier = ">=3.0.3" },
     { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "ifunnel", specifier = ">=0.0.6" },
-    { name = "numpy", specifier = ">=2.2.1" },
-    { name = "pandas", specifier = ">=2.2.3" },
     { name = "pyarrow", specifier = ">=18.1.0" },
     { name = "pydantic", specifier = ">=2.10.3" },
 ]
