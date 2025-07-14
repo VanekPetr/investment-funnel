@@ -116,7 +116,7 @@ def plot_backtest(algo, inputs):
 
     # try:
     # fig_universe.show()
-    
+
     universe_figure = dcc.Graph(
         figure=fig_universe, style={"margin": "0%", "height": "1200px"}
     )
