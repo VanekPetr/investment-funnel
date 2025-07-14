@@ -8,6 +8,7 @@ class OverviewInputs(BaseModel):
     start_date: str
     end_date: str
     search: list[str] = [""]
+    top_performers: str = "no"
 
     @classmethod
     def as_state_vector(cls) -> list[State]:
@@ -16,7 +17,6 @@ class OverviewInputs(BaseModel):
             State("picker-show", "end_date"),
             State("find-fund", "value"),
             State("top-performers", "value", allow_optional=True),
-            #State("combine-top-performers", "value", allow_optional=True),
         ]
 
     @classmethod
