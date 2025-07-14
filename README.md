@@ -49,14 +49,17 @@ framework and Dash application, it presents a comprehensive environment for the 
 investment strategies
 
 ### Portfolio optimization models
+
 1. Conditional Value at Risk (CVaR) model - [read more](https://docs.mosek.com/portfolio-cookbook/riskmeasures.html#conditional-value-at-risk)
 2. Mean-Variance (Markowitz) model - [read more](https://docs.mosek.com/portfolio-cookbook/markowitz.html)
 
 ### ML models
+
 1. Minimum Spanning Tree (MST) model - [read more](https://en.wikipedia.org/wiki/Minimum_spanning_tree)
 2. Hierarchical Clustering (HCA) model - [read more](https://en.wikipedia.org/wiki/Hierarchical_clustering)
 
 ### Scenario generation algorithms
+
 1. Monte Carlo scenario simulation - [read more](https://en.wikipedia.org/wiki/Monte_Carlo_method)
 2. Bootstrap scenario simulation - [read more](https://en.wikipedia.org/wiki/Bootstrapping_(statistics))
 
@@ -194,54 +197,6 @@ The following callbacks are tested using dash[testing]:
 - `plot_ml`: Tests that the ML figures are updated when the button is clicked
 - `plot_lifecycle`: Tests that the lifecycle figures are updated when the button is clicked
 - `plot_dots`: Tests that the dots figure is updated when the button is clicked
-
-To run the dash[testing] tests, you need to:
-
-1. Install dash[testing] by adding it to the dev dependencies in pyproject.toml:
-   ```toml
-   dev = [
-       "pytest-cov>=6.0.0",
-       "pytest>=8.3.3",
-       "pre-commit>=4.0.1",
-       "ifunnel>=0.0.6",
-       "ecos>=2.0.14",
-       "dash[testing]>=3.1.0",
-   ]
-   ```
-
-2. Install the dependencies:
-   ```bash
-   pip install -e ".[dev]"
-   ```
-
-3. Run the tests:
-   ```bash
-   pytest tests/dashboard/test_app_callbacks.py::test_display_page_routing_with_dash_testing -v
-   pytest tests/dashboard/test_app_callbacks.py::test_update_output_with_dash_testing -v
-   pytest tests/dashboard/test_app_callbacks.py::test_plot_backtest_with_dash_testing -v
-   pytest tests/dashboard/test_app_callbacks.py::test_plot_ml_with_dash_testing -v
-   pytest tests/dashboard/test_app_callbacks.py::test_plot_lifecycle_with_dash_testing -v
-   pytest tests/dashboard/test_app_callbacks.py::test_plot_dots_with_dash_testing -v
-   ```
-
-   Or run all dash[testing] tests at once:
-   ```bash
-   pytest tests/dashboard/test_app_callbacks.py -k "with_dash_testing" -v
-   ```
-
-#### Benefits of dash[testing]
-
-Using dash[testing] provides several benefits over the traditional approach:
-
-1. **End-to-end testing**: Tests the entire application stack, including the Dash framework, callbacks, and browser interactions.
-2. **Real browser interaction**: Tests how the application behaves in a real browser, which can catch issues that unit tests might miss.
-3. **Visual testing**: Can be used with Percy for visual regression testing.
-4. **Integration testing**: Tests how different components of the application work together.
-
-#### When to Use Each Approach
-
-- Use the traditional approach for unit testing callbacks in isolation, when you want to test the logic of the callback function without running a Dash application.
-- Use dash[testing] for integration and end-to-end testing, when you want to test how the application behaves in a real browser and how different components work together.
 
 ## Contributing
 

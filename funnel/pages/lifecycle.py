@@ -1,8 +1,20 @@
-import dash_bootstrap_components as dbc
-from dash import dcc, html
+"""
+Lifecycle Investment page module for the Investment Funnel dashboard.
 
-from .general import sideBar
-from .styles import (
+This module defines the UI components and callback functions for the Lifecycle page.
+It allows users to test lifecycle investment strategies with different risk appetites,
+time horizons, and withdrawal patterns, helping them plan for long-term financial goals.
+"""
+
+from typing import Any
+
+import dash
+import dash_bootstrap_components as dbc
+from dash import Input, callback, dcc, html
+from ifunnel.models.main import initialize_bot
+
+from funnel.pages.models.lifecycle import LifecycleInputs, LifecycleOutputs, plot_lifecycle
+from funnel.pages.styles import (
     DESCRIP_INFO,
     GRAPH_LEFT,
     GRAPH_RIGHT,
@@ -13,10 +25,12 @@ from .styles import (
     SUB_TITLE,
 )
 
+dash.register_page(__name__, path="/lifecycle", name="Lifecycle")
 
-def div(algo) -> html.Div:
+algo = initialize_bot()
 
-    options_lifecycle = html.Div(
+# Create the UI components for the Lifecycle page
+options_lifecycle = html.Div(
     [
         # part1
         html.H5("Lifecycle Investments", style=MAIN_TITLE),
@@ -145,41 +159,72 @@ def div(algo) -> html.Div:
         ),
     ],
     style=GRAPH_LEFT,
-    )
+)
 
-    results_lifecycle = html.Div(
+results_lifecycle = html.Div(
+    [
+        html.Div(id="glidepaths-output-fig", style=OPTION_ELEMENT),
+        html.Div(id="performance-output-fig", style=OPTION_ELEMENT),
+        html.Div(id="lifecycle-all-output-fig", style=OPTION_ELEMENT),
+    ],
+    style=GRAPH_RIGHT,
+)
+
+spinner_lifecycle = html.Div(
+    [
+        dcc.Loading(
+            id="loading-output-lifecycle",
+            children=[html.Div([html.Div(id="loading-output-backtest-lifecycle")])],
+            type="circle",
+            style=LOADING_STYLE,
+            color="black",
+        ),
+    ]
+)
+
+layout = html.Div(
+    dbc.Row(
         [
-            html.Div(id="glidepaths-output-fig", style=OPTION_ELEMENT),
-            html.Div(id="performance-output-fig", style=OPTION_ELEMENT),
-            html.Div(id="lifecycle-all-output-fig", style=OPTION_ELEMENT),
+            dbc.Col(options_lifecycle, width=4, style={"padding": "2rem"}),
+            dbc.Col([results_lifecycle, spinner_lifecycle], width=8, style={"padding": "2rem"}),
         ],
-        style=GRAPH_RIGHT,
+        style={"height": "100vh", "overflowY": "auto"},
     )
+)
 
-    spinner_lifecycle = html.Div(
-        [
-            dcc.Loading(
-                id="loading-output-lifecycle",
-                children=[html.Div([html.Div(id="loading-output-backtest-lifecycle")])],
-                type="circle",
-                style=LOADING_STYLE,
-                color="black",
-            ),
-        ]
-    )
+@callback(
+    LifecycleOutputs.as_output_vector(),
+    [Input("lifecycle-run", "n_clicks")],
+    LifecycleInputs.as_state_vector(),
+    prevent_initial_call=True
+)
+def run_lifecycle(click: int, *args: Any):
+    """
+    Callback function for the Lifecycle page.
 
-    return html.Div(
-        [
-            # Row 1 - body
-            dbc.Row(
-                [
-                    # Row 1, Col 1 - navigation bar
-                    dbc.Col([sideBar]),
-                    # Row 1, col 2 - text description
-                    dbc.Col([options_lifecycle]),
-                    # Row 1, Col 3 - table
-                    dbc.Col([results_lifecycle, spinner_lifecycle]),
-                ]
-            )
-        ]
-    )
+    This function is triggered when the user clicks the "Run Simulations" button.
+    It processes the input parameters, runs the lifecycle investment analysis with the
+    selected feature selection method, scenario generation method, and investment parameters,
+    and returns the visualization results.
+
+    Args:
+        click (int): Number of times the button has been clicked
+        *args (Any): Variable length argument list containing the input values
+                    from the UI components, in the order defined by LifecycleInputs.as_state_vector()
+
+    Returns:
+        tuple: A tuple of output values for the UI components, as defined by
+               LifecycleOutputs.as_output_vector()
+
+    Raises:
+        dash.exceptions.PreventUpdate: If the callback is triggered without a button click
+    """
+    if not click:
+        raise dash.exceptions.PreventUpdate
+
+    keys = list(LifecycleInputs.model_fields.keys())
+    input_values = dict(zip(keys, args))
+    inputs = LifecycleInputs(**input_values)
+
+    outputs = plot_lifecycle(algo, inputs)
+    return outputs.as_tuple()

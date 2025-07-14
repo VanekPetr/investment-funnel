@@ -1,61 +1,37 @@
 from pathlib import Path
+from typing import Any
 
-import dash
 import pytest
 from ifunnel.models.main import initialize_bot
 
-from funnel.app import load_page
-from funnel.dashboard.app_callbacks import get_callbacks
-
 
 @pytest.fixture(scope="session", name="resource_dir")
-def resource_fixture():
-    """resource fixture"""
+def resource_fixture() -> Path:
+    """
+    Provide the path to the test resources directory.
+
+    This fixture returns the absolute path to the resources directory
+    containing test data files needed for the tests.
+
+    Returns:
+        Path: The absolute path to the resources directory
+    """
     return Path(__file__).parent / "resources"
 
 
 @pytest.fixture(scope="session")
-def algo(resource_dir: Path):
+def algo(resource_dir: Path) -> Any:
     """
     Initialize the investment bot for testing.
 
     This fixture initializes the investment bot with default parameters
-    and makes it available for tests.
-
-    Returns:
-        The initialized investment bot
-    """
-    return initialize_bot(file = resource_dir / "all_etfs_rets.parquet.gzip")
-
-
-# Fixture to create a Dash app for testing
-@pytest.fixture
-def app(algo) -> dash.Dash:
-    """
-    Create a Dash application instance for testing.
-
-    This fixture sets up a minimal Dash application with the necessary
-    components and callbacks for testing. It initializes the app with
-    a basic layout and registers all callbacks.
+    and makes it available for tests. It uses a test dataset from the
+    resources directory.
 
     Args:
-        algo: The algorithm bot instance
+        resource_dir (Path): The path to the resources directory
 
     Returns:
-        Dash: Configured Dash application instance
+        Any: The initialized investment bot instance
     """
-    # Create a new Dash app instance
-    app = dash.Dash(__name__)
-
-    # Apply the layout
-    layout = load_page()
-    app.layout = layout
-
-    # Register all callbacks
-    get_callbacks(app, algo=algo)
-
-    return app
-
-@pytest.fixture
-def callbacks(app, algo):
-    return get_callbacks(app, algo=algo)
+    return initialize_bot(file = resource_dir / "all_etfs_rets.parquet.gzip")
