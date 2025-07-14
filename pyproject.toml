@@ -16,6 +16,7 @@ dependencies = [
     "clarabel>=0.9.0",
     "flask>=3.0.3",
     "ifunnel>=0.0.6",
+    "pydantic>=2.10.3",
 ]
 
 [project.urls]

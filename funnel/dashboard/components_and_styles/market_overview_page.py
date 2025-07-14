@@ -52,36 +52,37 @@ def div(algo) -> html.Div:
                     {"label": "yes", "value": "yes"},
                     {"label": "no", "value": "no"},
                 ],
+                value="no",
                 inline=True,
                 style=OPTION_ELEMENT,
                 id="top-performers",
             ),
-            html.Div(
-                id="if-top-performers",
-                children=[
-                    html.P(
-                        "% of top performing assets from each risk class", style=SUB_TITLE
-                    ),
-                    dcc.Input(
-                        id="top-performers-pct",
-                        type="number",
-                        value=15,
-                        style=OPTION_ELEMENT,
-                    ),
-                    html.P("Combine with previous top performers", style=SUB_TITLE),
-                    dcc.RadioItems(
-                        [
-                            {"label": "yes", "value": "yes"},
-                            {"label": "no", "value": "no"},
-                        ],
-                        "no",
-                        inline=True,
-                        style=OPTION_ELEMENT,
-                        id="combine-top-performers",
-                    ),
-                ],
-                style={"display": "none"},
-            ),
+            #html.Div(
+                #id="if-top-performers",
+                #children=[
+                    #html.P(
+                    #    "% of top performing assets from each risk class", style=SUB_TITLE
+                    #),
+                    #dcc.Input(
+                    #    id="top-performers-pct",
+                    #    type="number",
+                    #    value=10,
+                    #    style=OPTION_ELEMENT,
+                    #),
+                    #html.P("Combine with previous top performers", style=SUB_TITLE),
+                    #dcc.RadioItems(
+                    #    [
+                    #        {"label": "yes", "value": "yes"},
+                    #        {"label": "no", "value": "no"},
+                    #    ],
+                    #    "no",
+                    #    inline=True,
+                    #    style=OPTION_ELEMENT,
+                    #    id="combine-top-performers",
+                    #),
+                #],
+                #style={"display": "none"},
+            #),
             # Button to plot results
             dbc.Button("Show Plot", id="show", style=OPTION_BTN),
         ],
