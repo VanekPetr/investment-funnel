@@ -25,7 +25,7 @@ experiment with various investment techniques and algorithms. Ultimately, it off
   * [Portfolio optimization models](#portfolio-optimization-models)
   * [ML models](#ml-models)
   * [Scenario generation algorithms](#scenario-generation-algorithms)
-- [How to start in 3 steps](#how-to-start-in-3-steps)
+- [How to start](#how-to-start)
 - [Usage](#usage)
   * [Market Overview](#market-overview)
   * [AI Feature Selection](#ai-feature-selection)
@@ -34,6 +34,8 @@ experiment with various investment techniques and algorithms. Ultimately, it off
 - [Further configuration for professionals or students](#further-configuration-for-professionals-or-students)
 - [Authors of the project](#authors-of-the-project)
 - [Research related to Investment Funnel](#research-related-to-investment-funnel)
+- [Testing](#testing)
+  * [Testing Dash Callbacks](#testing-dash-callbacks)
 - [Contributing](#contributing)
 - [Versioning](#versioning)
 - [License](#license)
@@ -174,6 +176,72 @@ To make the best of this project, you'll likely need access to up-to-date financ
 * **Petr Vanek** - *Performance Analysis of the most traded Mutual Funds versus Optimal Portfolios of Exchange Traded Funds* (Master Thesis, KU, 2020)
 
 Do you want to write your thesis on Investment Funnel? Please reach out and let us know.
+
+## Testing
+
+### Testing Dash Callbacks
+
+The project includes tests for the Dash callbacks using two approaches:
+
+1. **Traditional Testing Approach**: The `tests/dashboard/test_app_callbacks.py` file contains tests for the callbacks using a traditional approach with mocks and patches. This approach is useful for unit testing callbacks in isolation, without running a Dash application.
+
+2. **Testing with dash[testing]**: The same file also contains tests using the dash[testing] package, which provides utilities for end-to-end testing of Dash applications. These tests are wrapped in a try-except block to handle the case where dash[testing] is not installed.
+
+The following callbacks are tested using dash[testing]:
+- `display_page`: Tests that the correct page is displayed based on the URL pathname
+- `update_output`: Tests that the output text is updated based on the slider value
+- `plot_backtest`: Tests that the backtest figures are updated when the button is clicked
+- `plot_ml`: Tests that the ML figures are updated when the button is clicked
+- `plot_lifecycle`: Tests that the lifecycle figures are updated when the button is clicked
+- `plot_dots`: Tests that the dots figure is updated when the button is clicked
+
+To run the dash[testing] tests, you need to:
+
+1. Install dash[testing] by adding it to the dev dependencies in pyproject.toml:
+   ```toml
+   dev = [
+       "pytest-cov>=6.0.0",
+       "pytest>=8.3.3",
+       "pre-commit>=4.0.1",
+       "ifunnel>=0.0.6",
+       "ecos>=2.0.14",
+       "dash[testing]>=3.1.0",
+   ]
+   ```
+
+2. Install the dependencies:
+   ```bash
+   pip install -e ".[dev]"
+   ```
+
+3. Run the tests:
+   ```bash
+   pytest tests/dashboard/test_app_callbacks.py::test_display_page_routing_with_dash_testing -v
+   pytest tests/dashboard/test_app_callbacks.py::test_update_output_with_dash_testing -v
+   pytest tests/dashboard/test_app_callbacks.py::test_plot_backtest_with_dash_testing -v
+   pytest tests/dashboard/test_app_callbacks.py::test_plot_ml_with_dash_testing -v
+   pytest tests/dashboard/test_app_callbacks.py::test_plot_lifecycle_with_dash_testing -v
+   pytest tests/dashboard/test_app_callbacks.py::test_plot_dots_with_dash_testing -v
+   ```
+
+   Or run all dash[testing] tests at once:
+   ```bash
+   pytest tests/dashboard/test_app_callbacks.py -k "with_dash_testing" -v
+   ```
+
+#### Benefits of dash[testing]
+
+Using dash[testing] provides several benefits over the traditional approach:
+
+1. **End-to-end testing**: Tests the entire application stack, including the Dash framework, callbacks, and browser interactions.
+2. **Real browser interaction**: Tests how the application behaves in a real browser, which can catch issues that unit tests might miss.
+3. **Visual testing**: Can be used with Percy for visual regression testing.
+4. **Integration testing**: Tests how different components of the application work together.
+
+#### When to Use Each Approach
+
+- Use the traditional approach for unit testing callbacks in isolation, when you want to test the logic of the callback function without running a Dash application.
+- Use dash[testing] for integration and end-to-end testing, when you want to test how the application behaves in a real browser and how different components work together.
 
 ## Contributing
 
