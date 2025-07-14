@@ -5,8 +5,6 @@ This module contains tests for the app.py module, which
 provides the main entry point for the investment funnel dashboard.
 """
 
-
-
 from funnel.app import server
 
 
