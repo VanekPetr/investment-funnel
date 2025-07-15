@@ -5,7 +5,7 @@ This module registers the root URL ("/") and redirects to the Overview page.
 """
 
 import dash
-from dash import html, dcc
+from dash import dcc, html
 
 # Register the root URL and redirect to the Overview page
 dash.register_page(

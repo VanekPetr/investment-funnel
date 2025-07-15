@@ -6,19 +6,19 @@ provides the styling constants and dictionaries for the investment funnel dashbo
 """
 
 from funnel.pages.styles.styles import (
-    SIDE_BAR_WIDTH,
-    OPTION_WIDTH,
-    OPTION_ELEMENT,
-    OPTION_BTN,
-    MAIN_TITLE,
-    SUB_TITLE,
     DESCRIP_INFO,
-    SIDEBAR_STYLE,
-    NAV_BTN,
     GRAPH_LEFT,
     GRAPH_RIGHT,
-    MOBILE_PAGE,
     LOADING_STYLE,
+    MAIN_TITLE,
+    MOBILE_PAGE,
+    NAV_BTN,
+    OPTION_BTN,
+    OPTION_ELEMENT,
+    OPTION_WIDTH,
+    SIDE_BAR_WIDTH,
+    SIDEBAR_STYLE,
+    SUB_TITLE,
 )
 
 

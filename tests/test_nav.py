@@ -51,17 +51,17 @@ def test_get_navbar() -> None:
     nav_div = children[1]
     assert isinstance(nav_div, html.Div), "Second child should be a Div"
     assert nav_div.style["padding"] == "1rem", "Nav div should have padding=1rem"
-    
+
     # Test the navigation component
     nav = nav_div.children[0]
     assert isinstance(nav, dbc.Nav), "Nav div should contain a Nav component"
     assert nav.vertical is True, "Nav should be vertical"
     assert nav.pills is True, "Nav should use pills style"
-    
+
     # Test the navigation links
     nav_links = nav.children
     assert len(nav_links) == 4, "Nav should have 4 links"
-    
+
     # Test each navigation link
     expected_links = [
         ("Overview", "/overview"),
@@ -69,7 +69,7 @@ def test_get_navbar() -> None:
         ("Backtest", "/backtest"),
         ("AI Feature Selection", "/ai_feature_selection")
     ]
-    
+
     for i, (label, href) in enumerate(expected_links):
         link = nav_links[i]
         assert isinstance(link, dbc.NavLink), f"Link {i} should be a NavLink"
