@@ -60,7 +60,7 @@ server = app.server
 
 
 # Local dev entry point
-def main():
+def main():  # pragma: no cover
     """
     Run the application for local development.
 
