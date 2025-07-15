@@ -7,13 +7,6 @@
 ################################################################################
 FROM python:3.12-slim as builder
 
-# We don't need build dependencies because:
-# 1. Modern Python package repositories provide pre-built wheels for most packages
-# 2. UV (used below) can install these pre-built wheels without compilation
-# 3. If a package doesn't have a pre-built wheel, UV will try to find an alternative
-# Clean up apt cache to reduce image size
-RUN apt-get update && apt-get clean && rm -rf /var/lib/apt/lists/*
-
 # Copy UV installer from the official UV image
 # UV is a fast Python package installer and resolver, used as an alternative to pip
 # We copy both 'uv' (the main tool) and 'uvx' (the extended version with additional features)
