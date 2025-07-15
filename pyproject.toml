@@ -8,10 +8,7 @@ requires-python = ">=3.10"
 dependencies = [
     "dash-bootstrap-components>=2.0",
     "dash>=3.1.0",
-    #"pyarrow>=18.1.0",
     "gunicorn>=23.0.0",
-    #"cvxpy-base>=1.6.0",
-    #"clarabel>=0.9.0",
     "ifunnel>=0.0.6",
     "pydantic>=2.10.3",
 ]
@@ -24,10 +21,7 @@ homepage = "https://investment-funnel.algostrata.com"
 dev = [
     "pytest-cov>=6.0.0",
     "pytest>=8.3.3",
-    "pre-commit>=4.0.1",
-    "ifunnel>=0.0.6",
-    "ecos>=2.0.14",
-    #"dash[testing]>=3.1.0",
+    "pre-commit>=4.2.0"
 ]
 
 [tool.ruff]
@@ -44,10 +38,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["funnel"]
-
-[tool.deptry.per_rule_ignores]
-DEP002 = ["gunicorn","ifunnel"]
-
 
 [project.scripts]
 funnel = "funnel.app:main"
