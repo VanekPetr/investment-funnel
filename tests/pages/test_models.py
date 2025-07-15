@@ -499,13 +499,13 @@ def test_plot_backtest_with_clustering(algo: Any) -> None:
     assert isinstance(result, BacktestOutputs), "Should return a BacktestOutputs object"
 
 
-def test_plot_ml(algo: Any) -> None:
+def test_plot_ml_with_mst(algo: Any) -> None:
     """
-    Test that plot_ml generates new figures when clicked.
+    Test that plot_ml generates new figures when clicked with model="MST".
 
     This test verifies that the plot_ml function correctly processes
     input parameters and generates the expected visualization outputs for
-    AI feature selection.
+    AI feature selection when using the MST model.
 
     Args:
         algo (Any): The investment bot fixture from conftest.py
@@ -516,6 +516,36 @@ def test_plot_ml(algo: Any) -> None:
         end_date="2014-01-01",    # Analysis end date
         model="MST",              # AI model type (Minimum Spanning Tree)
         spec=4                    # Number of MST runs
+    )
+
+    # Call the function being tested
+    result = plot_ml(
+        algo,  # Algorithm object with investment methods
+        inputs  # Input parameters
+    )
+
+    # Verify the result type and output figure
+    assert isinstance(result, FeatureOutput), "Should return a FeatureOutput object"
+    assert result.ml_figure is not None, "Should return a ml figure"
+
+
+def test_plot_ml_with_clustering(algo: Any) -> None:
+    """
+    Test that plot_ml generates new figures when clicked with model="Cluster".
+
+    This test verifies that the plot_ml function correctly processes
+    input parameters and generates the expected visualization outputs for
+    AI feature selection when using the Clustering model.
+
+    Args:
+        algo (Any): The investment bot fixture from conftest.py
+    """
+    # Create test input parameters
+    inputs = FeatureInput(
+        start_date="2013-01-01",  # Analysis start date
+        end_date="2014-01-01",    # Analysis end date
+        model="Cluster",          # AI model type (Clustering)
+        spec=3                    # Number of clusters
     )
 
     # Call the function being tested
