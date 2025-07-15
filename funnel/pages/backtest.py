@@ -9,7 +9,7 @@ and testing time period.
 
 from typing import Any
 
-import cvxpy
+#import cvxpy
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, callback, dcc, html
@@ -76,8 +76,9 @@ optionBacktest = html.Div(
             id="select-solver",
             options=[
                 {"label": value, "value": value}
-                for value in cvxpy.installed_solvers()
-                if value not in ["ECOS", "ECOS_BB", "SCS"]
+                for value in ["Mosek", "Clarabel"]
+        #cvxpy.installed_solvers()
+                #if value not in ["ECOS", "ECOS_BB", "SCS"]
             ],
             placeholder="Select your installed solver",
             style=OPTION_ELEMENT,

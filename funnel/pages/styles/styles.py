@@ -1,4 +1,4 @@
-SIDE_BAR_WIDTH = "12%"
+SIDE_BAR_WIDTH = "16.67%"
 OPTION_WIDTH = "20%"
 
 OPTION_ELEMENT = {"margin": "1%", "font-size": "12px"}
@@ -72,7 +72,7 @@ GRAPH_LEFT = {
 
 GRAPH_RIGHT = {
     "position": "fixed",
-    "left": "32%",
+    "left": "36.67%",
     "right": "0%",
     "top": 0,
     "bottom": "0%",
@@ -102,7 +102,7 @@ LOADING_STYLE = {
     "justifyContent": "center",
     "alignItems": "center",
     "position": "fixed",
-    "left": "32%",
+    "left": "36.67%",
     "right": "0%",
     "top": 0,
     "bottom": "0%",
