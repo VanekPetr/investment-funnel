@@ -64,8 +64,8 @@ COPY --from=builder /app/.venv /app/.venv
 
 # Install gunicorn for production serving
 # We install it separately as it's a production-only dependency
-# Using the virtual environment's pip ensures it's installed in the right place
-RUN /app/.venv/bin/pip install gunicorn
+# Using Python from the virtual environment to run pip as a module
+RUN /app/.venv/bin/python -m pip install gunicorn
 
 # Copy the application code
 # This is done after installing dependencies to optimize rebuild times
