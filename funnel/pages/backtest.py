@@ -9,7 +9,6 @@ and testing time period.
 
 from typing import Any
 
-#import cvxpy
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, callback, dcc, html

@@ -9,7 +9,7 @@ import dash
 import dash_bootstrap_components as dbc
 from ifunnel.models.main import initialize_bot
 
-from funnel.dashboard.nav import get_navbar
+from funnel.nav import get_navbar
 
 # Global object - initialize the algorithm bot for use across the application
 algo = initialize_bot()

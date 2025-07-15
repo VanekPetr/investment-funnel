@@ -46,13 +46,8 @@ build-backend = "hatchling.build"
 packages = ["funnel"]
 
 [tool.deptry.per_rule_ignores]
-DEP001 = ["gams"]
-DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn","ifunnel"]
+DEP002 = ["gunicorn","ifunnel"]
 
 
 [project.scripts]
 funnel = "funnel.app:main"
-
-[tool.deptry.package_module_name_map]
-cvxpy-base = ["cvxpy"]
-scikit-learn = ["sklearn"]
