@@ -7,11 +7,107 @@ and generates the expected output visualizations.
 """
 
 from typing import Any
+from dash import Output, State
 
 from funnel.pages.models.ai_feature import FeatureInput, FeatureOutput, plot_ml
 from funnel.pages.models.backtest import BacktestInputs, BacktestOutputs, plot_backtest
 from funnel.pages.models.lifecycle import LifecycleInputs, LifecycleOutputs, plot_lifecycle
 from funnel.pages.models.overview import OverviewInputs, OverviewOutputs, plot_overview
+
+
+def test_feature_input_from_kwargs() -> None:
+    """
+    Test that FeatureInput.from_kwargs creates a valid instance.
+
+    This test verifies that the from_kwargs class method correctly
+    creates a new instance of the FeatureInput class from keyword arguments.
+    """
+    # Create a FeatureInput instance using from_kwargs
+    kwargs = {
+        "model": "MST",
+        "spec": 4,
+        "start_date": "2013-01-01",
+        "end_date": "2014-01-01"
+    }
+
+    feature_input = FeatureInput.from_kwargs(**kwargs)
+
+    # Verify that the instance has the correct attributes
+    assert feature_input.model == "MST"
+    assert feature_input.spec == 4
+    assert feature_input.start_date == "2013-01-01"
+    assert feature_input.end_date == "2014-01-01"
+
+
+def test_feature_output_as_tuple() -> None:
+    """
+    Test that FeatureOutput.as_tuple returns the correct tuple.
+
+    This test verifies that the as_tuple method correctly converts
+    the FeatureOutput instance to a tuple of its attribute values.
+    """
+    # Create a FeatureOutput instance
+    feature_output = FeatureOutput(
+        ml_figure="test_figure",
+        ai_result="test_result",
+        ai_number="test_number"
+    )
+
+    # Call the method being tested
+    result = feature_output.as_tuple()
+
+    # Verify that the result is a tuple with the correct values
+    assert isinstance(result, tuple)
+    assert len(result) == 3
+    assert result[0] == "test_figure"
+    assert result[1] == "test_result"
+    assert result[2] == "test_number"
+
+
+def test_feature_input_as_state_vector() -> None:
+    """
+    Test that FeatureInput.as_state_vector returns the correct list of State objects.
+
+    This test verifies that the as_state_vector class method correctly
+    returns a list of Dash State objects for callback input capturing.
+    """
+    # Call the method being tested
+    result = FeatureInput.as_state_vector()
+
+    # Verify that the result is a list of State objects with the correct IDs and properties
+    assert isinstance(result, list)
+    assert len(result) == 4
+    assert all(isinstance(state, State) for state in result)
+    assert result[0].component_id == "model-dropdown"
+    assert result[0].component_property == "value"
+    assert result[1].component_id == "ML-num-dropdown"
+    assert result[1].component_property == "value"
+    assert result[2].component_id == "picker-AI"
+    assert result[2].component_property == "start_date"
+    assert result[3].component_id == "picker-AI"
+    assert result[3].component_property == "end_date"
+
+
+def test_feature_output_as_output_vector() -> None:
+    """
+    Test that FeatureOutput.as_output_vector returns the correct list of Output objects.
+
+    This test verifies that the as_output_vector class method correctly
+    returns a list of Dash Output objects for callback output mapping.
+    """
+    # Call the method being tested
+    result = FeatureOutput.as_output_vector()
+
+    # Verify that the result is a list of Output objects with the correct IDs and properties
+    assert isinstance(result, list)
+    assert len(result) == 3
+    assert all(isinstance(output, Output) for output in result)
+    assert result[0].component_id == "mlFig"
+    assert result[0].component_property == "children"
+    assert result[1].component_id == "AIResult"
+    assert result[1].component_property == "data"
+    assert result[2].component_id == "AInumber"
+    assert result[2].component_property == "children"
 
 
 def test_plot_lifecycle(algo: Any) -> None:
@@ -123,13 +219,100 @@ def test_plot_ml(algo: Any) -> None:
     assert result.ml_figure is not None, "Should return a ml figure"
 
 
-def test_plot_overview(algo: Any) -> None:
+def test_overview_input_from_kwargs() -> None:
     """
-    Test that plot_overview generates new figures when clicked.
+    Test that OverviewInputs.from_kwargs creates a valid instance.
+
+    This test verifies that the from_kwargs class method correctly
+    creates a new instance of the OverviewInputs class from keyword arguments.
+    """
+    # Create an OverviewInputs instance using from_kwargs
+    kwargs = {
+        "start_date": "2013-01-01",
+        "end_date": "2023-01-01",
+        "search": ["Wealth Invest Amalie Global AK"],
+        "top_performers": "yes"
+    }
+
+    overview_input = OverviewInputs.from_kwargs(**kwargs)
+
+    # Verify that the instance has the correct attributes
+    assert overview_input.start_date == "2013-01-01"
+    assert overview_input.end_date == "2023-01-01"
+    assert overview_input.search == ["Wealth Invest Amalie Global AK"]
+    assert overview_input.top_performers == "yes"
+
+
+def test_overview_output_as_tuple() -> None:
+    """
+    Test that OverviewOutputs.as_tuple returns the correct tuple.
+
+    This test verifies that the as_tuple method correctly converts
+    the OverviewOutputs instance to a tuple of its attribute values.
+    """
+    # Create an OverviewOutputs instance
+    overview_output = OverviewOutputs(
+        dots_figure="test_figure"
+    )
+
+    # Call the method being tested
+    result = overview_output.as_tuple()
+
+    # Verify that the result is a tuple with the correct values
+    assert isinstance(result, tuple)
+    assert len(result) == 1
+    assert result[0] == "test_figure"
+
+
+def test_overview_input_as_state_vector() -> None:
+    """
+    Test that OverviewInputs.as_state_vector returns the correct list of State objects.
+
+    This test verifies that the as_state_vector class method correctly
+    returns a list of Dash State objects for callback input capturing.
+    """
+    # Call the method being tested
+    result = OverviewInputs.as_state_vector()
+
+    # Verify that the result is a list of State objects with the correct IDs and properties
+    assert isinstance(result, list)
+    assert len(result) == 4
+    assert all(isinstance(state, State) for state in result)
+    assert result[0].component_id == "picker-show"
+    assert result[0].component_property == "start_date"
+    assert result[1].component_id == "picker-show"
+    assert result[1].component_property == "end_date"
+    assert result[2].component_id == "find-fund"
+    assert result[2].component_property == "value"
+    assert result[3].component_id == "top-performers"
+    assert result[3].component_property == "value"
+
+
+def test_overview_output_as_output_vector() -> None:
+    """
+    Test that OverviewOutputs.as_output_vector returns the correct list of Output objects.
+
+    This test verifies that the as_output_vector class method correctly
+    returns a list of Dash Output objects for callback output mapping.
+    """
+    # Call the method being tested
+    result = OverviewOutputs.as_output_vector()
+
+    # Verify that the result is a list of Output objects with the correct IDs and properties
+    assert isinstance(result, list)
+    assert len(result) == 1
+    assert all(isinstance(output, Output) for output in result)
+    assert result[0].component_id == "dotsFig"
+    assert result[0].component_property == "children"
+
+
+def test_plot_overview_with_top_performers(algo: Any) -> None:
+    """
+    Test that plot_overview generates new figures when clicked with top_performers="yes".
 
     This test verifies that the plot_overview function correctly processes
     input parameters and generates the expected visualization outputs for
-    the market overview.
+    the market overview when top_performers is set to "yes".
 
     Args:
         algo (Any): The investment bot fixture from conftest.py
@@ -140,6 +323,36 @@ def test_plot_overview(algo: Any) -> None:
         end_date="2023-01-01",    # Analysis end date
         search=["Wealth Invest Amalie Global AK", "BankInvest Danske Aktier A"],  # Funds to highlight
         top_performers="yes"      # Whether to highlight top performers
+    )
+
+    # Call the function being tested
+    result = plot_overview(
+        algo,  # Algorithm object with investment methods
+        inputs  # Input parameters
+    )
+
+    # Verify the result type and output figure
+    assert isinstance(result, OverviewOutputs), "Should return an OverviewOutputs object"
+    assert result.dots_figure is not None, "Should return a scatter plot figure"
+
+
+def test_plot_overview_without_top_performers(algo: Any) -> None:
+    """
+    Test that plot_overview generates new figures when clicked with top_performers="no".
+
+    This test verifies that the plot_overview function correctly processes
+    input parameters and generates the expected visualization outputs for
+    the market overview when top_performers is set to "no".
+
+    Args:
+        algo (Any): The investment bot fixture from conftest.py
+    """
+    # Create test input parameters
+    inputs = OverviewInputs(
+        start_date="2013-01-01",  # Analysis start date
+        end_date="2023-01-01",    # Analysis end date
+        search=["Wealth Invest Amalie Global AK", "BankInvest Danske Aktier A"],  # Funds to highlight
+        top_performers="no"       # Whether to highlight top performers
     )
 
     # Call the function being tested
