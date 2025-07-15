@@ -1,29 +1,39 @@
-name: Bump version and publish
+# Workflow for creating a new release
+# This workflow handles tags and builds the Docker image
+# This workflow is manually triggered via the GitHub UI
 
-# Workflow for creating a new release and publishing to PyPI
-# This workflow handles version bumping, package building, and publishing
+name: Build and Release
 
 on:
-  workflow_dispatch:  # Manual trigger only - run when explicitly requested
+  workflow_dispatch:  # Manual trigger only
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.2.3)'
+        required: true
+        type: string
 
-# Permissions needed for creating tags and releases
+# Permissions needed for the workflow
 permissions:
-  contents: write  # Allows writing to repository (for tagging)
+  contents: write  # Allows the workflow to write to the repository (create tags)
+  packages: write  # Allows the workflow to write to GitHub Packages (for Docker images)
 
 jobs:
-  # Job to create a new version tag
+  # Job to set the tag based on input
   tagging:
     runs-on: ubuntu-latest
     outputs:
-      new_tag: ${{ steps.tag_step.outputs.new_tag }}  # Output the new tag for use in other jobs
+      new_tag: ${{ github.event.inputs.tag }}  # Output the tag to be used by other jobs
 
     steps:
-      # Generate a new version tag based on semantic versioning
-      - name: Generate Tag
-        id: tag_step
-        uses: tschm/cradle/actions/tag@v0.3.01
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}  # Token for GitHub API access
+      - name: Checkout [${{ github.repository }}]
+        uses: actions/checkout@v4  # Check out the repository code
+
+      - name: Create and Push Tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag -a "${{ github.event.inputs.tag }}" -m "Release ${{ github.event.inputs.tag }}"
+          git push origin "${{ github.event.inputs.tag }}"
 
   docker:
     needs: tagging
@@ -51,11 +61,3 @@ jobs:
             org.opencontainers.image.title=Investment Funnel App
             org.opencontainers.image.description=Investment Funnel
             org.opencontainers.image.vendor=Petr Vanek
-
-      #- name: Build and Push Docker Image
-      #  uses: cvxgrp/.github/actions/docker@v2.2.8
-      #  with:
-      #    repository: ${{ github.repository }}
-      #    tag: ${{ needs.tagging.outputs.new_tag }}
-      #    dockerfile-path: 'docker/Dockerfile'
-      #    github_token: ${{ secrets.GITHUB_TOKEN }}
