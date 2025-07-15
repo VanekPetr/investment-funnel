@@ -1,0 +1,37 @@
+name: TEST DOCKER
+
+on:
+  push:
+
+# Permissions needed for the workflow
+permissions:
+  contents: write  # Allows the workflow to write to the repository (create tags)
+  packages: write  # Allows the workflow to write to GitHub Packages (for Docker images)
+
+jobs:
+  # Job to set the tag based on input
+  docker:
+    permissions:
+      contents: read
+      packages: write
+
+    runs-on: ubuntu-latest
+    steps:
+      # -----------------------------------------------------------------------------
+      # Step 1: Checkout the repository
+      # -----------------------------------------------------------------------------
+      - name: Checkout [${{ github.repository }}]
+        uses: actions/checkout@v4
+
+      - name: Build and Push Docker Image
+        uses: tschm/cradle/actions/docker@v0.3.01
+        with:
+          registry: 'ghcr.io'
+          github_repository: ${{ github.repository }}
+          github_actor: ${{ github.actor }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "latest"
+          labels: |
+            org.opencontainers.image.title=Investment Funnel App
+            org.opencontainers.image.description=Investment Funnel
+            org.opencontainers.image.vendor=Petr Vanek

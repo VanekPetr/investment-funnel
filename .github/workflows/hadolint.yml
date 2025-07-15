@@ -1,0 +1,38 @@
+# Workflow for linting Dockerfiles with hadolint
+# This workflow runs automatically on every push to the repository
+
+name: Dockerfile Linting
+
+on:
+  push
+    #paths:
+    #  - 'docker/Dockerfile'  # Only run when Dockerfile changes
+
+# Permissions needed for the workflow
+permissions:
+  contents: read  # Read-only access to repository contents
+  security-events: write
+
+
+jobs:
+  hadolint:
+    name: Lint Dockerfile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: docker/Dockerfile
+          format: sarif
+          output-file: hadolint-results.sarif
+          no-fail: true  # Don't fail the build on linting issues
+
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()  # Always run this step, even if previous steps fail
+        with:
+          sarif_file: hadolint-results.sarif
+          category: hadolint

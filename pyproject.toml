@@ -8,7 +8,6 @@ requires-python = ">=3.10"
 dependencies = [
     "dash-bootstrap-components>=2.0",
     "dash>=3.1.0",
-    "gunicorn>=23.0.0",
     "ifunnel>=0.0.6",
     "pydantic>=2.10.3",
 ]
