@@ -24,10 +24,8 @@ homepage = "https://investment-funnel.algostrata.com"
 dev = [
     "pytest-cov>=6.0.0",
     "pytest>=8.3.3",
-    "pre-commit>=4.0.1",
-    "ifunnel>=0.0.6",
+    "pre-commit>=4.2.0",
     "ecos>=2.0.14",
-    #"dash[testing]>=3.1.0",
 ]
 
 [tool.ruff]
