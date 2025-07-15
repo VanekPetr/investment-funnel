@@ -10,9 +10,6 @@ from unittest.mock import MagicMock, patch
 import dash
 import pytest
 
-# Mock dash.register_page before importing the module
-dash.register_page = MagicMock()
-
 from funnel.pages.lifecycle import run_lifecycle
 from funnel.pages.models.lifecycle import LifecycleInputs, LifecycleOutputs
 
