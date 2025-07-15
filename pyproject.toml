@@ -39,9 +39,5 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["funnel"]
 
-[tool.deptry.per_rule_ignores]
-DEP002 = ["gunicorn","ifunnel"]
-
-
 [project.scripts]
 funnel = "funnel.app:main"
