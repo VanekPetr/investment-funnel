@@ -48,13 +48,13 @@ def get_navbar():
         ],
         width=2,
         style={
-            "backgroundColor": "#f8f9fa",
+            "backgroundColor": "#212529",
             "height": "100vh",
             "position": "fixed",
             "left": 0,
             "top": 0,
             "bottom": 0,
             "paddingTop": "1rem",
-            "borderRight": "1px solid #dee2e6"
+            "borderRight": "1px solid #343a40"
         }
     )

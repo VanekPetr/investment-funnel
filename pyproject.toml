@@ -8,10 +8,10 @@ requires-python = ">=3.10"
 dependencies = [
     "dash-bootstrap-components>=2.0",
     "dash>=3.1.0",
-    "pyarrow>=18.1.0",
+    #"pyarrow>=18.1.0",
     "gunicorn>=23.0.0",
-    "cvxpy-base>=1.6.0",
-    "clarabel>=0.9.0",
+    #"cvxpy-base>=1.6.0",
+    #"clarabel>=0.9.0",
     "ifunnel>=0.0.6",
     "pydantic>=2.10.3",
 ]
@@ -46,13 +46,8 @@ build-backend = "hatchling.build"
 packages = ["funnel"]
 
 [tool.deptry.per_rule_ignores]
-DEP001 = ["gams"]
-DEP002 = ["clarabel","pyarrow","cvxpy-base","gunicorn","ifunnel"]
+DEP002 = ["gunicorn","ifunnel"]
 
 
 [project.scripts]
 funnel = "funnel.app:main"
-
-[tool.deptry.package_module_name_map]
-cvxpy-base = ["cvxpy"]
-scikit-learn = ["sklearn"]
