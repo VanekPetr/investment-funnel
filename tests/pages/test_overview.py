@@ -5,16 +5,16 @@ This module contains tests for the overview.py module, which
 provides the Market Overview page for the investment funnel dashboard.
 """
 
-import pytest
 from unittest.mock import MagicMock, patch
 
 import dash
+import pytest
 
 # Mock dash.register_page before importing the module
 dash.register_page = MagicMock()
 
-from funnel.pages.overview import plot_dots
 from funnel.pages.models.overview import OverviewInputs, OverviewOutputs
+from funnel.pages.overview import plot_dots
 
 
 def test_plot_dots_prevent_update():
@@ -79,9 +79,10 @@ def test_layout_components():
     This test verifies that the layout for the overview page
     contains the expected components with the correct properties.
     """
-    from funnel.pages.overview import layout, optionsGraph, graphOverview, spinner_dots
     import dash_bootstrap_components as dbc
     from dash import html
+
+    from funnel.pages.overview import graphOverview, layout, optionsGraph, spinner_dots
 
     # Verify that layout is a Div containing a Row
     assert isinstance(layout, html.Div)

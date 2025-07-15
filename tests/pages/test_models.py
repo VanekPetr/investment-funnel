@@ -7,6 +7,7 @@ and generates the expected output visualizations.
 """
 
 from typing import Any
+
 from dash import Output, State
 
 from funnel.pages.models.ai_feature import FeatureInput, FeatureOutput, plot_ml
