@@ -32,6 +32,9 @@ WORKDIR /app
 # Copy virtual environment from builder
 COPY --from=builder /app/.venv /app/.venv
 
+# Install gunicorn
+RUN /app/.venv/bin/pip install gunicorn
+
 # Copy application code only in runtime stage
 COPY . .
 
