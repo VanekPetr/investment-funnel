@@ -1,0 +1,67 @@
+# Workflow to build and publish the project documentation
+# This workflow runs automatically on every push to the repository
+
+name: "book"
+
+on:
+    push:
+        branches:
+            - main
+
+
+# Permissions needed for the workflow
+permissions:
+    checks: write  # Allows the workflow to write check results
+    contents: read  # Read-only access to repository contents
+
+jobs:
+  # Job to generate API documentation with pdoc
+  pdoc:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Build the virtual environment"
+        uses: tschm/cradle/actions/environment@v0.3.01  # Custom action to set up Python environment
+
+      - uses: tschm/cradle/actions/pdoc@v0.3.01  # Custom action to generate API documentation
+        with:
+          source-folder: funnel  # Source code folder to document
+
+
+  # Job to run tests and generate coverage reports
+  test:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Build the virtual environment"
+        uses: tschm/cradle/actions/environment@v0.3.01  # Custom action to set up Python environment
+
+      - uses: tschm/cradle/actions/coverage@v0.3.01  # Custom action to run tests with coverage
+        with:
+          tests-folder: tests  # Folder containing the tests
+          source-folder: funnel  # Source code folder to test
+          coveralls: 'false'  # Don't upload to Coveralls
+
+  # Job to build and publish the book documentation
+  book:
+    runs-on: "ubuntu-latest"
+    needs: [test, pdoc]  # This job depends on all other jobs
+
+    # Additional write permissions needed for publishing
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Check out the repository code
+
+      - name: Upload the book
+        uses: tschm/cradle/actions/book@v0.3.01  # Custom action to build and upload the book
+        with:
+          title: Investment Funnel
+          links: |
+            {
+              "API": "./pdoc/index.html",
+              "Coverage":"./tests/html-coverage/index.html",
+              "Tests":"./tests/html-report/report.html"
+            }
