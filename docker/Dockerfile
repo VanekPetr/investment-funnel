@@ -32,8 +32,12 @@ COPY uv.lock pyproject.toml README.md ./
 # Create a virtual environment and install dependencies
 # First command creates a virtual environment at /app/.venv
 # Second command installs all dependencies defined in uv.lock (--frozen ensures exact versions)
-RUN uv venv /app/.venv
-RUN uv sync --frozen
+
+# Install gunicorn for production serving
+# We install it separately as it's a production-only dependency
+RUN uv venv /app/.venv && \
+    uv sync --frozen --no-dev && \
+    uv pip install gunicorn
 
 ################################################################################
 # RUNTIME STAGE
@@ -61,11 +65,6 @@ WORKDIR /app
 # Copy the virtual environment from the builder stage
 # This contains all our dependencies without the build tools
 COPY --from=builder /app/.venv /app/.venv
-
-# Install gunicorn for production serving
-# We install it separately as it's a production-only dependency
-# Using Python from the virtual environment to run pip as a module
-RUN /app/.venv/bin/python -m pip install gunicorn
 
 # Copy the application code
 # This is done after installing dependencies to optimize rebuild times
