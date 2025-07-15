@@ -5,10 +5,10 @@ This module contains tests for the ai_feature_selection.py module, which
 provides the AI Feature Selection page for the investment funnel dashboard.
 """
 
-import pytest
 from unittest.mock import MagicMock, patch
 
 import dash
+import pytest
 
 # Mock dash.register_page before importing the module
 dash.register_page = MagicMock()
@@ -79,9 +79,10 @@ def test_layout_components():
     This test verifies that the layout for the ai_feature_selection page
     contains the expected components with the correct properties.
     """
-    from funnel.pages.ai_feature_selection import layout, optionML, graphML, spinner_ml
     import dash_bootstrap_components as dbc
     from dash import html
+
+    from funnel.pages.ai_feature_selection import graphML, layout, optionML, spinner_ml
 
     # Verify that layout is a Div containing a Row
     assert isinstance(layout, html.Div)

@@ -5,10 +5,10 @@ This module contains tests for the backtest.py module, which
 provides the Backtesting page for the investment funnel dashboard.
 """
 
-import pytest
 from unittest.mock import MagicMock, patch
 
 import dash
+import pytest
 
 # Mock dash.register_page before importing the module
 dash.register_page = MagicMock()
@@ -26,11 +26,11 @@ def test_run_backtest_prevent_update():
     preventing unnecessary updates to the UI.
     """
     with pytest.raises(dash.exceptions.PreventUpdate):
-        run_backtest(None, "MST", 2, 3, "Bootstrap", 1000, ["Benchmark"], "2018-01-01", "2021-12-31", 
+        run_backtest(None, "MST", 2, 3, "Bootstrap", 1000, ["Benchmark"], "2018-01-01", "2021-12-31",
                     "2022-01-01", "2023-01-01", "CLARABEL", "CVaR model", 0)
 
     with pytest.raises(dash.exceptions.PreventUpdate):
-        run_backtest(0, "MST", 2, 3, "Bootstrap", 1000, ["Benchmark"], "2018-01-01", "2021-12-31", 
+        run_backtest(0, "MST", 2, 3, "Bootstrap", 1000, ["Benchmark"], "2018-01-01", "2021-12-31",
                     "2022-01-01", "2023-01-01", "CLARABEL", "CVaR model", 0)
 
 
@@ -52,7 +52,7 @@ def test_run_backtest_processes_inputs(mock_plot_backtest):
     mock_plot_backtest.return_value = mock_outputs
 
     # Call the function being tested
-    result = run_backtest(1, "MST", 2, 3, "Bootstrap", 1000, ["Benchmark"], "2018-01-01", "2021-12-31", 
+    result = run_backtest(1, "MST", 2, 3, "Bootstrap", 1000, ["Benchmark"], "2018-01-01", "2021-12-31",
                          "2022-01-01", "2023-01-01", "CLARABEL", "CVaR model", 0)
 
     # Verify that plot_backtest was called with the correct arguments
@@ -91,9 +91,10 @@ def test_layout_components():
     This test verifies that the layout for the backtest page
     contains the expected components with the correct properties.
     """
-    from funnel.pages.backtest import layout, optionBacktest, graphResults, spinner_backtest
     import dash_bootstrap_components as dbc
     from dash import html
+
+    from funnel.pages.backtest import graphResults, layout, optionBacktest, spinner_backtest
 
     # Verify that layout is a Div containing a Row
     assert isinstance(layout, html.Div)

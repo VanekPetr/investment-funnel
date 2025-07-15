@@ -5,10 +5,10 @@ This module contains tests for the lifecycle.py module, which
 provides the Lifecycle Investment page for the investment funnel dashboard.
 """
 
-import pytest
 from unittest.mock import MagicMock, patch
 
 import dash
+import pytest
 
 # Mock dash.register_page before importing the module
 dash.register_page = MagicMock()
@@ -86,9 +86,10 @@ def test_layout_components():
     This test verifies that the layout for the lifecycle page
     contains the expected components with the correct properties.
     """
-    from funnel.pages.lifecycle import layout, options_lifecycle, results_lifecycle, spinner_lifecycle
     import dash_bootstrap_components as dbc
     from dash import html
+
+    from funnel.pages.lifecycle import layout, options_lifecycle, results_lifecycle, spinner_lifecycle
 
     # Verify that layout is a Div containing a Row
     assert isinstance(layout, html.Div)
