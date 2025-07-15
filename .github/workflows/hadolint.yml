@@ -11,6 +11,8 @@ on:
 # Permissions needed for the workflow
 permissions:
   contents: read  # Read-only access to repository contents
+  security-events: write
+
 
 jobs:
   hadolint:
