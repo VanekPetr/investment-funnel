@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build and Push Docker Image
-        uses: tschm/cradle/actions/docker@v0.3.04
+        uses: tschm/cradle/actions/docker@v0.3.06
         with:
           registry: 'ghcr.io'
           github_repository: ${{ github.repository }}
