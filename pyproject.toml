@@ -2,7 +2,7 @@
 name = "investment-funnel"
 version = "0.0.0"
 description = "Open-source testing and benchmarking plaform for asset allocation."
-authors = [{name="Petr Vanek", email="abc@gmail.com"}]
+authors = [{name="Petr Vanek", email="petrr.vanekk@gmail.com"}]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
