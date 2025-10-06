@@ -37,7 +37,7 @@ jobs:
 
       # This creates a release on GitHub with automatically generated release notes
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v2.3.3  # Third-party release action
+        uses: softprops/action-gh-release@v2.3.4  # Third-party release action
         with:
           token: ${{ secrets.GITHUB_TOKEN }}  # Token for authentication
           tag_name: ${{ github.event.inputs.tag }}  # Use the provided tag
