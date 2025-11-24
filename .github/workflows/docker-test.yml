@@ -21,7 +21,7 @@ jobs:
       # Step 1: Checkout the repository
       # -----------------------------------------------------------------------------
       - name: Checkout [${{ github.repository }}]
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Build and Push Docker Image
         uses: tschm/cradle/actions/docker@v0.3.06

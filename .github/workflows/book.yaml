@@ -53,7 +53,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v5  # Check out the repository code
+        uses: actions/checkout@v6  # Check out the repository code
 
       - name: Upload the book
         uses: tschm/cradle/actions/book@v0.3.06  # Custom action to build and upload the book
