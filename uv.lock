@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version < '3.11'",
@@ -411,22 +411,24 @@ wheels = [
 
 [[package]]
 name = "dash"
-version = "3.1.1"
+version = "4.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "flask" },
     { name = "importlib-metadata" },
+    { name = "janus" },
     { name = "nest-asyncio" },
     { name = "plotly" },
+    { name = "pydantic" },
     { name = "requests" },
     { name = "retrying" },
     { name = "setuptools" },
     { name = "typing-extensions" },
     { name = "werkzeug" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/db/7c/8569c50a4c07fabee6b2428a1515c0c92247e2127367b438a9f99d69723c/dash-3.1.1.tar.gz", hash = "sha256:916b31cec46da0a3339da0e9df9f446126aa7f293c0544e07adf9fe4ba060b18", size = 7544441, upload-time = "2025-06-30T15:31:30.518Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/71/2d/c605f929e126f72a980a0f06fc08084d9e35e43f14bba2cddd507f7d7b14/dash-4.4.0.tar.gz", hash = "sha256:9155e4b1136b5a6bdae1fbd108f55a2ce9e9b4ac376dace4457c877cc7da279d", size = 8517423, upload-time = "2026-07-03T18:29:11.163Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e1/df/267614cbc1003f6982d7078fd5c7591778f75e07bf36d4771fcb2eab8ff1/dash-3.1.1-py3-none-any.whl", hash = "sha256:66fff37e79c6aa114cd55aea13683d1e9afe0e3f96b35388baca95ff6cfdad23", size = 7885616, upload-time = "2025-06-30T15:31:22.768Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/49/c15f6c1d3d340bf18b4f66a4bf884d6bd2364d1707db2c200963066cf67c/dash-4.4.0-py3-none-any.whl", hash = "sha256:59eb377b8601fcbcf67246c75cc6daf066790ec08a616eb6f64efba7a5e021d4", size = 8925788, upload-time = "2026-07-03T18:29:03.189Z" },
 ]
 
 [[package]]
@@ -576,7 +578,7 @@ wheels = [
 [[package]]
 name = "ifunnel"
 version = "0.0.6"
-source = { registry = "https://pypi.org/simple" }
+source = { url = "https://files.pythonhosted.org/packages/9f/3b/b3e37ae8671999378e5ff1e721f437d27bf6f6b76c62ce9a0e3917dec7d8/ifunnel-0.0.6-py3-none-any.whl" }
 dependencies = [
     { name = "clarabel" },
     { name = "cvxpy-base" },
@@ -596,10 +598,35 @@ dependencies = [
     { name = "scipy" },
     { name = "yfinance" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1b/99/1dbfb180a4d85a7878c5c81634fc4a6f2d228b04f7364c45f4e296b34a92/ifunnel-0.0.6.tar.gz", hash = "sha256:dacdae19461dd5a3fd8cf1e1d6cc9b0ac93cf79051781e73ba71a749b46e60f5", size = 3772609, upload-time = "2025-07-12T09:13:58.337Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9f/3b/b3e37ae8671999378e5ff1e721f437d27bf6f6b76c62ce9a0e3917dec7d8/ifunnel-0.0.6-py3-none-any.whl", hash = "sha256:197f5aaa2cecf4fa2b044a033bf7ce8506fd9ae25895f90a71d04b769a7a5220", size = 3786209, upload-time = "2025-07-12T09:13:56.5Z" },
+    { url = "https://files.pythonhosted.org/packages/9f/3b/b3e37ae8671999378e5ff1e721f437d27bf6f6b76c62ce9a0e3917dec7d8/ifunnel-0.0.6-py3-none-any.whl", hash = "sha256:197f5aaa2cecf4fa2b044a033bf7ce8506fd9ae25895f90a71d04b769a7a5220" },
 ]
+
+[package.metadata]
+requires-dist = [
+    { name = "clarabel", specifier = ">=0.10.0" },
+    { name = "cvxpy-base", specifier = ">=1.6.1" },
+    { name = "dotenv", specifier = ">=0.9.9" },
+    { name = "ecos", marker = "extra == 'dev'", specifier = ">=2.0.14" },
+    { name = "loguru", specifier = ">=0.7.3" },
+    { name = "matplotlib", specifier = ">=3.10.0" },
+    { name = "mosek", specifier = ">=11.0.8" },
+    { name = "networkx", specifier = ">=3.4.2" },
+    { name = "numpy", specifier = ">=2.2.3" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "plotly", specifier = ">=6.0.0" },
+    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.0.1" },
+    { name = "pyarrow", specifier = ">=19.0.1" },
+    { name = "pydantic-settings", specifier = ">=2.8.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.3" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "python-dateutil", specifier = ">=2.9.0.post0" },
+    { name = "requests", specifier = ">=2.32.3" },
+    { name = "scikit-learn", specifier = ">=1.6.1" },
+    { name = "scipy", specifier = ">=1.15.2" },
+    { name = "yfinance", specifier = ">=0.2.54" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "importlib-metadata"
@@ -642,16 +669,16 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "dash", specifier = ">=3.1.0" },
+    { name = "dash", specifier = ">=4.1.0" },
     { name = "dash-bootstrap-components", specifier = ">=2.0" },
-    { name = "ifunnel", specifier = ">=0.0.6" },
+    { name = "ifunnel", url = "https://files.pythonhosted.org/packages/9f/3b/b3e37ae8671999378e5ff1e721f437d27bf6f6b76c62ce9a0e3917dec7d8/ifunnel-0.0.6-py3-none-any.whl" },
     { name = "pydantic", specifier = ">=2.10.3" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "pre-commit", specifier = ">=4.2.0" },
-    { name = "pytest", specifier = ">=8.3.3" },
+    { name = "pytest", specifier = ">=9.0.3" },
     { name = "pytest-cov", specifier = ">=6.0.0" },
 ]
 
@@ -662,6 +689,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/9c/cb/8ac0172223afbccb63986cc25049b154ecfb5e85932587206f42317be31d/itsdangerous-2.2.0.tar.gz", hash = "sha256:e0050c0b7da1eea53ffaf149c0cfbb5c6e2e2b69c4bef22c81fa6eb73e5f6173", size = 54410, upload-time = "2024-04-16T21:28:15.614Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/04/96/92447566d16df59b2a776c0fb82dbc4d9e07cd95062562af01e408583fc4/itsdangerous-2.2.0-py3-none-any.whl", hash = "sha256:c6242fc49e35958c8b15141343aa660db5fc54d4f13a1db01a3f5891b98700ef", size = 16234, upload-time = "2024-04-16T21:28:14.499Z" },
+]
+
+[[package]]
+name = "janus"
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d8/7f/69884b6618be4baf6ebcacc716ee8680a842428a19f403db6d1c0bb990aa/janus-2.0.0.tar.gz", hash = "sha256:0970f38e0e725400496c834a368a67ee551dc3b5ad0a257e132f5b46f2e77770", size = 22910, upload-time = "2024-12-13T12:59:08.622Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/68/34/65604740edcb20e1bda6a890348ed7d282e7dd23aa00401cbe36fd0edbd9/janus-2.0.0-py3-none-any.whl", hash = "sha256:7e6449d34eab04cd016befbd7d8c0d8acaaaab67cb59e076a69149f9031745f9", size = 12161, upload-time = "2024-12-13T12:59:06.106Z" },
 ]
 
 [[package]]
@@ -1364,6 +1400,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pygments"
+version = "2.20.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c3/b2/bc9c9196916376152d655522fdcebac55e66de6603a76a02bca1b6414f6c/pygments-2.20.0.tar.gz", hash = "sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f", size = 4955991, upload-time = "2026-03-29T13:29:33.898Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f4/7e/a72dd26f3b0f4f2bf1dd8923c85f7ceb43172af56d63c7383eb62b332364/pygments-2.20.0-py3-none-any.whl", hash = "sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176", size = 1231151, upload-time = "2026-03-29T13:29:30.038Z" },
+]
+
+[[package]]
 name = "pyparsing"
 version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1374,7 +1419,7 @@ wheels = [
 
 [[package]]
 name = "pytest"
-version = "8.3.4"
+version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -1382,11 +1427,12 @@ dependencies = [
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
+    { name = "pygments" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/05/35/30e0d83068951d90a01852cb1cef56e5d8a09d20c7f511634cc2f7e0372a/pytest-8.3.4.tar.gz", hash = "sha256:965370d062bce11e73868e0335abac31b4d3de0e82f4007408d242b4f8610761", size = 1445919, upload-time = "2024-12-01T12:54:25.98Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz", hash = "sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313", size = 1636369, upload-time = "2026-06-19T10:58:32.857Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/92/76a1c94d3afee238333bc0a42b82935dd8f9cf8ce9e336ff87ee14d9e1cf/pytest-8.3.4-py3-none-any.whl", hash = "sha256:50e16d954148559c9a74109af1eaf0c945ba2d8f30f0a3d3335edde19788b6f6", size = 343083, upload-time = "2024-12-01T12:54:19.735Z" },
+    { url = "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl", hash = "sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c", size = 386536, upload-time = "2026-06-19T10:58:31.347Z" },
 ]
 
 [[package]]

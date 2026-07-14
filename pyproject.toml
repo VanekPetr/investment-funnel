@@ -7,7 +7,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "dash-bootstrap-components>=2.0",
-    "dash>=3.1.0",
+    "dash>=4.1.0",
     "ifunnel>=0.0.6",
     "pydantic>=2.10.3",
 ]
@@ -19,7 +19,7 @@ homepage = "https://investment-funnel.algostrata.com"
 [dependency-groups]
 dev = [
     "pytest-cov>=7.1.0",
-    "pytest>=8.3.3",
+    "pytest>=9.0.3",
     "pre-commit>=4.2.0"
 ]
 
@@ -40,3 +40,6 @@ packages = ["funnel"]
 
 [project.scripts]
 funnel = "funnel.app:main"
+
+[tool.uv.sources]
+ifunnel = { url = "https://files.pythonhosted.org/packages/9f/3b/b3e37ae8671999378e5ff1e721f437d27bf6f6b76c62ce9a0e3917dec7d8/ifunnel-0.0.6-py3-none-any.whl" }
